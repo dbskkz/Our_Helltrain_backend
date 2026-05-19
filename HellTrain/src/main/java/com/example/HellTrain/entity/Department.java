@@ -3,7 +3,7 @@ package com.example.HellTrain.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "department")
 public class Department {
 
 	@Id
