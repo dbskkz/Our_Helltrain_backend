@@ -56,10 +56,10 @@ CREATE TABLE `product` (
 
 CREATE TABLE `report` (
   `report_id` int NOT NULL AUTO_INCREMENT,
-  `order_id` varchar(45) NOT NULL,
-  `complainant_id` int NOT NULL,
-  `accused_id` int NOT NULL,
-  `description` varchar(200) NOT NULL,
+  `order_id` int NOT NULL DEFAULT '0',
+  `complainant_id` int NOT NULL DEFAULT '0',
+  `accused_id` int NOT NULL DEFAULT '0',
+  `description` varchar(200) NOT NULL DEFAULT '0',
   ` file_path` varchar(500) DEFAULT NULL,
   `report_date` varchar(45) NOT NULL,
   `status` varchar(45) NOT NULL,
