@@ -27,14 +27,15 @@ CREATE TABLE `order` (
   `order_id` int NOT NULL,
   `buyer_id` int NOT NULL,
   `product_id` int NOT NULL,
-  `create_date` varchar(45) DEFAULT NULL,
-  `status` varchar(45) DEFAULT NULL,
-  `buyer_check` tinyint DEFAULT NULL,
-  `seller_check` tinyint DEFAULT NULL,
+  `create_date` varchar(45) NOT NULL,
+  `status` varchar(45) NOT NULL,
+  `buyer_check` tinyint NOT NULL,
+  `seller_check` tinyint NOT NULL,
   `buyer_rank` int DEFAULT '0',
   `salesman_rank` int DEFAULT '0',
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
