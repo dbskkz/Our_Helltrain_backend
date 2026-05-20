@@ -20,7 +20,7 @@ public class User {
 	private String password;
 	
 	@Column(name = "phone")
-	private int phone;
+	private String phone;
 	
 	@Column(name = "location")
 	private String location;
@@ -31,13 +31,15 @@ public class User {
 	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "student_verifled_at")
-	private LocalDate studentVerifledAt;
+	@Column(name = "student_verified_at")
+	private LocalDate studentVerifiedAt;
 	
 	@Column(name = "good_level")
 	private int goodLevel;
+	
 	@Column(name = "msg")
 	private String msg;
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -62,10 +64,10 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public int getPhone() {
+	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(int phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 	public String getLocation() {
@@ -86,11 +88,11 @@ public class User {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public LocalDate getStudentVerifledAt() {
-		return studentVerifledAt;
+	public LocalDate getStudentVerifiedAt() {
+		return studentVerifiedAt;
 	}
-	public void setStudentVerifledAt(LocalDate studentVerifledAt) {
-		this.studentVerifledAt = studentVerifledAt;
+	public void setStudentVerifiedAt(LocalDate studentVerifiedAt) {
+		this.studentVerifiedAt = studentVerifiedAt;
 	}
 	public int getGoodLevel() {
 		return goodLevel;

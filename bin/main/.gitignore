@@ -1,3 +1,5 @@
 /application.properties
 /com/
 /schema-mysql.sql
+/data-mysql.sql
+/logback-spring.xml

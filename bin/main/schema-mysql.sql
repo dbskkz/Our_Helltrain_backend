@@ -81,11 +81,11 @@ CREATE TABLE `user` (
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
-  `phone` int DEFAULT '0',
+  `phone` varchar(20) DEFAULT '0',
   `location` varchar(45) NOT NULL,
   `department_id` int NOT NULL DEFAULT '0',
   `status` varchar(45) NOT NULL,
-  `student_verifled_at` varchar(45) NOT NULL,
+  `student_verified_at` varchar(45) NOT NULL,
   `good_level` int DEFAULT NULL,
   `msg` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
