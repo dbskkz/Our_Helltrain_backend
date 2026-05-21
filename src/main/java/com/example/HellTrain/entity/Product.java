@@ -9,6 +9,7 @@ public class Product {
 	
 	@Id
 	@Column(name = "product_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int productId;
 
 	@Column(name = "user_id")
@@ -17,8 +18,8 @@ public class Product {
 	@Column(name = "product_name")
 	private String productName;
 
-	@Column(name = "describe")
-	private String describe;
+	@Column(name = "description")
+	private String description;
 	
 	@Column(name = "price")
 	private int price;
@@ -72,11 +73,11 @@ public class Product {
 	}
 
 	public String getDescribe() {
-		return describe;
+		return description;
 	}
 
 	public void setDescribe(String describe) {
-		this.describe = describe;
+		this.description = describe;
 	}
 
 	public int getPrice() {
