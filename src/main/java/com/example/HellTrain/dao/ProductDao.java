@@ -1,16 +1,13 @@
 package com.example.HellTrain.dao;
 
-import java.util.List;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.example.HellTrain.entity.Product;
 
-
-public class ProductDao {
-//	// 預設會有多筆 所以回傳值是LIST
-//		@Query(value="SELECT * FROM product", nativeQuery = true)
-//		public List<Product> getAll() {
-//		return null;
-//	}
+@Repository
+public interface ProductDao extends JpaRepository<Product, Integer>{
+	@Query(value = "SELECT COUNT(product_id) FROM product",nativeQuery = true)
+	public int findData();
 }
