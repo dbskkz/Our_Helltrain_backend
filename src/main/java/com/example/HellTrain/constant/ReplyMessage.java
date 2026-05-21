@@ -2,7 +2,8 @@ package com.example.HellTrain.constant;
 
 public enum ReplyMessage {
 	SUCCESS(200, "Success!!"),
-	NO_DATA_FOUND(404, "No data found");
+	NO_DATA_FOUND(404, "No data found"),
+	PRODUCT_PARSE_ERROR(400, "Product data parse error !");
 	
 	private int code;
 	private String message;

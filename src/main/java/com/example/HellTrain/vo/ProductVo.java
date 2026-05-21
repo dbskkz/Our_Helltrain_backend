@@ -1,53 +1,50 @@
-package com.example.HellTrain.entity;
+package com.example.HellTrain.vo;
+
 import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "product")
-public class Product {
-	
-	@Id
-	@Column(name = "product_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductVo {
 	private int productId;
-
-	@Column(name = "user_id")
 	private int userId;
-
-	@Column(name = "product_name")
 	private String productName;
-
-	@Column(name = "description")
 	private String description;
-	
-	@Column(name = "price")
 	private int price;
-	
-	@Column(name = "img_path")
-	private String imgPath;
-	
-	@Column(name = "type")
-	private String type;
-	
-	@Column(name = "shelf_date")
+	private List<String> imgPath;
+	private List<String>  type;
 	private LocalDate shelfDate;
-	
-	@Column(name = "product_condition")
 	private String productCondition;
-	
-	@Column(name = "status")
 	private String status;
-	
-	@Column(name = "stock")
 	private int stock;
-	
-	@Column(name = "grade")
 	private String grade;
+	private List<String>  location;
 	
-	@Column(name = "location")
-	private String location;
-
+	
+	// Constructor
+	public ProductVo() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public ProductVo(int productId, int userId, String productName, String description, int price, List<String> imgPath,
+			List<String> type, LocalDate shelfDate, String productCondition, String status, int stock, String grade,
+			List<String> location) {
+		super();
+		this.productId = productId;
+		this.userId = userId;
+		this.productName = productName;
+		this.description = description;
+		this.price = price;
+		this.imgPath = imgPath;
+		this.type = type;
+		this.shelfDate = shelfDate;
+		this.productCondition = productCondition;
+		this.status = status;
+		this.stock = stock;
+		this.grade = grade;
+		this.location = location;
+	}
+	
+	// G&N
 	public int getProductId() {
 		return productId;
 	}
@@ -88,19 +85,19 @@ public class Product {
 		this.price = price;
 	}
 
-	public String getImgPath() {
+	public List<String> getImgPath() {
 		return imgPath;
 	}
 
-	public void setImgPath(String imgPath) {
+	public void setImgPath(List<String> imgPath) {
 		this.imgPath = imgPath;
 	}
 
-	public String getType() {
+	public List<String> getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(List<String> type) {
 		this.type = type;
 	}
 
@@ -144,12 +141,11 @@ public class Product {
 		this.grade = grade;
 	}
 
-	public String getLocation() {
+	public List<String> getLocation() {
 		return location;
 	}
 
-	public void setLocation(String location) {
+	public void setLocation(List<String> location) {
 		this.location = location;
 	}
-
 }
