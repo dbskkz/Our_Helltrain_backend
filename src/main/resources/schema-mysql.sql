@@ -41,7 +41,7 @@ CREATE TABLE `product` IF NOT EXIST(
   `product_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `product_name` varchar(45) NOT NULL,
-  `description` varchar(45) NOT NULL,
+  `description` varchar(1000) NOT NULL,
   `price` int NOT NULL,
   `img_path` varchar(500) NOT NULL,
   `type` varchar(60) DEFAULT NULL,
