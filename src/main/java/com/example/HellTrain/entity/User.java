@@ -26,7 +26,7 @@ public class User {
 	private String location;
 	
 	@Column(name = "department_id")
-	private int departmentId;
+	private int departmentId;//校系
 	
 	@Column(name = "status")
 	private String status;

@@ -6,21 +6,29 @@ CREATE TABLE `manager` IF NOT EXIST(
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `announcement` IF NOT EXIST(
+CREATE TABLE `announcement` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
   `img_path` varchar(500) NOT NULL,
   `shelf_date` varchar(45) NOT NULL,
   `removal_date` varchar(45) NOT NULL,
   `status` varchar(45) DEFAULT NULL,
+  `publish` tinyint NOT NULL DEFAULT '0',
+  `content` varchar(300) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `department` IF NOT EXIST(
+
+CREATE TABLE `department` (
   `department_id` int NOT NULL AUTO_INCREMENT,
-  `school` varchar(45) NOT NULL,
   `department` varchar(45) NOT NULL,
   PRIMARY KEY (`department_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `school` (
+  `school_id` int NOT NULL AUTO_INCREMENT,
+  `school` varchar(45) NOT NULL,
+  PRIMARY KEY (`school_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `order` IF NOT EXIST(
@@ -37,18 +45,18 @@ CREATE TABLE `order` IF NOT EXIST(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE `product` IF NOT EXIST(
+CREATE TABLE `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `product_name` varchar(45) NOT NULL,
-  `description` varchar(1000) NOT NULL,
+  `describe` varchar(45) NOT NULL,
   `price` int NOT NULL,
   `img_path` varchar(500) NOT NULL,
-  `type` varchar(60) DEFAULT NULL,
-  `shelf_date` varchar(45) NOT NULL,
+  `type` varchar(60) NOT NULL,
+  `shelf_date` varchar(45) DEFAULT NULL,
   `product_condition` varchar(45) NOT NULL,
-  `status` varchar(45) NOT NULL,
-  `grade` varchar(45) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `grade` varchar(45) NOT NULL,
   `location` varchar(45) NOT NULL,
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -75,16 +83,16 @@ CREATE TABLE `score` IF NOT EXIST(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `user` IF NOT EXIST(
+CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
-  `phone` varchar(20) DEFAULT '0',
+  `phone` varchar(20) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
-  `department_id` int NOT NULL DEFAULT '0',
-  `status` varchar(45) NOT NULL,
-  `student_verified_at` varchar(45) NOT NULL,
+  `department_id` int DEFAULT '0',
+  `status` varchar(45) DEFAULT NULL,
+  `verifled` varchar(45) DEFAULT NULL,
   `good_level` int DEFAULT NULL,
   `msg` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
