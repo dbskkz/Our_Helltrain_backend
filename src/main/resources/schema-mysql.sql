@@ -48,7 +48,6 @@ CREATE TABLE `product` IF NOT EXIST(
   `shelf_date` varchar(45) NOT NULL,
   `product_condition` varchar(45) NOT NULL,
   `status` varchar(45) NOT NULL,
-  `stock` int NOT NULL DEFAULT '0',
   `grade` varchar(45) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
   PRIMARY KEY (`product_id`)
