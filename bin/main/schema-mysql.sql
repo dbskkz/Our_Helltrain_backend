@@ -1,4 +1,4 @@
-CREATE TABLE `manager` IF NOT EXIST(
+CREATE TABLE IF NOT EXISTS `manager` (
   `email` varchar(45) NOT NULL,
   `name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE `school` (
   PRIMARY KEY (`school_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `order` IF NOT EXIST(
+CREATE TABLE IF NOT EXISTS  `order` (
   `order_id` int NOT NULL,
   `buyer_id` int NOT NULL,
   `product_id` int NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `product` (
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `report` IF NOT EXIST(
+CREATE TABLE IF NOT EXISTS `report` (
   `report_id` int NOT NULL AUTO_INCREMENT,
   `order_id` int NOT NULL DEFAULT '0',
   `complainant_id` int NOT NULL DEFAULT '0',
@@ -75,7 +75,7 @@ CREATE TABLE `report` IF NOT EXIST(
   PRIMARY KEY (`report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `score` IF NOT EXIST(
+CREATE TABLE IF NOT EXISTS `score` (
   `product_id` int NOT NULL,
   `base_score` varchar(45) NOT NULL,
   `click` varchar(45) NOT NULL,
