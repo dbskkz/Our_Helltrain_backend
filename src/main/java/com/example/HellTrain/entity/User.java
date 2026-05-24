@@ -26,7 +26,7 @@ public class User {
 	private String location;
 	
 	@Column(name = "school_id")
-	private int schoolId;//學校ID
+	private String schoolId;//學校(ID)
 	
 	@Column(name = "status")
 	private String status;
@@ -84,10 +84,10 @@ public class User {
 		this.status = status;
 	}
 
-	public int getSchoolId() {
+	public String getSchoolId() {
 		return schoolId;
 	}
-	public void setSchoolId(int schoolId) {
+	public void setSchoolId(String schoolId) {
 		this.schoolId = schoolId;
 	}
 	public LocalDate getVerified() {
@@ -96,7 +96,7 @@ public class User {
 	public void setVerified(LocalDate verified) {
 		this.verified = verified;
 	}
-	int getGoodLevel() {
+	public int getGoodLevel() {
 		return goodLevel;
 	}
 	public void setGoodLevel(int goodLevel) {

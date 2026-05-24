@@ -90,13 +90,14 @@ CREATE TABLE IF NOT EXIST `user` (
   `password` varchar(60) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
-  `school_id` int NOT NULL DEFAULT '0',
+  `school_id` varchar(60) NOT NULL DEFAULT '0',
   `status` varchar(45) NOT NULL,
-  `verifled` varchar(45) DEFAULT NULL,
-  `good_level` int DEFAULT NULL,
+  `verified` varchar(45) DEFAULT NULL,
+  `good_level` int DEFAULT '0'
   `msg` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 CREATE TABLE IF NOT EXIST `violation`(
   `user_email` varchar(60) NOT NULL,

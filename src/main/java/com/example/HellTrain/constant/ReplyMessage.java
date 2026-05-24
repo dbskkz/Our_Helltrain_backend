@@ -7,6 +7,13 @@ public enum ReplyMessage {
 	PRODUCT_PARSE_ERROR(400, "Product data parse error !"),//
 	//UserService使用
 	EMAIL_HAS_FOUND(400,"Email has found"),//
+	EMAIL_ISNOT_SCHOOL(400,"Email is not school"),//
+	PARAM_NAME_ERROR(400,"Name error"),//
+	PARAM_PASSWORD_ERROR(400,"Password error"),//
+	EMAIL_OR_PASSWORD_ERROR(400,"Email or password error"),//
+	SCHOOL_IS_NULL(400,"School is null"),//
+	LOCATION_IS_NULL(400,"Location is null"),//
+	PARAM_PHONE_ERROR(400,"Phone error"),//
 	;
 	
 	private int code;
