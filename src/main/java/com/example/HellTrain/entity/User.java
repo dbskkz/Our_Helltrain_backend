@@ -25,14 +25,14 @@ public class User {
 	@Column(name = "location")
 	private String location;
 	
-	@Column(name = "department_id")
-	private int departmentId;//校系
+	@Column(name = "school_id")
+	private int schoolId;//學校ID
 	
 	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "student_verified_at")
-	private LocalDate studentVerifiedAt;
+	@Column(name = "verified")
+	private LocalDate verified;
 	
 	@Column(name = "good_level")
 	private int goodLevel;
@@ -76,25 +76,27 @@ public class User {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public int getDepartmentId() {
-		return departmentId;
-	}
-	public void setDepartmentId(int departmentId) {
-		this.departmentId = departmentId;
-	}
+
 	public String getStatus() {
 		return status;
 	}
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public LocalDate getStudentVerifiedAt() {
-		return studentVerifiedAt;
+
+	public int getSchoolId() {
+		return schoolId;
 	}
-	public void setStudentVerifiedAt(LocalDate studentVerifiedAt) {
-		this.studentVerifiedAt = studentVerifiedAt;
+	public void setSchoolId(int schoolId) {
+		this.schoolId = schoolId;
 	}
-	public int getGoodLevel() {
+	public LocalDate getVerified() {
+		return verified;
+	}
+	public void setVerified(LocalDate verified) {
+		this.verified = verified;
+	}
+	int getGoodLevel() {
 		return goodLevel;
 	}
 	public void setGoodLevel(int goodLevel) {
