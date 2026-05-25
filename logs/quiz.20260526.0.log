@@ -1,0 +1,38 @@
+01:37:01.302 INFO  [background-preinit]org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+01:37:01.405 INFO  [restartedMain]com.example.HellTrain.HellTrainApplication - Starting HellTrainApplication using Java 17.0.18 with PID 21012 (D:\eclipse-workspace\Our_Helltrain_backend\bin\main started by User in D:\eclipse-workspace\Our_Helltrain_backend)
+01:37:01.407 INFO  [restartedMain]com.example.HellTrain.HellTrainApplication - The following 1 profile is active: "local"
+01:37:01.484 INFO  [restartedMain]o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+01:37:01.485 INFO  [restartedMain]o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+01:37:02.332 INFO  [restartedMain]o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+01:37:02.411 INFO  [restartedMain]o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 66 ms. Found 2 JPA repository interfaces.
+01:37:03.453 INFO  [restartedMain]o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+01:37:03.473 INFO  [restartedMain]org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+01:37:03.476 INFO  [restartedMain]org.apache.catalina.core.StandardService - Starting service [Tomcat]
+01:37:03.476 INFO  [restartedMain]org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.54]
+01:37:03.541 INFO  [restartedMain]o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+01:37:03.542 INFO  [restartedMain]o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2016 ms
+01:37:03.717 INFO  [restartedMain]com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+01:37:04.017 INFO  [restartedMain]com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5732189a
+01:37:04.020 INFO  [restartedMain]com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+01:37:04.168 INFO  [restartedMain]org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+01:37:04.234 INFO  [restartedMain]org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.49.Final
+01:37:04.280 INFO  [restartedMain]o.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+01:37:04.687 INFO  [restartedMain]o.s.o.j.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+01:37:04.800 INFO  [restartedMain]org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.46
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+01:37:05.268 WARN  [restartedMain]org.hibernate.mapping.RootClass - HHH000038: Composite-id class does not override equals(): com.example.HellTrain.entity.Violation
+01:37:05.270 WARN  [restartedMain]org.hibernate.mapping.RootClass - HHH000039: Composite-id class does not override hashCode(): com.example.HellTrain.entity.Violation
+01:37:05.898 INFO  [restartedMain]o.h.e.t.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+01:37:05.902 INFO  [restartedMain]o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+01:37:06.265 INFO  [restartedMain]o.s.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+01:37:06.364 WARN  [restartedMain]o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+01:37:06.834 INFO  [restartedMain]o.s.b.d.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+01:37:06.850 INFO  [restartedMain]org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+01:37:06.881 INFO  [restartedMain]o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+01:37:06.895 INFO  [restartedMain]com.example.HellTrain.HellTrainApplication - Started HellTrainApplication in 6.163 seconds (process running for 6.674)

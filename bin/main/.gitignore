@@ -1,6 +1,6 @@
+/application-local.properties
 /application.properties
 /com/
-/schema-mysql.sql
 /data-mysql.sql
 /logback-spring.xml
-/application-local.properties
+/schema-mysql.sql
