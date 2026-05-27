@@ -83,11 +83,8 @@ CREATE TABLE IF NOT EXISTS `score`(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS `user` (
-=======
+
 CREATE TABLE IF NOT EXISTS  `user` (
->>>>>>> THE-MR
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,
@@ -112,3 +109,22 @@ CREATE TABLE IF NOT EXISTS `violation`(
   `violation_at` varchar(45) NOT NULL,
   PRIMARY KEY (`violation_id`,`user_email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- 新增欄位
+SET @exist := (
+    SELECT COUNT(*)
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'product'
+      AND column_name = 'dept_group'
+);
+
+SET @sql = IF(
+    @exist = 0,
+    'ALTER TABLE product ADD COLUMN dept_group VARCHAR(255)',
+    'SELECT "Column already exists"'
+);
+
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
