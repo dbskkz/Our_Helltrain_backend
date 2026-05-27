@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `department` (
   PRIMARY KEY (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `school` (
+CREATE TABLE IF NOT EXIST `school` (
   `school_id` int NOT NULL AUTO_INCREMENT,
   `school` varchar(45) NOT NULL,
   PRIMARY KEY (`school_id`)
@@ -83,11 +83,7 @@ CREATE TABLE IF NOT EXISTS `score`(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS `user` (
-=======
 CREATE TABLE IF NOT EXISTS  `user` (
->>>>>>> THE-MR
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,

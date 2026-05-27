@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `product_name` varchar(45) NOT NULL,
-  `description` varchar(1000) NOT NULL,
+  `describe` varchar(45) NOT NULL,
   `price` int NOT NULL,
   `img_path` varchar(500) NOT NULL,
   `type` varchar(60) NOT NULL,
@@ -83,24 +83,20 @@ CREATE TABLE IF NOT EXISTS `score`(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS `user` (
-=======
-CREATE TABLE IF NOT EXISTS  `user` (
->>>>>>> THE-MR
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
-  `school` varchar(60) NOT NULL DEFAULT '0',
-  `department` varchar(45) DEFAULT NULL,
+  `school_id` varchar(60) NOT NULL DEFAULT '0',
   `status` varchar(45) NOT NULL,
   `verified` varchar(45) DEFAULT NULL,
-  `good_level` float DEFAULT '0',
+  `good_level` FLOAT DEFAULT '0'
   `msg` varchar(200) DEFAULT NULL,
-  `img_path` varchar(500) DEFAULT NULL,
+  `img_path` VARCHAR(500) NULL AFTER `msg`;
+
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

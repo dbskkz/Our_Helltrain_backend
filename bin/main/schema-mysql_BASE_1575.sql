@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `manager`(
+CREATE TABLE IF NOT EXIST `manager`(
   `email` varchar(45) NOT NULL,
   `name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `manager`(
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `announcement` (
+CREATE TABLE IF NOT EXIST `announcement` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(45) NOT NULL,
   `img_path` varchar(500) NOT NULL,
@@ -19,19 +19,19 @@ CREATE TABLE IF NOT EXISTS `announcement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE IF NOT EXISTS `department` (
+CREATE TABLE IF NOT EXIST `department` (
   `department_id` int NOT NULL AUTO_INCREMENT,
   `department` varchar(45) NOT NULL,
   PRIMARY KEY (`department_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `school` (
+CREATE TABLE IF NOT EXIST `school` (
   `school_id` int NOT NULL AUTO_INCREMENT,
   `school` varchar(45) NOT NULL,
   PRIMARY KEY (`school_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `order`(
+CREATE TABLE IF NOT EXIST `order`(
   `order_id` int NOT NULL,
   `buyer_id` int NOT NULL,
   `product_id` int NOT NULL,
@@ -45,11 +45,11 @@ CREATE TABLE IF NOT EXISTS `order`(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE IF NOT EXISTS `product` (
+CREATE TABLE IF NOT EXIST `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `product_name` varchar(45) NOT NULL,
-  `description` varchar(1000) NOT NULL,
+  `describe` varchar(45) NOT NULL,
   `price` int NOT NULL,
   `img_path` varchar(500) NOT NULL,
   `type` varchar(60) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `report`(
+CREATE TABLE IF NOT EXIST `report`(
   `report_id` int NOT NULL AUTO_INCREMENT,
   `order_id` int NOT NULL DEFAULT '0',
   `complainant_id` int NOT NULL DEFAULT '0',
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `report`(
   PRIMARY KEY (`report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `score`(
+CREATE TABLE IF NOT EXIST `score`(
   `product_id` int NOT NULL,
   `base_score` varchar(45) NOT NULL,
   `click` varchar(45) NOT NULL,
@@ -83,29 +83,25 @@ CREATE TABLE IF NOT EXISTS `score`(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS `user` (
-=======
-CREATE TABLE IF NOT EXISTS  `user` (
->>>>>>> THE-MR
+CREATE TABLE IF NOT EXIST `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `password` varchar(60) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
-  `school` varchar(60) NOT NULL DEFAULT '0',
-  `department` varchar(45) DEFAULT NULL,
+  `school_id` varchar(60) NOT NULL DEFAULT '0',
   `status` varchar(45) NOT NULL,
   `verified` varchar(45) DEFAULT NULL,
-  `good_level` float DEFAULT '0',
+  `good_level` FLOAT DEFAULT '0'
   `msg` varchar(200) DEFAULT NULL,
-  `img_path` varchar(500) DEFAULT NULL,
+  `img_path` VARCHAR(500) NULL AFTER `msg`;
+
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE IF NOT EXISTS `violation`(
+CREATE TABLE IF NOT EXIST `violation`(
   `user_email` varchar(60) NOT NULL,
   `violation_id` int NOT NULL AUTO_INCREMENT,
   `violation_type` varchar(45) DEFAULT NULL,

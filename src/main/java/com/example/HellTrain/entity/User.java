@@ -1,5 +1,6 @@
 package com.example.HellTrain.entity;
 import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -25,8 +26,11 @@ public class User {
 	@Column(name = "location")
 	private String location;
 	
-	@Column(name = "school_id")
-	private int schoolId;//學校ID
+	@Column(name = "school")
+	private String school;
+	
+	@Column(name = "department")
+	private String department;
 	
 	@Column(name = "status")
 	private String status;
@@ -35,10 +39,13 @@ public class User {
 	private LocalDate verified;
 	
 	@Column(name = "good_level")
-	private int goodLevel;
+	private float goodLevel;
 	
 	@Column(name = "msg")
 	private String msg;
+	
+	@Column(name = "img_path")
+	private String imgPath;
 	
 	public int getUserId() {
 		return userId;
@@ -84,11 +91,11 @@ public class User {
 		this.status = status;
 	}
 
-	public int getSchoolId() {
-		return schoolId;
+	public String getSchool() {
+		return school;
 	}
-	public void setSchoolId(int schoolId) {
-		this.schoolId = schoolId;
+	public void setSchool(String schoolId) {
+		this.school = schoolId;
 	}
 	public LocalDate getVerified() {
 		return verified;
@@ -96,10 +103,11 @@ public class User {
 	public void setVerified(LocalDate verified) {
 		this.verified = verified;
 	}
-	int getGoodLevel() {
+
+	public float getGoodLevel() {
 		return goodLevel;
 	}
-	public void setGoodLevel(int goodLevel) {
+	public void setGoodLevel(float goodLevel) {
 		this.goodLevel = goodLevel;
 	}
 	public String getMsg() {
@@ -107,6 +115,18 @@ public class User {
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public String getImgPath() {
+		return imgPath;
+	}
+	public void setImgPath(String imgPath) {
+		this.imgPath = imgPath;
 	}
 
 }
