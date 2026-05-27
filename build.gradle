@@ -28,7 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	
 	//送出郵件
-	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
 	//mysql驅動
 	implementation 'com.mysql:mysql-connector-j'

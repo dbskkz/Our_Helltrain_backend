@@ -93,8 +93,10 @@ CREATE TABLE IF NOT EXIST `user` (
   `school_id` varchar(60) NOT NULL DEFAULT '0',
   `status` varchar(45) NOT NULL,
   `verified` varchar(45) DEFAULT NULL,
-  `good_level` int DEFAULT '0'
-  `msg` varchar(45) DEFAULT NULL,
+  `good_level` FLOAT DEFAULT '0'
+  `msg` varchar(200) DEFAULT NULL,
+  `img_path` VARCHAR(500) NULL AFTER `msg`;
+
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

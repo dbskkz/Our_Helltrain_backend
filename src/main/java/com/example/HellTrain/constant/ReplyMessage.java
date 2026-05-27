@@ -14,6 +14,18 @@ public enum ReplyMessage {
 	SCHOOL_IS_NULL(400,"School is null"),//
 	LOCATION_IS_NULL(400,"Location is null"),//
 	PARAM_PHONE_ERROR(400,"Phone error"),//
+	MESSAGE_TOO_LONG(400,"Message too long"),//
+	PLEASE_LOGIN_FIRST(400,"Please login first"),//
+	DEPARTMENT_IS_NULL(400,"Department is null"),//
+	EMAIL_NOT_FOUND(400,"Email not found"),//
+	INVALID_VERIFICATION_CODE(400,"Invalid verification code"),//
+	ACCOUNT_IS_VERIFICATION(400,"Account is verification"),//
+	PLEASE_SET_FILE(400,"Please set file"),//
+	FILE_FORMAT_ERROR(400,"File format error"),//檔案格式不正確
+	FILE_NAMEFORMAT_ERROR(400,"File name error"),//檔案附檔名不正確
+	FILE_SIZE_ERROR(400,"File size error"),//
+	PLEASE_TRY_LATE(400,"Please try late"),//
+	PASSWORD_NOT_CHANGE(400,"Password not change"),//
 	;
 	
 	private int code;
