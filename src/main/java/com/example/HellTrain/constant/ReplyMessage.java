@@ -27,8 +27,9 @@ public enum ReplyMessage {
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
 	//Order用
-	PRODUCT_is_NOTFOUND(200, "Product is not found"),//找不到商品
-	PRODUCT_is_UNSELL(200, "Product is unsell"),//未販售的商品
+	PRODUCT_is_NOTFOUND(400, "Product is not found"),//找不到商品
+	PRODUCT_is_UNSELL(400, "Product is unsell"),//未販售的商品
+	NO_PERMISSIONS(400, "You has not Permissions"),//沒有購買商品的權限(買賣家ID相同狀況下適用)
 	;
 	
 	private int code;
