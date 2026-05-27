@@ -19,18 +19,6 @@ CREATE TABLE IF NOT EXISTS `announcement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE IF NOT EXISTS `department` (
-  `department_id` int NOT NULL AUTO_INCREMENT,
-  `department` varchar(45) NOT NULL,
-  PRIMARY KEY (`department_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE IF NOT EXISTS `school` (
-  `school_id` int NOT NULL AUTO_INCREMENT,
-  `school` varchar(45) NOT NULL,
-  PRIMARY KEY (`school_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE IF NOT EXISTS `order`(
   `order_id` int NOT NULL,
   `buyer_id` int NOT NULL,
@@ -39,10 +27,11 @@ CREATE TABLE IF NOT EXISTS `order`(
   `status` varchar(45) NOT NULL,
   `buyer_check` tinyint NOT NULL,
   `seller_check` tinyint NOT NULL,
-  `buyer_rank` int DEFAULT '0',
-  `salesman_rank` int DEFAULT '0',
+  `buyer_rank` float DEFAULT '0',
+  `salesman_rank` float DEFAULT '0',
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 CREATE TABLE IF NOT EXISTS `product` (
@@ -83,7 +72,6 @@ CREATE TABLE IF NOT EXISTS `score`(
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
 CREATE TABLE IF NOT EXISTS  `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_email` varchar(60) NOT NULL,
@@ -91,15 +79,15 @@ CREATE TABLE IF NOT EXISTS  `user` (
   `password` varchar(60) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `location` varchar(45) NOT NULL,
-  `school` varchar(60) NOT NULL DEFAULT '0',
+  `school` varchar(60) NOT NULL,
   `department` varchar(45) DEFAULT NULL,
   `status` varchar(45) NOT NULL,
-  `verified` varchar(45) DEFAULT NULL,
+  `verified` date DEFAULT NULL,
   `good_level` float DEFAULT '0',
   `msg` varchar(200) DEFAULT NULL,
   `img_path` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 CREATE TABLE IF NOT EXISTS `violation`(
@@ -109,22 +97,3 @@ CREATE TABLE IF NOT EXISTS `violation`(
   `violation_at` varchar(45) NOT NULL,
   PRIMARY KEY (`violation_id`,`user_email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- 新增欄位
-SET @exist := (
-    SELECT COUNT(*)
-    FROM information_schema.columns
-    WHERE table_schema = DATABASE()
-      AND table_name = 'product'
-      AND column_name = 'dept_group'
-);
-
-SET @sql = IF(
-    @exist = 0,
-    'ALTER TABLE product ADD COLUMN dept_group VARCHAR(255)',
-    'SELECT "Column already exists"'
-);
-
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;

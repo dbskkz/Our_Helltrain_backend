@@ -1,5 +1,7 @@
 package com.example.HellTrain.dao;
 
+import java.time.LocalDate;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,7 +33,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Transactional
 	@Query(value="update user set user_name = :name, location = :location,"
 			+ " school = :school, department = :department, "
-			+ " phone = :phone, msg = :msg, imgPath = :imgPath "
+			+ " phone = :phone, msg = :msg, img_path = :imgPath "
 			+ " where user_email = :email",nativeQuery = true)
 	public void  setInfo(@Param("email") String email,
             @Param("name") String name,
@@ -44,8 +46,8 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
 	@Modifying
 	@Transactional
-	@Query(value="update user set status = ?2 where user_email = ?1",nativeQuery = true)
-	public void updateStatus(String email,String status);
+	@Query(value="update user set verified = ?2 where user_email = ?1",nativeQuery = true)
+	public void updateverified(String email,LocalDate verified);
 
 	@Modifying
 	@Transactional

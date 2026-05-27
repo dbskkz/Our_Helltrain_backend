@@ -2,6 +2,7 @@ package com.example.HellTrain.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,7 +104,7 @@ public class UserService {
 		}
 		// 設定status，每個使用者一開始都是'未驗證'......用enum?
 		// 過渡用
-		String status = "未驗證";
+		String status = "正常";
 
 		/* 建立帳號並傳入加密後的密碼 */
 		userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
@@ -112,19 +113,6 @@ public class UserService {
 		/* 產生驗證碼並寄信 */
 		String code = codeStore.generate(req.getEmail());
 		sendVerificationEmail(req.getEmail(), code);
-
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
-	}
-
-	// 一年後重新驗證
-	public BasicResponse resendVerificationCode(String email) {
-		// 確認這個 email 有註冊過
-		if (userdao.selectCount(email) == 0) {
-			return new BasicResponse(ReplyMessage.EMAIL_NOT_FOUND.getCode(), ReplyMessage.EMAIL_NOT_FOUND.getMessage());
-		}
-		// 產生新驗證碼並寄信
-		String code = codeStore.generate(email);
-		sendVerificationEmail(email, code);
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 	}
@@ -147,7 +135,7 @@ public class UserService {
 		}
 
 		// 驗證成功 → 更新 status
-		userdao.updateStatus(vo.getEmail(), "已驗證");
+		userdao.updateverified(vo.getEmail(), LocalDate.now());
 
 		// 銷毀驗證碼
 		codeStore.remove(vo.getEmail());
@@ -173,8 +161,8 @@ public class UserService {
 		// 產生新驗證碼並寄信（舊的會被覆蓋）
 		String code = codeStore.generate(email);
 		sendVerificationEmail(email, code);
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage());
+		return new BasicResponse(ReplyMessage.VERIFICATION_CODE_IS_SEND.getCode(), //
+				ReplyMessage.VERIFICATION_CODE_IS_SEND.getMessage());
 	}
 
 	/* 登入，默認大部分為一般使用者，故先以使用者資料庫進行比對 */
@@ -191,6 +179,18 @@ public class UserService {
 		// 檢查password是否一致
 		if (user != null && encoder.matches(password, user.getPassword())) {
 			role = "user";
+			
+			if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
+			    
+			    // 這兩行就是全部了，不需要新方法
+			    String code = codeStore.generate(user.getUserEmail());
+			    sendVerificationEmail(user.getUserEmail(), code);
+			    
+			    return new LogInRes( ReplyMessage.VERIFICATION_CODE_IS_SEND.getCode(), //
+						ReplyMessage.VERIFICATION_CODE_IS_SEND.getMessage());
+			    
+			}
+		    
 			return new LogInRes(ReplyMessage.SUCCESS.getCode(), //
 					ReplyMessage.SUCCESS.getMessage(), role, user);
 		}
@@ -243,6 +243,11 @@ public class UserService {
 
 		// 頭像圖檔更新
 		String imgPath = null;
+		
+		if(vo.isDeleteImg())//接收前端是否回傳刪除照片的旗標
+		{
+			imgPath=null;
+		}
 		// 1.確定有上傳圖片
 		if (vo.getImg() != null && !vo.getImg().isEmpty()) {
 
@@ -310,7 +315,7 @@ public class UserService {
 		
 		User user = userdao.getAccount(email);
 
-		if(!nowPad.matches(padPattern) || encoder.matches(nowPad, user.getPassword())) {
+		if(!nowPad.matches(padPattern) || !encoder.matches(nowPad, user.getPassword())) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
 					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
@@ -321,8 +326,8 @@ public class UserService {
 		}
 		
 		if(newPad.equals(nowPad)) {
-			return new BasicResponse(ReplyMessage.PASSWORD_NOT_CHANGE.getCode(), //
-					ReplyMessage.PASSWORD_NOT_CHANGE.getMessage());
+			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
+					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
 		
 		//寫寫dao

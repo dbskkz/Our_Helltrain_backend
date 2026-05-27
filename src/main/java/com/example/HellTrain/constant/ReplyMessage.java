@@ -7,7 +7,7 @@ public enum ReplyMessage {
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//UserService使用
-	EMAIL_HAS_FOUND(400,"Email has found"),//
+	EMAIL_HAS_FOUND(400,"Email has found"),//檢查email是否註冊過
 	EMAIL_ISNOT_SCHOOL(400,"Email is not school"),//
 	PARAM_NAME_ERROR(400,"Name error"),//
 	PARAM_PASSWORD_ERROR(400,"Password error"),//
@@ -26,7 +26,8 @@ public enum ReplyMessage {
 	FILE_NAMEFORMAT_ERROR(400,"File name error"),//檔案附檔名不正確
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
-	PASSWORD_NOT_CHANGE(400,"Password not change"),//
+	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
+	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
 	;
 	
 	private int code;

@@ -16,6 +16,7 @@ import com.example.HellTrain.requeest.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
 import com.example.HellTrain.service.UserService;
+import com.example.HellTrain.vo.ChangePasswordVo;
 import com.example.HellTrain.vo.SetInfoVo;
 import com.example.HellTrain.vo.VerifyVO;
 
@@ -50,7 +51,7 @@ public class UserController {
 		return userService.login(email, password);
 	}
 	
-	//使用者輸入驗證碼後按下發送所需要街的資料回傳API
+	//使用者輸入驗證碼後按下發送所需要街的資料回傳API(初次及後續驗證皆是這個)
 	@PostMapping(value = "/verify")
 	public BasicResponse verifyAndRegister(@RequestBody VerifyVO vo) {
 		return userService.verifyAndRegister(vo);
@@ -76,15 +77,14 @@ public class UserController {
 	
 	//修改密碼
 	@PostMapping(value = "/changePassword")
-	public BasicResponse changePassword(HttpSession session, @RequestBody String email,
-			 @RequestBody String nowPad, @RequestBody String newPad) { 
+	public BasicResponse changePassword(HttpSession session, @RequestBody ChangePasswordVo vo) { 
 		
-		String sessionEmail=(String)session.getAttribute("user_email");
-		if(sessionEmail==null) {
-			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
-					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
-		}
-		return userService.changePassword(email, nowPad, newPad);
+//		String email=(String)session.getAttribute("user_email");
+//		if(email==null) {
+//			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
+//					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+//		}
+		return userService.changePassword(vo.getEmail(),vo.getNowPad(),vo.getNewPad());
 	}
 
 }
