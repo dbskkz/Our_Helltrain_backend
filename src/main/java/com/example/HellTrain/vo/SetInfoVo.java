@@ -19,6 +19,16 @@ public class SetInfoVo {
 	
 	private String msg;
 
+	private boolean deleteImg;//刪除照片是否
+	
+	public boolean isDeleteImg() {
+		return deleteImg;
+	}
+
+	public void setDeleteImg(boolean deleteImg) {
+		this.deleteImg = deleteImg;
+	}
+
 	public String getEmail() {
 		return email;
 	}
