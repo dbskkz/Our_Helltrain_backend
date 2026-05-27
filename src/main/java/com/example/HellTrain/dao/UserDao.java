@@ -1,19 +1,54 @@
 package com.example.HellTrain.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.HellTrain.entity.User;
 
+import jakarta.transaction.Transactional;
+
 @Repository
 public interface UserDao extends JpaRepository<User, Integer> {
 	
-	@Query(value="select count(email) from user where email=?",nativeQuery = true)
+	@Query(value="select count(user_email) from user where user_email=?",nativeQuery = true)
 	public int selectCount(String email);
 
-	@Query(value="insert ignore into user () "
-			+ " value ()",nativeQuery = true)
-	public int addUser(String email);
+	@Modifying
+	@Transactional
+	@Query(value="insert ignore into user (user_email, user_name, password, phone,"
+			+ " location, school, status) "
+			+ " value (?1,?2,?3,?4,?5,?6,?7)",nativeQuery = true)
+	public void addUser(String email,String name,String password,String phone,
+			String location,String school,String status);
 
+	@Query(value="select * from user where user_email = ?1",nativeQuery = true)
+	public User getAccount(String email);
+	
+	@Modifying
+	@Transactional
+	@Query(value="update user set user_name = :name, location = :location,"
+			+ " school = :school, department = :department, "
+			+ " phone = :phone, msg = :msg, imgPath = :imgPath "
+			+ " where user_email = :email",nativeQuery = true)
+	public void  setInfo(@Param("email") String email,
+            @Param("name") String name,
+            @Param("imgPath") String imgPath,
+            @Param("location") String location,
+            @Param("school") String school,
+            @Param("department") String department,
+            @Param("phone") String phone,
+            @Param("msg") String msg);
+
+	@Modifying
+	@Transactional
+	@Query(value="update user set status = ?2 where user_email = ?1",nativeQuery = true)
+	public void updateStatus(String email,String status);
+
+	@Modifying
+	@Transactional
+	@Query(value="update user set password = ?2 where user_email = ?1",nativeQuery = true)
+	public void updatePad(String email,String password);
 }

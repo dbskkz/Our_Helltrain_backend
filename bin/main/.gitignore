@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 /application-local.properties
 /application.properties
 /com/
 /data-mysql.sql
 /logback-spring.xml
 /schema-mysql.sql
+=======
+/com/
+>>>>>>> THE-MR
