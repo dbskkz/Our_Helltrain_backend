@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.HellTrain.entity.Product;
 
+
 @Repository
 public interface ProductDao extends JpaRepository<Product, Integer> {
 

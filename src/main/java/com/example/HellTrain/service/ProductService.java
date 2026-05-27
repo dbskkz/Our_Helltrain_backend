@@ -11,7 +11,7 @@ import org.springframework.util.CollectionUtils;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.entity.Product;
-import com.example.HellTrain.requeest.SearchProductReq;
+import com.example.HellTrain.request.SearchProductReq;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.vo.ProductVo;
 import com.fasterxml.jackson.core.type.TypeReference;

@@ -1,4 +1,4 @@
-package com.example.HellTrain.requeest;
+package com.example.HellTrain.request;
 
 import java.util.List;
 
