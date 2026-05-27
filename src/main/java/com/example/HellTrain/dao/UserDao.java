@@ -53,4 +53,13 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Transactional
 	@Query(value="update user set password = ?2 where user_email = ?1",nativeQuery = true)
 	public void updatePad(String email,String password);
+
+	@Modifying
+	@Transactional
+	@Query(value="update user set good_level = ?2 where user_email = ?1",nativeQuery = true)
+	public void goodLevel(String email,float level);
+	
+	//提取使用者信譽
+	@Query(value="select user_name,good_level from user where user_id=?",nativeQuery = true)
+	public User getById(int id);
 }
