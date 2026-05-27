@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
-import com.example.HellTrain.requeest.UserReq;
+import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
 import com.example.HellTrain.service.UserService;
@@ -67,6 +67,8 @@ public class UserController {
 	//修改密碼以外的個人資訊
 	@PostMapping(value = "/setInfo")
 	public BasicResponse setInfo(HttpSession session, @RequestBody SetInfoVo vo) {
+		
+		//檢查登入session是否過期
 		String email=(String)session.getAttribute("user_email");
 		if(email==null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
@@ -79,11 +81,12 @@ public class UserController {
 	@PostMapping(value = "/changePassword")
 	public BasicResponse changePassword(HttpSession session, @RequestBody ChangePasswordVo vo) { 
 		
-//		String email=(String)session.getAttribute("user_email");
-//		if(email==null) {
-//			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
-//					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
-//		}
+		//檢查登入session是否過期
+		String email=(String)session.getAttribute("user_email");
+		if(email==null) {
+			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
+					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+		}
 		return userService.changePassword(vo.getEmail(),vo.getNowPad(),vo.getNewPad());
 	}
 

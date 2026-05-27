@@ -19,7 +19,7 @@ import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ManagerDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.*;
-import com.example.HellTrain.requeest.UserReq;
+import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
 import com.example.HellTrain.vo.SetInfoVo;
