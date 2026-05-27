@@ -4,7 +4,7 @@ public enum ReplyMessage {
 	SUCCESS(200, "Success!!"),
 	NO_DATA_FOUND(404, "No data found"),
 	USER_ID_ERR(400, "The user id is invalid !"),
-	PRODUCT_PARSE_ERROR(400, "Product data parse error !"),//
+	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	//UserService使用
 	EMAIL_HAS_FOUND(400,"Email has found"),//
 	;
