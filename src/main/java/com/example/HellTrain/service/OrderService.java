@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.dao.OrderDao;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.Product;
@@ -20,7 +21,12 @@ public class OrderService {
 	
 	@Autowired
 	private ProductDao productDao;
+	
+	@Autowired
+	private OrderDao orderDao;
 
+	
+	//新增訂單
 	public BasicResponse addOrder(int buyerId, int productId) {// (Get)
 
 		User user = userDao.getById(buyerId);
@@ -50,7 +56,9 @@ public class OrderService {
 		LocalDate createDate=LocalDate.now();
 		String status="等待回應中";
 		//血寫dao
-		//buyerId>productId>createDate>status
+		//buyerId>productId>createDate>status buyerCheck、sellerCheck在dao給0就好
+		orderDao.addOrder(buyerId, productId, createDate, status);
+		
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 
