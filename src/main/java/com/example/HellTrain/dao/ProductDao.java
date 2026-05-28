@@ -3,11 +3,14 @@ package com.example.HellTrain.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.HellTrain.entity.Product;
+
+import jakarta.transaction.Transactional;
 
 
 @Repository
@@ -46,4 +49,18 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
         @Param("minPrice") Integer minPrice,
         @Param("maxPrice") Integer maxPrice
     );
+    
+    @Query(value = "SELECT * FROM product WHERE product_id = ?1", nativeQuery = true)
+    public Product findByProductId(int productId);
+    
+    //更改商品狀況s
+	@Modifying
+	@Transactional
+	@Query(value="update product set status = ?2 where product_id = ?1",nativeQuery = true)
+    public void changeStatus(int productId, String status);
+
+//	@Modifying
+//	@Transactional
+//	@Query(value="",nativeQuery = true)
+//	public void insert();
 }

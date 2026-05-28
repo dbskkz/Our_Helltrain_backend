@@ -21,5 +21,9 @@ public class ManagerService {
 		managerDao.addManager(email, name, encoder.encode(password));
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 	}
+	
+	
+	
+	
 
 }

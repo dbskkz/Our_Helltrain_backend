@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.example.HellTrain.component.VerificationCodeStore;
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.ManagerDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.*;
@@ -34,8 +35,8 @@ public class UserService {
 	private String uploadPath;
 
 	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\\\s]{2,20}$";// 姓名2-20碼
-	private final String padPattern = "^[a-zA-Z0-9!@#$%^&*\\\\-_]+${8,}";// 密碼至少8碼
-	private final String phonepattern = "0\\d{1,3}-\\d{7,8}";
+	private final String pwdPattern = "^[a-zA-Z0-9!@#$%^&*\\\\-_]{8,}$";// 密碼至少8碼
+	private final String phonepattern = "09-\\d{7,8}";
 
 	private BasicResponse checkAccount(String email, String password) {
 		if (!email.endsWith(".edu.tw")) {
@@ -43,7 +44,7 @@ public class UserService {
 					ReplyMessage.EMAIL_ISNOT_SCHOOL.getMessage());
 		}
 
-		if (!password.matches(padPattern)) {
+		if (!password.matches(pwdPattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
 					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
@@ -102,13 +103,10 @@ public class UserService {
 			return new BasicResponse(ReplyMessage.EMAIL_HAS_FOUND.getCode(), //
 					ReplyMessage.EMAIL_HAS_FOUND.getMessage());
 		}
-		// 設定status，每個使用者一開始都是'未驗證'......用enum?
-		// 過渡用
-		String status = "正常";
 
 		/* 建立帳號並傳入加密後的密碼 */
 		userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
-				req.getLocation(), req.getSchool(), status);
+				req.getLocation(), req.getSchool(), UserStatus.Normal.getMessage());
 
 		/* 產生驗證碼並寄信 */
 		String code = codeStore.generate(req.getEmail());
@@ -122,7 +120,7 @@ public class UserService {
 		SimpleMailMessage mail = new SimpleMailMessage();
 		mail.setTo(email);
 		mail.setSubject("【HellTrain】Email 驗證碼");
-		mail.setText("您的驗證碼為：" + code + "\n10分鐘內有效，請勿告知他人。");
+		mail.setText("您的驗證碼為：" + code + "\n15分鐘內有效，請勿告知他人。");
 		mailSender.send(mail);
 	}
 
@@ -153,7 +151,7 @@ public class UserService {
 
 		// 確認目前狀態是未驗證（已驗證的不需要重寄）
 		User user = userdao.getAccount(email);
-		if (!user.getStatus().equals("未驗證")) {
+		if (user.getVerified() != null) {
 			return new BasicResponse(ReplyMessage.ACCOUNT_IS_VERIFICATION.getCode(), //
 					ReplyMessage.ACCOUNT_IS_VERIFICATION.getMessage());
 		}
@@ -179,18 +177,18 @@ public class UserService {
 		// 檢查password是否一致
 		if (user != null && encoder.matches(password, user.getPassword())) {
 			role = "user";
-			
+
 			if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
-			    
-			    // 這兩行就是全部了，不需要新方法
-			    String code = codeStore.generate(user.getUserEmail());
-			    sendVerificationEmail(user.getUserEmail(), code);
-			    
-			    return new LogInRes( ReplyMessage.VERIFICATION_CODE_IS_SEND.getCode(), //
+
+				// 這兩行就是全部了，不需要新方法
+				String code = codeStore.generate(user.getUserEmail());
+				sendVerificationEmail(user.getUserEmail(), code);
+
+				return new LogInRes(ReplyMessage.VERIFICATION_CODE_IS_SEND.getCode(), //
 						ReplyMessage.VERIFICATION_CODE_IS_SEND.getMessage());
-			    
+
 			}
-		    
+
 			return new LogInRes(ReplyMessage.SUCCESS.getCode(), //
 					ReplyMessage.SUCCESS.getMessage(), role, user);
 		}
@@ -209,19 +207,25 @@ public class UserService {
 
 	/* 資料修改 */
 	public BasicResponse setInfo(SetInfoVo vo) {
-		
+
 		User user = userdao.getAccount(vo.getEmail());
 
+		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
 					ReplyMessage.PARAM_NAME_ERROR.getMessage());
 		}
 
-		if (!StringUtils.hasText(vo.getLocation())) {
+		// 檢查地區
+//		if (!StringUtils.hasText(vo.getLocation())) {
+
+//		}
+
+		if (vo.getLocation() == null || vo.getLocation().isEmpty()) {
 			return new BasicResponse(ReplyMessage.LOCATION_IS_NULL.getCode(), //
 					ReplyMessage.LOCATION_IS_NULL.getMessage());
 		}
-
+		
 		if (!StringUtils.hasText(vo.getEmail())) {
 			return new BasicResponse(ReplyMessage.SCHOOL_IS_NULL.getCode(), //
 					ReplyMessage.SCHOOL_IS_NULL.getMessage());
@@ -243,13 +247,13 @@ public class UserService {
 
 		// 頭像圖檔更新
 		String imgPath = null;
-		
-		if(vo.isDeleteImg())//接收前端是否回傳刪除照片的旗標
+
+		if (vo.isDeleteImg())// 接收前端是否回傳刪除照片的旗標
 		{
-			imgPath=null;
+			imgPath = null;
 		}
 		// 1.確定有上傳圖片
-		if (vo.getImg() != null && !vo.getImg().isEmpty()) {
+		else if (vo.getImg() != null && !vo.getImg().isEmpty()) {
 
 			// 2. 檢查檔案類型
 			List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
@@ -303,38 +307,41 @@ public class UserService {
 
 		}
 		
-		userdao.setInfo(vo.getEmail(), vo.getName(), imgPath,
-				vo.getLocation(), vo.getSchool(), vo.getDepartment(), vo.getPhone(), vo.getMsg());
+		// 存入前轉換，只有單一選項所以不需要Map
+		String locationStr = String.join(",", vo.getLocation());
+
+		userdao.setInfo(vo.getEmail(), vo.getName(), imgPath, locationStr, vo.getSchool(), vo.getDepartment(),
+				vo.getPhone(), vo.getMsg());
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 
 	}
-	
-	//更改密碼
-	public BasicResponse changePassword(String email, String nowPad, String newPad) { 
-		
+
+	// 更改密碼
+	public BasicResponse changePassword(String email, String nowPwd, String newPwd) {
+
 		User user = userdao.getAccount(email);
 
-		if(!nowPad.matches(padPattern) || !encoder.matches(nowPad, user.getPassword())) {
+		if (!nowPwd.matches(pwdPattern) || !encoder.matches(nowPwd, user.getPassword())) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
 					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
-		
-		if (!newPad.matches(padPattern)) {
+
+		if (!newPwd.matches(pwdPattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
 					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
-		
-		if(newPad.equals(nowPad)) {
+
+		if (newPwd.equals(nowPwd)) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
 					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
 		}
-		
-		//寫寫dao
-		userdao.updatePad(email, encoder.encode(newPad));
-		
+
+		// 寫寫dao
+		userdao.updatePad(email, encoder.encode(newPwd));
+
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}
-	
+
 }

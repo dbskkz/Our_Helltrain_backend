@@ -3,6 +3,7 @@ package com.example.HellTrain.vo;
 import java.time.LocalDate;
 import java.util.List;
 
+//抓取資料庫的資料?
 public class ProductVo {
 	private int productId;
 	private int userId;

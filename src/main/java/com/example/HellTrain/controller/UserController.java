@@ -60,7 +60,7 @@ public class UserController {
 	//重新發送驗證碼
 	@PostMapping(value = "/resend")
 	public BasicResponse resendCode(@RequestBody  Map<String, String> body) {
-		String email=body.get("email");
+		String email=body.get("user_email");
 		return userService.resendCode(email);
 	}
 	

@@ -1,5 +1,7 @@
 package com.example.HellTrain.vo;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class SetInfoVo {
@@ -9,7 +11,7 @@ public class SetInfoVo {
 	
 	private MultipartFile img;
 	
-	private String location;
+	private List<String> location;
 	
 	private String school;
 	
@@ -53,11 +55,11 @@ public class SetInfoVo {
 		this.img = img;
 	}
 
-	public String getLocation() {
+	public List<String> getLocation() {
 		return location;
 	}
 
-	public void setLocation(String location) {
+	public void setLocation(List<String> location) {
 		this.location = location;
 	}
 

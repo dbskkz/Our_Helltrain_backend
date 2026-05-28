@@ -31,6 +31,12 @@ public enum ReplyMessage {
 	PRODUCT_is_NOTFOUND(400, "Product is not found"),//找不到商品
 	PRODUCT_is_UNSELL(400, "Product is unsell"),//未販售的商品
 	NO_PERMISSIONS(400, "You has not Permissions"),//沒有購買商品的權限(買賣家ID相同狀況下適用)
+	NOT_FOUND_DATE(400, "Not found date"),//沒有找到這筆資料
+	ORDER_STATUS_ERROR(400, "Order status error"),//訂單狀態異常(無法進行此操作)
+	//Report
+	DESCRIPTION_IS_NULL(400, "Description is null"),//請輸入描述
+	REPORTTYPE_IS_NULL(400, "ReportType is null"),//請輸入檢舉類型
+	REPORTTYPE_ERROR(400, "ReportType error"),//檢舉類型錯誤
 	;
 	
 	private int code;

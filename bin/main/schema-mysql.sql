@@ -18,22 +18,6 @@ CREATE TABLE IF NOT EXISTS `announcement` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS `department` (
-  `department_id` int NOT NULL AUTO_INCREMENT,
-  `department` varchar(45) NOT NULL,
-  PRIMARY KEY (`department_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE IF NOT EXISTS `school` (
-  `school_id` int NOT NULL AUTO_INCREMENT,
-  `school` varchar(45) NOT NULL,
-  PRIMARY KEY (`school_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-=======
->>>>>>> THE-MR
 CREATE TABLE IF NOT EXISTS `order`(
   `order_id` int NOT NULL,
   `buyer_id` int NOT NULL,
@@ -47,8 +31,6 @@ CREATE TABLE IF NOT EXISTS `order`(
   PRIMARY KEY (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-
 CREATE TABLE IF NOT EXISTS `product` (
   `product_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
@@ -58,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `img_path` varchar(500) NOT NULL,
   `type` varchar(60) NOT NULL,
   `shelf_date` varchar(45) DEFAULT NULL,
-  `product_condition` varchar(45) NOT NULL,
+  `product_condition` varchar(500) NOT NULL,
   `status` varchar(45) DEFAULT NULL,
   `grade` varchar(45) NOT NULL,
   `location` varchar(45) NOT NULL,

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.DeptGroupConst;
 import com.example.HellTrain.request.SearchProductReq;
-import com.example.HellTrain.response.BasicResponse;
+//import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.service.ProductService;
 

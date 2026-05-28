@@ -44,16 +44,19 @@ public interface UserDao extends JpaRepository<User, Integer> {
             @Param("phone") String phone,
             @Param("msg") String msg);
 
+	//設定驗證日期
 	@Modifying
 	@Transactional
 	@Query(value="update user set verified = ?2 where user_email = ?1",nativeQuery = true)
 	public void updateverified(String email,LocalDate verified);
 
+	//更新密碼
 	@Modifying
 	@Transactional
 	@Query(value="update user set password = ?2 where user_email = ?1",nativeQuery = true)
 	public void updatePad(String email,String password);
 
+	//設定評價
 	@Modifying
 	@Transactional
 	@Query(value="update user set good_level = ?2 where user_email = ?1",nativeQuery = true)

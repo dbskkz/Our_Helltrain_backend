@@ -5,63 +5,195 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.HellTrain.constant.OrderStatus;
+import com.example.HellTrain.constant.ProductStatus;
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.OrderDao;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.dao.UserDao;
+import com.example.HellTrain.entity.Order;
 import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.vo.ChangeOrderStatusVo;
+import com.example.HellTrain.vo.LevelVo;
+import com.example.HellTrain.vo.OrderVo;
 
 @Service
 public class OrderService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private ProductDao productDao;
-	
+
 	@Autowired
 	private OrderDao orderDao;
 
-	
-	//新增訂單
-	public BasicResponse addOrder(int buyerId, int productId) {// (Get)
+	// 新增訂單
+	public BasicResponse addOrder(OrderVo vo) {// (Get)
 
-		User user = userDao.getById(buyerId);
+		User user = userDao.getById(vo.getBuyerId());
 		// 查無此買家帳號
 		if (user == null) {
 			return new BasicResponse(ReplyMessage.EMAIL_NOT_FOUND.getCode(), //
 					ReplyMessage.EMAIL_NOT_FOUND.getMessage());
 		}
 		
-		Product product=productDao.getById(productId);
-		//確定有商品
-		if(product==null) {
-			return new BasicResponse(ReplyMessage.PRODUCT_is_NOTFOUND.getCode(), //
-					ReplyMessage.PRODUCT_is_NOTFOUND.getMessage());
-		}
-		//檢查商品是否為販售中
-		if(product.getStatus()!="販售中")
-		{
-			return new BasicResponse(ReplyMessage.PRODUCT_is_UNSELL.getCode(), //
-					ReplyMessage.PRODUCT_is_UNSELL.getMessage());
-		}
-		//檢查買賣家是否為同一個帳號
-		if(product.getUserId()==user.getUserId()) {
+		//檢查帳號是否被停權
+		if(user.getStatus()==UserStatus.Suspension.getMessage()) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
-		LocalDate createDate=LocalDate.now();
-		String status="等待回應中";
-		//血寫dao
-		//buyerId>productId>createDate>status buyerCheck、sellerCheck在dao給0就好
-		orderDao.addOrder(buyerId, productId, createDate, status);
-		
+
+		Product product = productDao.findByProductId(vo.getProductId());
+		// 確定有商品
+		if (product == null) {
+			return new BasicResponse(ReplyMessage.PRODUCT_is_NOTFOUND.getCode(), //
+					ReplyMessage.PRODUCT_is_NOTFOUND.getMessage());
+		}
+		// 檢查商品是否為販售中
+		if (!product.getStatus().equals(ProductStatus.NotSale.getMassage())) {
+			return new BasicResponse(ReplyMessage.PRODUCT_is_UNSELL.getCode(), //
+					ReplyMessage.PRODUCT_is_UNSELL.getMessage());
+		}
+		// 檢查買賣家是否為同一個帳號
+		if (product.getUserId() == user.getUserId()) {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+		LocalDate createDate = LocalDate.now();
+		// 血寫dao
+		// buyerId>productId>createDate>status buyerCheck、sellerCheck在dao給0就好
+		orderDao.addOrder(vo.getBuyerId(), vo.getProductId(), createDate, OrderStatus.PENDING.getMessage());
+
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage());
+	}
+
+	// 同意交易(賣家操作 vo.email是賣家的)
+	public BasicResponse acceptOrder(ChangeOrderStatusVo vo) {
+
+		// 由訂單編號查詢完整訂單資訊
+		Order order = orderDao.getOrderById(vo.getOrderId());
+
+		// 檢查是否有完整資訊
+		if (order == null) {
+			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
+					ReplyMessage.NOT_FOUND_DATE.getMessage());
+		}
+		// 有，以訂單資訊中的buyerId查詢買家資訊
+		User user = userDao.getById(order.getBuyerId());
+		// 當賣家email==買家email，則沒有進行此操作的權限
+		if (!vo.getEmail().equals(user.getUserEmail())) {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+
+		// 改變交易狀況
+		orderDao.updateStatus(vo.getOrderId(), OrderStatus.ACCEPTED.getMessage());
+
+		// 傳入第一個status為取消,第二個為等待中(只有這個會更改)
+		orderDao.cancelOtherOrders(order.getProductId(), order.getOrderId(), OrderStatus.CANCELLED.getMessage(),
+				OrderStatus.PENDING.getMessage());
+		//更改交易狀況為交易中
+		productDao.changeStatus(order.getProductId(), ProductStatus.Trade.getMassage());
+
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage());
+	}
+
+	// 買家主動取消訂單(vo.email是買家的)
+	public BasicResponse canaelOrder(ChangeOrderStatusVo vo) {
+		// 由訂單編號查詢完整訂單資訊
+		Order order = orderDao.getOrderById(vo.getOrderId());
+
+		// 檢查是否有完整資訊
+		if (order == null) {
+			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
+					ReplyMessage.NOT_FOUND_DATE.getMessage());
+		}
+
+		// 當vo email!=買家email，則沒有進行此操作的權限(因為vo是買家的，所以如果不相等則沒有進行此操作的權限)
+		User user = userDao.getById(order.getBuyerId());
+		if (!vo.getEmail().equals(user.getUserEmail())) {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+
+		orderDao.updateStatus(vo.getOrderId(), OrderStatus.CANCELLED.getMessage());
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 
+	}
+
+	// 買賣家確認交易 delivery->交貨
+	// check資料0->1，兩個皆為1->change status
+	public BasicResponse checkDelivery(ChangeOrderStatusVo vo) {
+
+		Order order = orderDao.getOrderById(vo.getOrderId());
+
+		if (order == null) {
+			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
+					ReplyMessage.NOT_FOUND_DATE.getMessage());
+		}
+
+		if (!order.getStatus().equals(OrderStatus.ACCEPTED.getMessage())) {
+			return new BasicResponse(ReplyMessage.ORDER_STATUS_ERROR.getCode(), //
+					ReplyMessage.ORDER_STATUS_ERROR.getMessage());
+		}
+
+		Product product = productDao.findByProductId(order.getProductId());
+		User user = userDao.getById(order.getBuyerId());
+		// 檢查是哪一方的帳號
+		if (vo.getEmail().equals(user.getUserEmail())) {
+			orderDao.buyerCheack(order.getOrderId());
+		}
+
+		else if (vo.getEmail().equals(product.getProductName())) {
+			orderDao.salesCheack(order.getOrderId());
+		}
+		// 都不是
+		else {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+
+		//抓最新的order資料
+		Order update = orderDao.getOrderById(vo.getOrderId());
+
+		if (update.isBuyerCheck() && update.isSellerCheck()) {
+			orderDao.updateStatus(vo.getOrderId(), OrderStatus.COMPLETED.getMessage());
+		}
+		//確認交易完成後商品下架
+		productDao.changeStatus(update.getProductId(),ProductStatus.Removed.getMassage());
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage());
+	}
+
+	// 給予評價
+	public BasicResponse giveLevel(LevelVo vo) {
+		
+		Order order=orderDao.getOrderById(vo.getOrderId());
+		
+		User user=userDao.getById(order.getBuyerId());
+		
+		Product product=productDao.findByProductId(order.getProductId());
+		
+		User salesman=userDao.getById(product.getUserId());
+		
+		if(!vo.getEmail().equals(user.getUserEmail()))
+		{
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+		
+		userDao.goodLevel(salesman.getUserEmail(), vo.getLevel());
+
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage());
 	}
 
 }

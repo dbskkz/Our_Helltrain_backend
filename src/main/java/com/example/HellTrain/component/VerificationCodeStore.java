@@ -20,7 +20,7 @@ public class VerificationCodeStore {
 
         CodeEntry(String code) {
             this.code = code;
-            this.expireAt = LocalDateTime.now().plusMinutes(15);
+            this.expireAt = LocalDateTime.now().plusMinutes(16);
         }
     }
 

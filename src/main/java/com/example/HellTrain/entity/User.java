@@ -1,7 +1,11 @@
 package com.example.HellTrain.entity;
 import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user")
@@ -77,12 +81,6 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getLocation() {
-		return location;
-	}
-	public void setLocation(String location) {
-		this.location = location;
-	}
 
 	public String getStatus() {
 		return status;
@@ -104,6 +102,12 @@ public class User {
 		this.verified = verified;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
 	public float getGoodLevel() {
 		return goodLevel;
 	}
