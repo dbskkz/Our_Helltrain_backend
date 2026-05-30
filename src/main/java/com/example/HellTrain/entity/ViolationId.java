@@ -12,7 +12,6 @@ public class ViolationId implements Serializable {
 
 	public ViolationId() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public ViolationId(String userEmail, int violationId) {

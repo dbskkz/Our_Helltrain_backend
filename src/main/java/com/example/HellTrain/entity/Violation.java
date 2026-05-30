@@ -2,10 +2,12 @@ package com.example.HellTrain.entity;
 
 import java.time.LocalDate;
 
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "violation")
+@IdClass(value = ViolationId.class)
 public class Violation {
 	
 	@Id
