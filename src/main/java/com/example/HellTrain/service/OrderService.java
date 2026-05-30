@@ -81,8 +81,8 @@ public class OrderService {
 
 		// 檢查是否有完整資訊
 		if (order == null) {
-			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
-					ReplyMessage.NOT_FOUND_DATE.getMessage());
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 		// 有，以訂單資訊中的buyerId查詢買家資訊
 		User user = userDao.getById(order.getBuyerId());
@@ -112,8 +112,8 @@ public class OrderService {
 
 		// 檢查是否有完整資訊
 		if (order == null) {
-			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
-					ReplyMessage.NOT_FOUND_DATE.getMessage());
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 
 		// 當vo email!=買家email，則沒有進行此操作的權限(因為vo是買家的，所以如果不相等則沒有進行此操作的權限)
@@ -136,8 +136,8 @@ public class OrderService {
 		Order order = orderDao.getOrderById(vo.getOrderId());
 
 		if (order == null) {
-			return new BasicResponse(ReplyMessage.NOT_FOUND_DATE.getCode(), //
-					ReplyMessage.NOT_FOUND_DATE.getMessage());
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 
 		if (!order.getStatus().equals(OrderStatus.ACCEPTED.getMessage())) {

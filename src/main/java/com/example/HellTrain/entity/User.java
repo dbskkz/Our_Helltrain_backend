@@ -1,6 +1,6 @@
 package com.example.HellTrain.entity;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +50,9 @@ public class User {
 	
 	@Column(name = "img_path")
 	private String imgPath;
+	
+	@Column(name = "create_date")
+	private LocalDateTime CreateDate;
 	
 	public int getUserId() {
 		return userId;
@@ -131,6 +134,12 @@ public class User {
 	}
 	public void setImgPath(String imgPath) {
 		this.imgPath = imgPath;
+	}
+	public LocalDateTime getCreateDate() {
+		return CreateDate;
+	}
+	public void setCreateDate(LocalDateTime createDate) {
+		CreateDate = createDate;
 	}
 
 }

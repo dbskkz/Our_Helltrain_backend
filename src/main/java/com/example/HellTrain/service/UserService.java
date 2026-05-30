@@ -3,13 +3,16 @@ package com.example.HellTrain.service;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,9 +26,14 @@ import com.example.HellTrain.entity.*;
 import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
+import com.example.HellTrain.response.UserRes;
 import com.example.HellTrain.vo.SetInfoVo;
 import com.example.HellTrain.vo.VerifyVO;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
+@EnableScheduling // 讓此類別下的scheduled的方法生效
 @Service
 public class UserService {
 
@@ -35,7 +43,7 @@ public class UserService {
 	private String uploadPath;
 
 	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\\\s]{2,20}$";// 姓名2-20碼
-	private final String pwdPattern = "^[a-zA-Z0-9!@#$%^&*\\\\-_]{8,}$";// 密碼至少8碼
+	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
 	private final String phonepattern = "09-\\d{7,8}";
 
 	private BasicResponse checkAccount(String email, String password) {
@@ -104,9 +112,11 @@ public class UserService {
 					ReplyMessage.EMAIL_HAS_FOUND.getMessage());
 		}
 
+		LocalDateTime createDate = LocalDateTime.now();
+
 		/* 建立帳號並傳入加密後的密碼 */
 		userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
-				req.getLocation(), req.getSchool(), UserStatus.Normal.getMessage());
+				req.getLocation(), req.getSchool(), UserStatus.Unverified.getMessage(), createDate);
 
 		/* 產生驗證碼並寄信 */
 		String code = codeStore.generate(req.getEmail());
@@ -117,11 +127,34 @@ public class UserService {
 
 	/* 寄送驗證信 */
 	private void sendVerificationEmail(String email, String code) {
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(email);
-		mail.setSubject("【HellTrain】Email 驗證碼");
-		mail.setText("您的驗證碼為：" + code + "\n15分鐘內有效，請勿告知他人。");
-		mailSender.send(mail);
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+			helper.setTo(email);
+			helper.setSubject("【HellTrain】Email 驗證碼");
+
+			String verifyUrl = "http://前端網址/login?mode=register&step=2&email=" + email;
+
+			String content = """
+					<div style="font-family: Arial, sans-serif; padding: 20px;">
+					    <h2>HellTrain 帳號驗證</h2>
+					    <p>您的驗證碼為：<strong>%s</strong></p>
+					    <p>15分鐘內有效，請勿告知他人。</p>
+					    <a href="%s" style="background-color: #FB831D; color: white;
+					       padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+					        前往驗證
+					    </a>
+					</div>
+					""".formatted(code, verifyUrl);
+
+			helper.setText(content, true); // true = HTML 格式
+			mailSender.send(message);
+
+		} catch (MessagingException e) {
+			// 寄信失敗不影響主流程
+			System.out.println("寄信失敗：" + e.getMessage());
+		}
 	}
 
 	public BasicResponse verifyAndRegister(VerifyVO vo) {
@@ -133,7 +166,7 @@ public class UserService {
 		}
 
 		// 驗證成功 → 更新 status
-		userdao.updateverified(vo.getEmail(), LocalDate.now());
+		userdao.updateverified(vo.getEmail(), LocalDate.now(), UserStatus.Normal.getMessage());
 
 		// 銷毀驗證碼
 		codeStore.remove(vo.getEmail());
@@ -163,35 +196,106 @@ public class UserService {
 				ReplyMessage.VERIFICATION_CODE_IS_SEND.getMessage());
 	}
 
+	// 排程提醒驗證之信件內容
+	private void sendReminderEmail(String email, String code) {
+		try {
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+			helper.setTo(email);
+			helper.setSubject("【HellTrain】帳號驗證提醒");
+
+			String verifyUrl = "http://前端網址/login?mode=register&step=2&email=" + email;
+
+			String content = """
+					<div style="font-family: Arial, sans-serif; padding: 20px;">
+					    <h2>HellTrain 帳號驗證提醒！！！</h2>
+					    <p>您的帳號尚未完成驗證，將在 <strong>24小時後</strong> 被刪除。</p>
+					    <p>您的驗證碼為：<strong>%s</strong></p>
+					    <p>15分鐘內有效，請勿告知他人。</p>
+					    <a href="%s" style="background-color: #FB831D; color: white;
+					       padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+					        前往驗證
+					    </a>
+					</div>
+					""".formatted(code, verifyUrl);
+
+			helper.setText(content, true);
+			mailSender.send(message);
+
+		} catch (MessagingException e) {
+			System.out.println("寄信失敗：" + e.getMessage());
+		}
+	}
+
+	// 排程自動發送
+	@Scheduled(cron = "0 0 0 * * *")
+	public void sendReminderEmail() {
+		LocalDateTime deadline = LocalDateTime.now().minusDays(6);
+		List<User> users = userdao.findUnverifiedBefore(deadline);
+
+		for (User user : users) {
+			String code = codeStore.generate(user.getUserEmail());
+			sendReminderEmail(user.getUserEmail(), code); // ← 用新的方法
+		}
+	}
+
 	/* 登入，默認大部分為一般使用者，故先以使用者資料庫進行比對 */
 	public LogInRes login(String email, String password) {
+		BasicResponse check=checkAccount(email, password);
 		String role = "";// 帳號身分
 
 		/* 查詢帳號格式 */
-		if (checkAccount(email, password) != null) {
-			return (LogInRes) checkAccount(email, password);
+		if (check != null) {
+			return new LogInRes(check.getStatusCode(),
+					check.getMessage());
 		}
 
 		// 比對使用者資料庫，找出email相符的資料
 		User user = userdao.getAccount(email);
-		// 檢查password是否一致
-		if (user != null && encoder.matches(password, user.getPassword())) {
-			role = "user";
+		if (user != null) {
 
-			if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
+	        // 3. 密碼錯
+	        if (!encoder.matches(password, user.getPassword())) {
+	            return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(),
+	                ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage());
+	        }
 
-				// 這兩行就是全部了，不需要新方法
-				String code = codeStore.generate(user.getUserEmail());
-				sendVerificationEmail(user.getUserEmail(), code);
+	        role = "user";
 
-				return new LogInRes(ReplyMessage.VERIFICATION_CODE_IS_SEND.getCode(), //
-						ReplyMessage.VERIFICATION_CODE_IS_SEND.getMessage());
+	        // 4. 停權
+	        if (user.getStatus().equals(UserStatus.Suspension.getMessage())) {
+	            return new LogInRes(ReplyMessage.ACCOUNT_IS_BANNED.getCode(),
+	                ReplyMessage.ACCOUNT_IS_BANNED.getMessage());
+	        }
 
-			}
+	        // 5. 未驗證
+	        if (user.getVerified() == null) {
+	            String code = codeStore.generate(user.getUserEmail());
+	            sendVerificationEmail(user.getUserEmail(), code);
+	            return new LogInRes(
+	                ReplyMessage.PLEASE_VERIFY.getCode(),
+	                ReplyMessage.PLEASE_VERIFY.getMessage()
+	            );
+	        }
 
-			return new LogInRes(ReplyMessage.SUCCESS.getCode(), //
-					ReplyMessage.SUCCESS.getMessage(), role, user);
-		}
+	        // 6. 驗證過期
+	        if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
+	            String code = codeStore.generate(user.getUserEmail());
+	            sendVerificationEmail(user.getUserEmail(), code);
+	            return new LogInRes(
+	                ReplyMessage.VERIFICATION_IS_INVALID.getCode(),
+	                ReplyMessage.VERIFICATION_IS_INVALID.getMessage()
+	            );
+	        }
+
+	        return new LogInRes(
+	            ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage(),
+	            role,
+	            user
+	        );
+	    }
 
 		// 比對管理員資料庫
 		Manager manager = managerdao.getByEmail(email);
@@ -217,15 +321,11 @@ public class UserService {
 		}
 
 		// 檢查地區
-//		if (!StringUtils.hasText(vo.getLocation())) {
-
-//		}
-
 		if (vo.getLocation() == null || vo.getLocation().isEmpty()) {
 			return new BasicResponse(ReplyMessage.LOCATION_IS_NULL.getCode(), //
 					ReplyMessage.LOCATION_IS_NULL.getMessage());
 		}
-		
+
 		if (!StringUtils.hasText(vo.getEmail())) {
 			return new BasicResponse(ReplyMessage.SCHOOL_IS_NULL.getCode(), //
 					ReplyMessage.SCHOOL_IS_NULL.getMessage());
@@ -306,7 +406,7 @@ public class UserService {
 			imgPath = user.getImgPath();
 
 		}
-		
+
 		// 存入前轉換，只有單一選項所以不需要Map
 		String locationStr = String.join(",", vo.getLocation());
 
@@ -340,6 +440,41 @@ public class UserService {
 		// 寫寫dao
 		userdao.updatePad(email, encoder.encode(newPwd));
 
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage());
+	}
+
+	// 抓取所有使用者
+	public UserRes getAllUser() {
+
+		List<User> userList = userdao.getAllUser();
+		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), userList);
+	}
+
+	// 取得個別帳號詳情
+	public UserRes getUserdaate(int userId) {
+		User user = userdao.getById(userId);
+		if (user == null) {
+			return new UserRes(ReplyMessage.USER_ID_ERR.getCode(), //
+					ReplyMessage.USER_ID_ERR.getMessage());
+		}
+		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), user);
+	}
+
+	// 帳號狀態變更(手動)
+	public BasicResponse changeStatus(int usesrId) {
+
+		String status;
+		User user = userdao.getById(usesrId);
+
+		if (user.getStatus().equals(UserStatus.Normal.getMessage())) {
+			status = UserStatus.Suspension.getMessage();
+		} else {
+			status = UserStatus.Normal.getMessage();
+		}
+		userdao.changeStatus(usesrId, status);
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}

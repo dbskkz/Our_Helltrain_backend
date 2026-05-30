@@ -2,6 +2,7 @@ package com.example.HellTrain.constant;
 
 public enum UserStatus {
 	
+	Unverified("未驗證"),
 	Normal("正常"),
 	Suspension("停權");
 	

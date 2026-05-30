@@ -50,17 +50,22 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
         @Param("maxPrice") Integer maxPrice
     );
     
+    //以Id取得告別商品情報
     @Query(value = "SELECT * FROM product WHERE product_id = ?1", nativeQuery = true)
     public Product findByProductId(int productId);
     
-    //更改商品狀況s
+    //更改商品狀況販售中、交易中、下嫁等等
 	@Modifying
 	@Transactional
-	@Query(value="update product set status = ?2 where product_id = ?1",nativeQuery = true)
+	@Query(value = "update product set status = ?2 where product_id = ?1",nativeQuery = true)
     public void changeStatus(int productId, String status);
 
 //	@Modifying
 //	@Transactional
-//	@Query(value="",nativeQuery = true)
+//	@Query(value="insert ignore into user (user_email, user_name, password, phone,"
+//+ " location, school, status) "
+//+ " value (?1,?2,?3,?4,?5,?6,?7)",nativeQuery = true)
 //	public void insert();
+	
+	
 }

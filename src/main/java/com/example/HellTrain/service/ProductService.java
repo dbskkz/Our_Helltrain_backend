@@ -1,10 +1,12 @@
 package com.example.HellTrain.service;
 
+import java.security.cert.CertPathValidatorException.BasicReason;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -12,6 +14,7 @@ import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.request.SearchProductReq;
+import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.vo.ProductVo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ProductService {
+	@Value("${file.upload.path}")
+	private String uploadPath;
+
 
 	@Autowired
 	private ProductDao productDao;
@@ -243,5 +249,10 @@ public class ProductService {
 
         return convertToFrontEndFormat(result);
     }
+    
+//    public BasicResponse addProduct() {
+//        return new BasicResponse( ReplyMessage.SUCCESS.getCode(),
+//        ReplyMessage.SUCCESS.getMessage());
+//    }
 
 }

@@ -1,45 +1,22 @@
-package com.example.HellTrain.entity;
+package com.example.HellTrain.request;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Entity
-@Table(name="announcement")
-public class Announcement {
-	
-	@Id
-	@Column(name = "id")
-	private int id;
+public class AnnounceReq {
 
-	@Column(name = "title")
 	private String title;
 
-	@Column(name = "img_path")
-	private String imgPath;
+	private MultipartFile imgPath;
 
-	@Column(name = "shelf_date")
 	private LocalDate shelfDate;
 
-	@Column(name = "removal_date")
 	private LocalDate removalDate;
-
-	@Column(name = "status")
-	private String status;
 	
-	@Column(name = "publish")
 	private boolean publish;
-	
-	@Column(name = "content")
+
 	private String content;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getTitle() {
 		return title;
@@ -49,11 +26,11 @@ public class Announcement {
 		this.title = title;
 	}
 
-	public String getImgPath() {
+	public MultipartFile getImgPath() {
 		return imgPath;
 	}
 
-	public void setImgPath(String imgPath) {
+	public void setImgPath(MultipartFile imgPath) {
 		this.imgPath = imgPath;
 	}
 
@@ -73,14 +50,6 @@ public class Announcement {
 		this.removalDate = removalDate;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public boolean isPublish() {
 		return publish;
 	}
@@ -96,6 +65,5 @@ public class Announcement {
 	public void setContent(String content) {
 		this.content = content;
 	}
-
 
 }

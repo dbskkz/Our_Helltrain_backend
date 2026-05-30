@@ -6,8 +6,12 @@ public enum ReplyMessage {
 	USER_ID_ERR(400, "The user id is invalid !"),
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
-	//UserService使用
+	//帳號驗證相關
 	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
+	VERIFICATION_IS_INVALID(403, "Verification is invalid"),//驗證已過期
+	PLEASE_VERIFY(403, "Please verify"),//請先驗證
+	ACCOUNT_IS_BANNED(403, "Account is banned"),//帳號被封鎖
+	//UserService使用
 	EMAIL_HAS_FOUND(400,"Email has found"),//檢查email是否註冊過
 	EMAIL_ISNOT_SCHOOL(400,"Email is not school"),//
 	PARAM_NAME_ERROR(400,"Name error"),//
@@ -27,16 +31,23 @@ public enum ReplyMessage {
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
+	//
+	WELCOME_MANAGER(201,"Manager is long"),//判斷登入者為管理員
 	//Order用
 	PRODUCT_is_NOTFOUND(400, "Product is not found"),//找不到商品
 	PRODUCT_is_UNSELL(400, "Product is unsell"),//未販售的商品
 	NO_PERMISSIONS(400, "You has not Permissions"),//沒有購買商品的權限(買賣家ID相同狀況下適用)
-	NOT_FOUND_DATE(400, "Not found date"),//沒有找到這筆資料
 	ORDER_STATUS_ERROR(400, "Order status error"),//訂單狀態異常(無法進行此操作)
 	//Report
-	DESCRIPTION_IS_NULL(400, "Description is null"),//請輸入描述
+	DESCRIPTION_IS_ERROR(400, "Description is error"),//請輸入描述
 	REPORTTYPE_IS_NULL(400, "ReportType is null"),//請輸入檢舉類型
+	VIOLATIONTYPE_IS_NULL(400, "ViolationType is null"),//請輸入檢舉類型
 	REPORTTYPE_ERROR(400, "ReportType error"),//檢舉類型錯誤
+	ACCUSEDID_IS_NULL(400, "Accusedid is null"),//檢舉類型為空
+	//公告
+	TITLE_IS_NULL(400, "Title is null"),//標題為空
+	DATE_ERROR(400, "Date error"),//標題為空
+	CONTENT_TEXT_OVER(400, "Counent text over"),//標題為空
 	;
 	
 	private int code;

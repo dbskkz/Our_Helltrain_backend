@@ -15,6 +15,7 @@ import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
+import com.example.HellTrain.response.UserRes;
 import com.example.HellTrain.service.UserService;
 import com.example.HellTrain.vo.ChangePasswordVo;
 import com.example.HellTrain.vo.SetInfoVo;
@@ -89,5 +90,25 @@ public class UserController {
 		}
 		return userService.changePassword(vo.getEmail(),vo.getNowPad(),vo.getNewPad());
 	}
+	
+	//以Id改變該使用者狀態
+	@PostMapping(value = "/changeStatus")
+	public BasicResponse changeStatus(@RequestBody int usesrId) {
+		return userService.changeStatus(usesrId);
+	}
+	
+	//取得所有使用者
+	@GetMapping(value = "/getUsers")
+	public UserRes getAllUser() {
+
+		return userService.getAllUser();
+	}
+	
+	//取得單一使用者資料
+	@GetMapping(value = "/getByUserId")
+	public UserRes getUserdaate(@RequestParam("userId") int userId) {
+		return userService.getUserdaate(userId);
+	}
+
 
 }

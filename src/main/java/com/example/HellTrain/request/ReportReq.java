@@ -1,27 +1,30 @@
 package com.example.HellTrain.request;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class ReportReq {
 	
-	private int orderId;//nn
+	private int productId;//nn
 	
 	private int accusedId;//nn
 	
 	private String description;//nn
 	
-	private MultipartFile filePath;
+	private List<MultipartFile> filePath;
 	
 	private String type;//nn
 	
 	private String violationType;
 
-	public int getOrderId() {
-		return orderId;
+
+	public int getProductId() {
+		return productId;
 	}
 
-	public void setOrderId(int orderId) {
-		this.orderId = orderId;
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
 	public String getDescription() {
@@ -32,11 +35,11 @@ public class ReportReq {
 		this.description = description;
 	}
 
-	public MultipartFile getFilePath() {
+	public List<MultipartFile> getFilePath() {
 		return filePath;
 	}
 
-	public void setFilePath(MultipartFile filePath) {
+	public void setFilePath(List<MultipartFile> filePath) {
 		this.filePath = filePath;
 	}
 
