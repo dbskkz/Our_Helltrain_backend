@@ -48,13 +48,13 @@ CREATE TABLE IF NOT EXISTS `product` (
   PRIMARY KEY (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `report`(
+ CREATE TABLE IF NOT EXISTS `report` (
   `report_id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int INT NULL DEFAULT '0' 
-  `complainant_id` int NOT NULL DEFAULT '0',
-  `accused_id` int  INT NULL DEFAULT '0',
+  `product_id` int NULL DEFAULT 0,
+  `complainant_id` int NOT NULL DEFAULT 0,
+  `accused_id` int NULL DEFAULT 0,
   `description` varchar(200) NOT NULL DEFAULT '0',
-  ` file_path` varchar(500) DEFAULT NULL,
+  `file_path` varchar(500) DEFAULT NULL,
   `report_date` date NOT NULL,
   `status` varchar(45) NOT NULL,
   `type` varchar(45) NOT NULL,
@@ -117,8 +117,25 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
--- announcement_table 新增 published
-----先查表，看看有沒有要新增的欄位
+---- announcement_table 新增 published
+------先查表，看看有沒有要新增的欄位
+--SET @exist2 := (
+--    SELECT COUNT(*)
+--    FROM information_schema.columns
+--    WHERE table_schema = DATABASE()
+--      AND table_name = 'user'
+--      AND column_name = 'create_date'
+--);
+----如果上述結果為0(沒查到)就新增(ALTER那行)，結果為1就印出下面那行(欄位已存在)
+--SET @sql2 = IF(
+--    @exist2 = 0,
+--    'ALTER TABLE user ADD COLUMN create_date DATETIME NOT NULL,
+--    'SELECT "create_date already exists"'
+--);
+----執行
+--PREPARE stmt2 FROM @sql2;
+--EXECUTE stmt2;
+--DEALLOCATE PREPARE stmt2;
 SET @exist2 := (
     SELECT COUNT(*)
     FROM information_schema.columns
@@ -126,16 +143,15 @@ SET @exist2 := (
       AND table_name = 'user'
       AND column_name = 'create_date'
 );
---如果上述結果為0(沒查到)就新增(ALTER那行)，結果為1就印出下面那行(欄位已存在)
-SET @sql2 = IF(
+
+SET @sql2 := IF(
     @exist2 = 0,
-    'ALTER TABLE user ADD COLUMN create_date DATETIME NOT NULL,
+    'ALTER TABLE `user` ADD COLUMN `create_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
     'SELECT "create_date already exists"'
 );
---執行
+
 PREPARE stmt2 FROM @sql2;
 EXECUTE stmt2;
 DEALLOCATE PREPARE stmt2;
-
 
 -- 其他資料表的欄位繼續往下加...
