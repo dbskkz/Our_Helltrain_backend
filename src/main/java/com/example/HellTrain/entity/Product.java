@@ -39,14 +39,14 @@ public class Product {
 	@Column(name = "status")
 	private String status;
 	
-	@Column(name = "stock")
-	private int stock;
-	
 	@Column(name = "grade")
 	private String grade;
 	
 	@Column(name = "location")
 	private String location;
+	
+	@Column(name = "dept_group")
+	private String deptGroup;
 
 	public int getProductId() {
 		return productId;
@@ -128,14 +128,6 @@ public class Product {
 		this.status = status;
 	}
 
-	public int getStock() {
-		return stock;
-	}
-
-	public void setStock(int stock) {
-		this.stock = stock;
-	}
-
 	public String getGrade() {
 		return grade;
 	}
@@ -151,5 +143,15 @@ public class Product {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+
+	public String getDeptGroup() {
+		return deptGroup;
+	}
+
+	public void setDeptGroup(String deptGroup) {
+		this.deptGroup = deptGroup;
+	}
+
+	
 
 }

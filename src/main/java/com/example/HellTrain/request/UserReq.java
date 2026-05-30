@@ -1,35 +1,21 @@
-package com.example.HellTrain.requeest;
+package com.example.HellTrain.request;
 
-import com.example.HellTrain.constant.ValidMessage;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 
 public class UserReq {
 
-	@Valid
-	@NotBlank(message = ValidMessage.NAME_ERROR)
 	private String name;
 
-	@Valid
-	@NotBlank(message = ValidMessage.PASSWORD_ERROR)
-	@Size(min = 8, message = ValidMessage.PASSWORD_LONG_ERROR)
 	private String password;
 
-	@Valid
-	@NotBlank(message=ValidMessage.Email_ERROR)
-	@Email(message=ValidMessage.Email_ERROR)
-	private String Email;
+	private String email;
 
-	@Valid
-	@NotBlank(message = ValidMessage.LOCATION_IS_NULL)
 	private String location;
 
-	@Valid
-	@NotBlank(message = ValidMessage.School_IS_NULL)
-	private String School;
+	private String school;
 	
 	private String phone;
+	
+	private String status;
 
 	public String getPhone() {
 		return phone;
@@ -56,11 +42,11 @@ public class UserReq {
 	}
 
 	public String getEmail() {
-		return Email;
+		return email;
 	}
 
 	public void setEmail(String email) {
-		Email = email;
+		this.email = email;
 	}
 
 	public String getLocation() {
@@ -72,11 +58,19 @@ public class UserReq {
 	}
 
 	public String getSchool() {
-		return School;
+		return school;
 	}
 
 	public void setSchool(String school) {
-		School = school;
+		this.school = school;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

@@ -12,8 +12,8 @@ public class Report {
 	@Column(name = "report_id")
 	private int reportId;
 
-	@Column(name = "order_id")
-	private int orderId;
+	@Column(name = "product_id")
+	private int productId;
 
 	@Column(name = "complainant_id")
 	private int complainantId;//檢舉人Id
@@ -47,12 +47,12 @@ public class Report {
 		this.reportId = reportId;
 	}
 
-	public int getOrderId() {
-		return orderId;
+	public int getProductId() {
+		return productId;
 	}
 
-	public void setOrderId(int orderId) {
-		this.orderId = orderId;
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
 	public int getComplainantId() {
