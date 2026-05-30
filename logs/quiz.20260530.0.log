@@ -2327,6 +2327,7 @@ Caused by: java.sql.SQLSyntaxErrorException: You have an error in your SQL synta
 09:58:35.753 INFO  [restartedMain]o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
 09:58:35.755 INFO  [restartedMain]com.example.HellTrain.HellTrainApplication - Started HellTrainApplication in 1.195 seconds (process running for 234.995)
 09:58:35.755 INFO  [restartedMain]o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+<<<<<<< HEAD
 09:59:00.937 INFO  [File Watcher]o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
 09:59:00.939 INFO  [Thread-15]o.s.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
 09:59:00.940 INFO  [tomcat-shutdown]org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
@@ -2582,3 +2583,5 @@ Caused by: java.sql.SQLSyntaxErrorException: You have an error in your SQL synta
 10:03:21.893 INFO  [File Watcher]o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
 10:03:21.894 INFO  [Thread-39]o.s.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
 10:03:21.894 INFO  [tomcat-shutdown]org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+=======
+>>>>>>> THE-MR
