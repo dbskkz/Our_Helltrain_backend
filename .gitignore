@@ -20,3 +20,7 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 bin/
+
+# 忽略所有自動產生的 log 檔案與資料夾
+logs/
+*.log
