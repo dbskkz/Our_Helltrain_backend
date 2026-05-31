@@ -43,5 +43,10 @@ public class AnnounceController {
 	public BasicResponse addAnnounce(@RequestBody AnnounceReq req) {
 		return announceService.addAnnounce(req);
 	}
+	
+	@PostMapping(value = "/updateAnnounce")
+	public BasicResponse updata(@RequestBody AnnounceReq req) {
+		return announceService.updata(req);
+	}
 
 }

@@ -136,7 +136,6 @@ public class AnnounceService {
 	
 	public BasicResponse updata(AnnounceReq req) {
 		
-
 		// 檢查標題
 		if (!StringUtils.hasText(req.getTitle())) {
 			return new BasicResponse(ReplyMessage.TITLE_IS_NULL.getCode(),//
@@ -212,11 +211,12 @@ public class AnnounceService {
 
 		} else {
 		    // 沒上傳就保留原本的
-//		    Announcement announcement = announcementDao.getById(req.getImgPath());
-//		    imgPath = announcement.getImgPath();
+		    Announcement announcement =annouDao.getById(req.getId());
+		    imgPath = announcement.getImgPath();
 		}
 
-//		announcementDao.updateAnnouncement(vo.getId(), vo.getTitle(), vo.getContent(), imgPath);
+		annouDao.upddataAnnounce(req.getId(), req.getTitle(), req.getContent(), req.getShelfDate(), req.getRemovalDate(),
+				req.isPublish(), imgPath);
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
 				ReplyMessage.SUCCESS.getMessage());
 		

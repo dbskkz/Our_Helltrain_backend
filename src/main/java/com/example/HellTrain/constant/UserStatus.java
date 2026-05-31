@@ -16,5 +16,4 @@ public enum UserStatus {
 		this.message = message;
 	}
 
-
 }

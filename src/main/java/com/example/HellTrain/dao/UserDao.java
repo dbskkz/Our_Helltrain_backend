@@ -35,9 +35,14 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Query(value = "update user set user_name = :name, location = :location,"
 			+ " school = :school, department = :department, " + " phone = :phone, msg = :msg, img_path = :imgPath"
 			+ " where user_email = :email", nativeQuery = true)
-	public void setInfo(@Param("email") String email, @Param("name") String name, @Param("imgPath") String imgPath,
-			@Param("location") String location, @Param("school") String school, @Param("department") String department,
-			@Param("phone") String phone, @Param("msg") String msg);
+	public void setInfo(@Param("email") String email,//
+			@Param("name") String name, //
+			@Param("imgPath") String imgPath,//
+			@Param("location") String location, //
+			@Param("school") String school, //
+			@Param("department") String department,
+			@Param("phone") String phone, //
+			@Param("msg") String msg);
 
 	// 設定驗證日期
 	@Modifying
@@ -76,6 +81,11 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	public List<User> getAllUser();
 
 	// 找出在某日期之前註冊但未驗證的帳號
-	@Query(value = "SELECT FROM User WHERE verified IS NULL AND createDate <= ?", nativeQuery = true)
+	@Query(value = "select *  from user where verified is null and create_date <= ?", nativeQuery = true)
 	List<User> findUnverifiedBefore(LocalDateTime deadline);
+	
+	@Modifying
+	@Transactional
+	@Query(value ="DELETE FROM user WHERE verified IS NULL AND create_date <= ?1", nativeQuery = true)
+	void deleteUnverified(LocalDateTime deadline);
 }
