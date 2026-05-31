@@ -32,6 +32,7 @@ import com.example.HellTrain.vo.VerifyVO;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpSession;
 
 @EnableScheduling // 讓此類別下的scheduled的方法生效
 @Service
@@ -41,6 +42,8 @@ public class UserService {
 
 	@Value("${file.upload.path}")
 	private String uploadPath;
+	@Value("${default.avatar}")
+	private String defaultAvatar;
 
 	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\\\s]{2,20}$";// 姓名2-20碼
 	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
@@ -134,7 +137,8 @@ public class UserService {
 			helper.setTo(email);
 			helper.setSubject("【HellTrain】Email 驗證碼");
 
-			String verifyUrl = "http://前端網址/login?mode=register&step=2&email=" + email;
+			//當有正式網站時localhost:4200會是網址
+			String verifyUrl = "http://localhost:4200/login?mode=register&step=2&email=" + email;
 
 			String content = """
 					<div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -205,7 +209,8 @@ public class UserService {
 			helper.setTo(email);
 			helper.setSubject("【HellTrain】帳號驗證提醒");
 
-			String verifyUrl = "http://前端網址/login?mode=register&step=2&email=" + email;
+			//當有正式網站時localhost:4200會是網址
+			String verifyUrl = "http://localhost:4200/login?mode=register&step=2&email=" + email;
 
 			String content = """
 					<div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -228,7 +233,7 @@ public class UserService {
 		}
 	}
 
-	// 排程自動發送
+	// 排程自動發送，0:00送出通知
 	@Scheduled(cron = "0 0 0 * * *")
 	public void sendReminderEmail() {
 		LocalDateTime deadline = LocalDateTime.now().minusDays(6);
@@ -238,6 +243,13 @@ public class UserService {
 			String code = codeStore.generate(user.getUserEmail());
 			sendReminderEmail(user.getUserEmail(), code); // ← 用新的方法
 		}
+	}
+	
+	//逾期未驗證刪除，1:00執行刪除
+	@Scheduled(cron = "0 0 1 * * *")  // 凌晨 1 點（提醒信寄完後才刪）
+	public void cleanUnverifiedAccounts() {
+	    LocalDateTime deadline = LocalDateTime.now().minusDays(7);
+	    userdao.deleteUnverified(deadline);
 	}
 
 	/* 登入，默認大部分為一般使用者，故先以使用者資料庫進行比對 */
@@ -310,10 +322,11 @@ public class UserService {
 	}
 
 	/* 資料修改 */
-	public BasicResponse setInfo(SetInfoVo vo) {
+	public BasicResponse setInfo(HttpSession session,SetInfoVo vo) {
+	    String email = (String) session.getAttribute("user_email");
 
-		User user = userdao.getAccount(vo.getEmail());
-
+		User user = userdao.getAccount(email);
+		System.out.println(user.getUserEmail() +user.getUserName());
 		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
@@ -326,7 +339,7 @@ public class UserService {
 					ReplyMessage.LOCATION_IS_NULL.getMessage());
 		}
 
-		if (!StringUtils.hasText(vo.getEmail())) {
+		if (!StringUtils.hasText(vo.getSchool())) {
 			return new BasicResponse(ReplyMessage.SCHOOL_IS_NULL.getCode(), //
 					ReplyMessage.SCHOOL_IS_NULL.getMessage());
 		}
@@ -350,7 +363,7 @@ public class UserService {
 
 		if (vo.isDeleteImg())// 接收前端是否回傳刪除照片的旗標
 		{
-			imgPath = null;
+			imgPath = defaultAvatar;
 		}
 		// 1.確定有上傳圖片
 		else if (vo.getImg() != null && !vo.getImg().isEmpty()) {
@@ -410,7 +423,7 @@ public class UserService {
 		// 存入前轉換，只有單一選項所以不需要Map
 		String locationStr = String.join(",", vo.getLocation());
 
-		userdao.setInfo(vo.getEmail(), vo.getName(), imgPath, locationStr, vo.getSchool(), vo.getDepartment(),
+		userdao.setInfo(email, vo.getName(), imgPath, locationStr, vo.getSchool(), vo.getDepartment(),
 				vo.getPhone(), vo.getMsg());
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
@@ -453,12 +466,13 @@ public class UserService {
 	}
 
 	// 取得個別帳號詳情
-	public UserRes getUserdaate(int userId) {
+	public UserRes getUserData(int userId) {
 		User user = userdao.getById(userId);
 		if (user == null) {
 			return new UserRes(ReplyMessage.USER_ID_ERR.getCode(), //
 					ReplyMessage.USER_ID_ERR.getMessage());
 		}
+
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(), user);
 	}
@@ -470,13 +484,15 @@ public class UserService {
 		User user = userdao.getById(usesrId);
 
 		if (user.getStatus().equals(UserStatus.Normal.getMessage())) {
-			status = UserStatus.Suspension.getMessage();
+//			status = UserStatus.Suspension.getMessage();
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
 		} else {
 			status = UserStatus.Normal.getMessage();
-		}
 		userdao.changeStatus(usesrId, status);
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
+		}
 	}
 
 }

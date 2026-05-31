@@ -39,6 +39,6 @@ public interface AnnounceDao extends JpaRepository<Announcement, Integer> {
 	@Transactional
 	@Query(value = "update Announcement set title = ?2 ,img_path = ?3 ,shelf_date = ?4 ,"//
 			+ "remove_date = ?5, publish = ?6 ,content = ?7 whrer id = ?1", nativeQuery = true)
-	public void upddateAnnounce(int id,String title, String img, LocalDate shelfDate, //
+	public void upddataAnnounce(int id,String title, String img, LocalDate shelfDate, //
 			LocalDate removeDate, boolean publish, String content);
 }

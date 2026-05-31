@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +68,7 @@ public class UserController {
 	
 	//修改密碼以外的個人資訊
 	@PostMapping(value = "/setInfo")
-	public BasicResponse setInfo(HttpSession session, @RequestBody SetInfoVo vo) {
+	public BasicResponse setInfo(HttpSession session, @ModelAttribute  SetInfoVo vo) {
 		
 		//檢查登入session是否過期
 		String email=(String)session.getAttribute("user_email");
@@ -75,7 +76,7 @@ public class UserController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return userService.setInfo(vo);
+		return userService.setInfo(session ,vo);
 	}
 	
 	//修改密碼
@@ -88,7 +89,7 @@ public class UserController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return userService.changePassword(vo.getEmail(),vo.getNowPad(),vo.getNewPad());
+		return userService.changePassword(email,vo.getNowPad(),vo.getNewPad());
 	}
 	
 	//以Id改變該使用者狀態
@@ -106,8 +107,8 @@ public class UserController {
 	
 	//取得單一使用者資料
 	@GetMapping(value = "/getByUserId")
-	public UserRes getUserdaate(@RequestParam("userId") int userId) {
-		return userService.getUserdaate(userId);
+	public UserRes getUserData(@RequestParam("userId") int userId) {
+		return userService.getUserData(userId);
 	}
 
 

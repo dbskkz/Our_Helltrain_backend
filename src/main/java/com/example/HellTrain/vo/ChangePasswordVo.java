@@ -1,20 +1,10 @@
 package com.example.HellTrain.vo;
 
 public class ChangePasswordVo {
-	
-	private String email;
-	
+		
 	private String nowPad;
 	
 	private String newPad;
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	public String getNowPad() {
 		return nowPad;
