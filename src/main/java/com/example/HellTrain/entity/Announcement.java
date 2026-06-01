@@ -24,8 +24,8 @@ public class Announcement {
 	@Column(name = "removal_date")
 	private LocalDate removalDate;
 
-	@Column(name = "status")
-	private String status;
+//	@Column(name = "status")
+//	private String status;
 	
 	@Column(name = "publish")
 	private boolean publish;
@@ -73,13 +73,13 @@ public class Announcement {
 		this.removalDate = removalDate;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
 
 	public boolean isPublish() {
 		return publish;

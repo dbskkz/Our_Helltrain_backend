@@ -482,6 +482,11 @@ public class UserService {
 
 		String status;
 		User user = userdao.getById(usesrId);
+		if(user==null)
+		{
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
 
 		if (user.getStatus().equals(UserStatus.Normal.getMessage())) {
 //			status = UserStatus.Suspension.getMessage();

@@ -2,7 +2,6 @@ package com.example.HellTrain.request;
 
 import java.time.LocalDate;
 
-import org.springframework.web.multipart.MultipartFile;
 
 public class AnnounceReq {
 	
@@ -10,7 +9,7 @@ public class AnnounceReq {
 
 	private String title;
 
-	private MultipartFile imgPath;
+	private String imgPath;
 
 	private LocalDate shelfDate;
 
@@ -28,16 +27,16 @@ public class AnnounceReq {
 		this.title = title;
 	}
 
-	public MultipartFile getImgPath() {
+	public LocalDate getShelfDate() {
+		return shelfDate;
+	}
+
+	public String getImgPath() {
 		return imgPath;
 	}
 
-	public void setImgPath(MultipartFile imgPath) {
+	public void setImgPath(String imgPath) {
 		this.imgPath = imgPath;
-	}
-
-	public LocalDate getShelfDate() {
-		return shelfDate;
 	}
 
 	public void setShelfDate(LocalDate shelfDate) {

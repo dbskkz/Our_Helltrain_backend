@@ -46,8 +46,8 @@ public enum ReplyMessage {
 	ACCUSEDID_IS_NULL(400, "Accusedid is null"),//檢舉類型為空
 	//公告
 	TITLE_IS_NULL(400, "Title is null"),//標題為空
-	DATE_ERROR(400, "Date error"),//標題為空
-	CONTENT_TEXT_OVER(400, "Counent text over"),//標題為空
+	DATE_ERROR(400, "Date error"),//日期為空
+	CONTENT_TEXT_OVER(400, "Counent text over"),//內文為空
 	;
 	
 	private int code;

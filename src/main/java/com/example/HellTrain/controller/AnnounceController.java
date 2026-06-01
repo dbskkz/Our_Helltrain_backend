@@ -1,5 +1,7 @@
 package com.example.HellTrain.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,7 @@ public class AnnounceController {
 	private AnnounceService announceService;
 	
 	@GetMapping(value = "/getId")
-	public AnnounceRes getByAnnounceId(@RequestParam int announceId) {
+	public AnnounceRes getByAnnounceId(@RequestParam("announceId") int announceId) {
 		return announceService.getByAnnounceId(announceId);
 	}
 	
@@ -40,11 +42,11 @@ public class AnnounceController {
 
 	//新增公告
 	@PostMapping(value = "/addAnnounce")
-	public BasicResponse addAnnounce(@RequestBody AnnounceReq req) {
+	public BasicResponse addAnnounce(@RequestBody AnnounceReq req) throws IOException {
 		return announceService.addAnnounce(req);
 	}
 	
-	@PostMapping(value = "/updateAnnounce")
+	@PostMapping(value = "/updataAnnounce")
 	public BasicResponse updata(@RequestBody AnnounceReq req) {
 		return announceService.updata(req);
 	}

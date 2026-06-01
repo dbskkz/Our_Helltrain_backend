@@ -41,6 +41,7 @@ public class UserController {
 	public LogInRes login(@RequestParam("email") String email,
 			@RequestParam("password") String password, HttpSession session) {
 		
+		//執行登入
 		LogInRes res = userService.login(email,password);
 		//確認登入成功後才將資料(email)儲存
 		if (res.getStatusCode() == 200) {
@@ -50,7 +51,8 @@ public class UserController {
 			//設定效期30天
 			session.setMaxInactiveInterval(2592000);// 單位是秒，0或負數表session永不失效
 		}
-		return userService.login(email, password);
+		//直接回傳不須再執行
+		return res;
 	}
 	
 	//使用者輸入驗證碼後按下發送所需要街的資料回傳API(初次及後續驗證皆是這個)
