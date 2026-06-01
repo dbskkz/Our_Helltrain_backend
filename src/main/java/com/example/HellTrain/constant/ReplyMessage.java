@@ -6,6 +6,9 @@ public enum ReplyMessage {
 	USER_ID_ERR(400, "The user id is invalid !"),
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
+	//
+	PRODUCT_IS_NULL(400, "The product cannot be null !"),//沒有商品名稱
+	DESCRIBE_IS_NULL(400, "Describe cannot be null !"),//沒有商品描述
 	//帳號驗證相關
 	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
 	VERIFICATION_IS_INVALID(403, "Verification is invalid"),//驗證已過期
@@ -31,7 +34,7 @@ public enum ReplyMessage {
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
-	//
+	//管理員
 	WELCOME_MANAGER(201,"Manager is long"),//判斷登入者為管理員
 	//Order用
 	PRODUCT_is_NOTFOUND(400, "Product is not found"),//找不到商品

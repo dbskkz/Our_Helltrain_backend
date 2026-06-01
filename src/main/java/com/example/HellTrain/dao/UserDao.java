@@ -40,7 +40,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 			@Param("imgPath") String imgPath,//
 			@Param("location") String location, //
 			@Param("school") String school, //
-			@Param("department") String department,
+			@Param("department") String department,//
 			@Param("phone") String phone, //
 			@Param("msg") String msg);
 

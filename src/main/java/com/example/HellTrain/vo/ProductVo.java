@@ -15,7 +15,7 @@ public class ProductVo {
 	private LocalDate shelfDate;
 	private String productCondition;
 	private String status;
-	private String grade;
+	private List<String> grade;
 	private List<String>  location;
 	private List<String> deptGroup;
 	public int getProductId() {
@@ -78,10 +78,11 @@ public class ProductVo {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public String getGrade() {
+
+	public List<String> getGrade() {
 		return grade;
 	}
-	public void setGrade(String grade) {
+	public void setGrade(List<String> grade) {
 		this.grade = grade;
 	}
 	public List<String> getLocation() {
@@ -101,7 +102,7 @@ public class ProductVo {
 		// TODO Auto-generated constructor stub
 	}
 	public ProductVo(int productId, int userId, String productName, String description, int price, List<String> imgPath,
-			List<String> type, LocalDate shelfDate, String productCondition, String status, String grade,
+			List<String> type, LocalDate shelfDate, String productCondition, String status, List<String> grade,
 			List<String> location, List<String> deptGroup) {
 		super();
 		this.productId = productId;

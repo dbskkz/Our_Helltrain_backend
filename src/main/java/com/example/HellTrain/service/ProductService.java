@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.entity.Product;
+import com.example.HellTrain.request.ProductReq;
 import com.example.HellTrain.request.SearchProductReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
@@ -64,7 +66,7 @@ public class ProductService {
             item.getShelfDate(),
             item.getProductCondition(),
             item.getStatus(),
-            item.getGrade(),
+            parseJsonList(item.getGrade()),
             parseJsonList(item.getLocation()),
             parseJsonList(item.getDeptGroup())
         );
@@ -250,9 +252,24 @@ public class ProductService {
         return convertToFrontEndFormat(result);
     }
     
-//    public BasicResponse addProduct() {
-//        return new BasicResponse( ReplyMessage.SUCCESS.getCode(),
-//        ReplyMessage.SUCCESS.getMessage());
-//    }
+    public BasicResponse addProduct(ProductReq req) {
+    	
+    	/*檢查*/
+    	//檢查商品稱是否有輸入
+    	if(!StringUtils.hasText(req.getProductName())) {
+    		return new BasicResponse( ReplyMessage.PRODUCT_IS_NULL.getCode(),
+    		        ReplyMessage.PRODUCT_IS_NULL.getMessage());
+    	}
+    	
+    	//
+    	if(!StringUtils.hasText(req.getDescription())) {
+    		return new BasicResponse( ReplyMessage.PRODUCT_IS_NULL.getCode(),
+    		        ReplyMessage.PRODUCT_IS_NULL.getMessage());
+    	}
+    	
+    	
+        return new BasicResponse( ReplyMessage.SUCCESS.getCode(),
+        ReplyMessage.SUCCESS.getMessage());
+    }
 
 }
