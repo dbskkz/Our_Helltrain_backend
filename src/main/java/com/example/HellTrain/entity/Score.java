@@ -7,25 +7,18 @@ import jakarta.persistence.*;
 public class Score {
 	
 	@Id
-	@Column(name="product_id")
-	private int productId;
+	@Column(name="user_id")
+	private int userId;
 
 	@Column(name="base_score")
 	private String baseScore;
 	
-	@Column(name="cilck")
-	private String cilck;
+	@Column(name="click")
+	private String click;
 
 	@Column(name="score")
 	private int score;
 
-	public int getProductId() {
-		return productId;
-	}
-
-	public void setProductId(int productId) {
-		this.productId = productId;
-	}
 
 	public String getBaseScore() {
 		return baseScore;
@@ -35,20 +28,28 @@ public class Score {
 		this.baseScore = baseScore;
 	}
 
-	public String getCilck() {
-		return cilck;
-	}
-
-	public void setCilck(String cilck) {
-		this.cilck = cilck;
-	}
-
 	public int getScore() {
 		return score;
 	}
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public String getClick() {
+		return click;
+	}
+
+	public void setClick(String click) {
+		this.click = click;
 	}
 
 }

@@ -2,8 +2,6 @@ package com.example.HellTrain.request;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class ReportReq {
 	
 	private int productId;//nn
@@ -12,7 +10,7 @@ public class ReportReq {
 	
 	private String description;//nn
 	
-	private List<MultipartFile> filePath;
+	private List<String> filePath;
 	
 	private String type;//nn
 	
@@ -35,11 +33,12 @@ public class ReportReq {
 		this.description = description;
 	}
 
-	public List<MultipartFile> getFilePath() {
+
+	public List<String> getFilePath() {
 		return filePath;
 	}
 
-	public void setFilePath(List<MultipartFile> filePath) {
+	public void setFilePath(List<String> filePath) {
 		this.filePath = filePath;
 	}
 

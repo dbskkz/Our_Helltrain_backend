@@ -8,13 +8,21 @@ public enum ReplyMessage {
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//
 	PRODUCT_IS_NULL(400, "The product cannot be null !"),//沒有商品名稱
-	DESCRIBE_IS_NULL(400, "Describe cannot be null !"),//沒有商品描述
+	PRICE_ERROR(400, "Price cannot less then one dollar"),//價格異常
+	TYPE_ERROR(400, "Price cannot less then one dollar"),//價格異常
+	CONDITION_IS_NULL(400, "Product condition not described"),//未描述商品狀況
+	NO_DESIGNTED_LOCATION(400, "No designated trading location"),//未指定交易地點
+	NO_DEPTGROUP(400, "No designated trading deptgroup"),//沒有指定學群
+	GRADE_IS_NULL(400,"Grade cannot be null"),//
+	//管理員
+	WELCOME_MANAGER(201,"Manager is login"),//判斷登入者為管理員
 	//帳號驗證相關
 	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
 	VERIFICATION_IS_INVALID(403, "Verification is invalid"),//驗證已過期
 	PLEASE_VERIFY(403, "Please verify"),//請先驗證
 	ACCOUNT_IS_BANNED(403, "Account is banned"),//帳號被封鎖
 	//UserService使用
+	PLEASE_LOGIN_FIRST(401,"Please login first"),//要求使用者先登入
 	EMAIL_HAS_FOUND(400,"Email has found"),//檢查email是否註冊過
 	EMAIL_ISNOT_SCHOOL(400,"Email is not school"),//
 	PARAM_NAME_ERROR(400,"Name error"),//
@@ -24,26 +32,23 @@ public enum ReplyMessage {
 	LOCATION_IS_NULL(400,"Location is null"),//
 	PARAM_PHONE_ERROR(400,"Phone error"),//
 	MESSAGE_TOO_LONG(400,"Message too long"),//
-	PLEASE_LOGIN_FIRST(400,"Please login first"),//
 	DEPARTMENT_IS_NULL(400,"Department is null"),//
 	EMAIL_NOT_FOUND(400,"Email not found"),//
 	INVALID_VERIFICATION_CODE(400,"Invalid verification code"),//
 	ACCOUNT_IS_VERIFICATION(400,"Account is verification"),//帳號已驗證
-	FILE_FORMAT_ERROR(400,"File format error"),//檔案格式不正確
-	FILE_NAMEFORMAT_ERROR(400,"File name error"),//檔案附檔名不正確
+	PLEASE_SET_FILE(400,"Please set file"),//請設定圖片
+	FILE_TOO_MANY(400,"File max seven"),//檔案最多七張
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
-	//管理員
-	WELCOME_MANAGER(201,"Manager is long"),//判斷登入者為管理員
 	//Order用
-	PRODUCT_is_NOTFOUND(400, "Product is not found"),//找不到商品
-	PRODUCT_is_UNSELL(400, "Product is unsell"),//未販售的商品
-	NO_PERMISSIONS(400, "You has not Permissions"),//沒有購買商品的權限(買賣家ID相同狀況下適用)
+	PRODUCT_IS_NOTFOUND(400, "Product is not found"),//找不到商品
+	PRODUCT_IS_UNSELL(400, "Product is unsell"),//未販售的商品
+	NO_PERMISSIONS(400, "You have not Permissions"),//沒有權限
 	ORDER_STATUS_ERROR(400, "Order status error"),//訂單狀態異常(無法進行此操作)
 	//Report
-	DESCRIPTION_IS_ERROR(400, "Description is error"),//請輸入描述
-	REPORTTYPE_IS_NULL(400, "ReportType is null"),//請輸入檢舉類型
+	DESCRIPTION_IS_NULL(400, "Description is null"),//請輸入描述
+	TYPE_IS_NULL(400, "Type is null"),//請輸入類型(可能是report也可能是product的)
 	VIOLATIONTYPE_IS_NULL(400, "ViolationType is null"),//請輸入檢舉類型
 	REPORTTYPE_ERROR(400, "ReportType error"),//檢舉類型錯誤
 	ACCUSEDID_IS_NULL(400, "Accusedid is null"),//檢舉類型為空

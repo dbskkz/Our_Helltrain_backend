@@ -12,10 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.DeptGroupConst;
+import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.request.ProductReq;
 import com.example.HellTrain.request.SearchProductReq;
+import com.example.HellTrain.response.BasicResponse;
 //import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.service.ProductService;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin
@@ -68,5 +73,29 @@ public class ProductController {
     @GetMapping("/deptGroups")
     public List<String> getDeptGroups() {
         return DeptGroupConst.ALL_GROUPS;
+    }
+    
+    @PostMapping("/addproduct")
+    public BasicResponse addProduct(HttpSession session, @RequestBody ProductReq req) {
+		//檢查登入session是否過期
+		String email=(String)session.getAttribute("user_email");
+		if(email==null) {
+			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
+					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+		}
+		
+    	return productService.addProduct(email, req);
+    }
+    
+    @PostMapping("/upprod")
+    public BasicResponse upProduct(HttpSession session,@RequestBody ProductReq req) {
+		//檢查登入session是否過期
+		String email=(String)session.getAttribute("user_email");
+		if(email==null) {
+			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
+					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+		}
+    	
+    	return productService.upProduct(email, req);
     }
 }

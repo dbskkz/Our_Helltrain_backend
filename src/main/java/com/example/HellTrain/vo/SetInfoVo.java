@@ -2,14 +2,12 @@ package com.example.HellTrain.vo;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class SetInfoVo {
 	private String email;
 	
 	private String name;
 	
-	private MultipartFile img;
+	private String img;
 	
 	private List<String> location;
 	
@@ -47,11 +45,11 @@ public class SetInfoVo {
 		this.name = name;
 	}
 
-	public MultipartFile getImg() {
+	public String getImg() {
 		return img;
 	}
 
-	public void setImg(MultipartFile img) {
+	public void setImg(String img) {
 		this.img = img;
 	}
 

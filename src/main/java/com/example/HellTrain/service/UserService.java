@@ -1,11 +1,8 @@
 package com.example.HellTrain.service;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.HellTrain.component.VerificationCodeStore;
+import com.example.HellTrain.config.CloudinaryService;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.ManagerDao;
@@ -40,12 +38,10 @@ public class UserService {
 
 	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-	@Value("${file.upload.path}")
-	private String uploadPath;
 	@Value("${default.avatar}")
 	private String defaultAvatar;
 
-	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\\\s]{2,20}$";// 姓名2-20碼
+	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\s]{2,20}$";// 姓名2-20碼
 	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
 	private final String phonepattern = "09-\\d{7,8}";
 
@@ -74,7 +70,8 @@ public class UserService {
 	private UserDao userdao;
 	@Autowired
 	private VerificationCodeStore codeStore;
-
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	@Autowired
 	private JavaMailSender mailSender;
 	@Autowired
@@ -358,67 +355,24 @@ public class UserService {
 					ReplyMessage.MESSAGE_TOO_LONG.getMessage());
 		}
 
-		// 頭像圖檔更新
 		String imgPath = null;
 
-		if (vo.isDeleteImg())// 接收前端是否回傳刪除照片的旗標
-		{
-			imgPath = defaultAvatar;
-		}
-		// 1.確定有上傳圖片
-		else if (vo.getImg() != null && !vo.getImg().isEmpty()) {
+	    if (vo.isDeleteImg()) {
+	        imgPath = defaultAvatar;
 
-			// 2. 檢查檔案類型
-			List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
-			if (!allowedTypes.contains(vo.getImg().getContentType())) {
-				return new BasicResponse(ReplyMessage.FILE_FORMAT_ERROR.getCode(), //
-						ReplyMessage.FILE_FORMAT_ERROR.getMessage());
-			}
+	    } else if (StringUtils.hasText(vo.getImg())) {
+	        // 有傳 base64 → 上傳到 Cloudinary
+	        try {
+	            imgPath = cloudinaryService.uploadBase64(vo.getImg());
+	        } catch (Exception e) {
+	            return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+	            		ReplyMessage.PLEASE_TRY_LATE.getMessage());
+	        }
 
-			// 3. 檢查副檔名
-			String originalFilename = vo.getImg().getOriginalFilename();
-			if (originalFilename == null || !originalFilename.contains(".")) {
-				return new BasicResponse(ReplyMessage.FILE_NAMEFORMAT_ERROR.getCode(), //
-						ReplyMessage.FILE_NAMEFORMAT_ERROR.getMessage());
-			}
-			String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-			List<String> allowedExt = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
-			if (!allowedExt.contains(ext)) {
-				return new BasicResponse(ReplyMessage.FILE_FORMAT_ERROR.getCode(), //
-						ReplyMessage.FILE_FORMAT_ERROR.getMessage());
-			}
-
-			// 4. 檢查檔案大小（2MB）
-			long maxSize = 2 * 1024 * 1024;
-			if (vo.getImg().getSize() > maxSize) {
-				return new BasicResponse(ReplyMessage.FILE_SIZE_ERROR.getCode(), //
-						ReplyMessage.FILE_SIZE_ERROR.getMessage());
-			}
-
-			// 5. 儲存檔案（重新命名避免衝突）
-			try {
-				// 用 UUID 重新命名
-				String newFilename = UUID.randomUUID().toString() + ext;
-
-				// 確認資料夾存在，不存在就建立
-				File dir = new File(uploadPath);
-				if (!dir.exists()) {
-					dir.mkdirs();
-				}
-
-				// 儲存
-				vo.getImg().transferTo(new File(uploadPath + newFilename));
-				imgPath = newFilename;
-
-			} catch (IOException e) {
-				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(), //
-						ReplyMessage.PLEASE_TRY_LATE.getMessage());
-			}
-		} else {
-			// 沒上傳圖片 → 保留原本的
-			imgPath = user.getImgPath();
-
-		}
+	    } else {
+	        // 沒傳圖片 → 保留原本的
+	        imgPath = user.getImgPath();
+	    }
 
 		// 存入前轉換，只有單一選項所以不需要Map
 		String locationStr = String.join(",", vo.getLocation());

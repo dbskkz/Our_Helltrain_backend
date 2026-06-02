@@ -30,7 +30,7 @@ public class OrderController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return orderService.addOrder(vo);
+		return orderService.addOrder(email,vo);
 	}
 
 	// 賣家同意請求，請求按鈕點下後同商品的其它等待中會強制轉為取消
@@ -41,7 +41,7 @@ public class OrderController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return orderService.acceptOrder(vo);
+		return orderService.acceptOrder(email,vo);
 	}
 
 	// 買家主動取消訂單(vo.email是買家的)
@@ -53,7 +53,7 @@ public class OrderController {
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
 
-		return orderService.canaelOrder(vo);
+		return orderService.canaelOrder(email,vo);
 	}
 
 	//確認雙方是否點擊確認
@@ -65,6 +65,6 @@ public class OrderController {
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
 		
-		return orderService.checkDelivery(vo);
+		return orderService.checkDelivery(email,vo);
 	}
 }

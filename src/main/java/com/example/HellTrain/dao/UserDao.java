@@ -84,8 +84,13 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Query(value = "select *  from user where verified is null and create_date <= ?", nativeQuery = true)
 	List<User> findUnverifiedBefore(LocalDateTime deadline);
 	
+	//超過驗證時間仍未驗證則刪除資料
 	@Modifying
 	@Transactional
 	@Query(value ="DELETE FROM user WHERE verified IS NULL AND create_date <= ?1", nativeQuery = true)
 	void deleteUnverified(LocalDateTime deadline);
+	
+	//用email抓user資料，ㄍㄋㄋ我居然沒有寫也太雷了八
+	@Query(value ="select * from user where user_email=?1", nativeQuery = true)
+	User getEmail(String email);
 }

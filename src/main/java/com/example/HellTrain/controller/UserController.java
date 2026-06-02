@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.request.LoginReq;
 import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
@@ -37,24 +37,37 @@ public class UserController {
 		return userService.addUser(req);
 	}
 	
-	@GetMapping(value = "/login")
-	public LogInRes login(@RequestParam("email") String email,
-			@RequestParam("password") String password, HttpSession session) {
-		
-		//執行登入
-		LogInRes res = userService.login(email,password);
-		//確認登入成功後才將資料(email)儲存
-		if (res.getStatusCode() == 200) {
-			//設定session的K,V
-			session.setAttribute("user_email", email);
-			//統一設定session的存活時間，預設為30分鐘，如user跟server還有在互動，則session效期延長(從新計算存活時間)
-			//設定效期30天
-			session.setMaxInactiveInterval(2592000);// 單位是秒，0或負數表session永不失效
-		}
-		//直接回傳不須再執行
-		return res;
-	}
+//	@GetMapping(value = "/login")
+//	public LogInRes login(@RequestParam("email") String email,
+//			@RequestParam("password") String password, HttpSession session) {
+//		
+//		//執行登入
+//		LogInRes res = userService.login(email,password);
+//		//確認登入成功後才將資料(email)儲存
+//		if (res.getStatusCode() == 200) {
+//			//設定session的K,V
+//			session.setAttribute("user_email", email);
+//			//統一設定session的存活時間，預設為30分鐘，如user跟server還有在互動，則session效期延長(從新計算存活時間)
+//			//設定效期30天
+//			session.setMaxInactiveInterval(2592000);// 單位是秒，0或負數表session永不失效
+//		}
+//		//直接回傳不須再執行
+//		return res;
+//	}
 	
+	@PostMapping("/login")
+	public LogInRes login(@RequestBody LoginReq req, HttpSession session) {
+	    // 執行登入
+	    LogInRes res = userService.login(req.getEmail(),req.getPassword());
+
+	    // 登入成功
+	    if (res.getStatusCode() == 200) {
+	        session.setAttribute("user_email", req.getEmail());
+	        // 30天
+	        session.setMaxInactiveInterval(2592000);
+	    }
+	    return res;
+	}
 	//使用者輸入驗證碼後按下發送所需要街的資料回傳API(初次及後續驗證皆是這個)
 	@PostMapping(value = "/verify")
 	public BasicResponse verifyAndRegister(@RequestBody VerifyVO vo) {
@@ -70,7 +83,7 @@ public class UserController {
 	
 	//修改密碼以外的個人資訊
 	@PostMapping(value = "/setInfo")
-	public BasicResponse setInfo(HttpSession session, @ModelAttribute  SetInfoVo vo) {
+	public BasicResponse setInfo(HttpSession session, @RequestBody  SetInfoVo vo) {
 		
 		//檢查登入session是否過期
 		String email=(String)session.getAttribute("user_email");

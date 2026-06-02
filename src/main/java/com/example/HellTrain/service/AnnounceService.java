@@ -21,7 +21,6 @@ public class AnnounceService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
-
 	@Autowired
 	private AnnounceDao annouDao;
 

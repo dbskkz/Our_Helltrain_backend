@@ -17,7 +17,7 @@ import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
-import com.example.HellTrain.vo.LevelVo;
+//import com.example.HellTrain.vo.LevelVo;
 import com.example.HellTrain.vo.OrderVo;
 
 @Service
@@ -33,17 +33,20 @@ public class OrderService {
 	private OrderDao orderDao;
 
 	// 新增訂單
-	public BasicResponse addOrder(OrderVo vo) {// (Get)
+	public BasicResponse addOrder(String email , OrderVo vo) {// (Get)
 
-		User user = userDao.getById(vo.getBuyerId());
+//		User user = userDao.getById(vo.getBuyerId());
+		
+		User user=userDao.getEmail(email);
 		// 查無此買家帳號
 		if (user == null) {
 			return new BasicResponse(ReplyMessage.EMAIL_NOT_FOUND.getCode(), //
 					ReplyMessage.EMAIL_NOT_FOUND.getMessage());
 		}
 		
-		//檢查帳號是否被停權
-		if(user.getStatus()==UserStatus.Suspension.getMessage()) {
+		//檢查帳號是否被停權。改成不等於正常，阿靠邀我她媽咧寫三小，但至少不會檢查有無驗證時間
+//		if(user.getStatus()==UserStatus.Suspension.getMessage()) {
+		if(!user.getStatus().equals(UserStatus.Normal.getMessage())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
@@ -51,13 +54,13 @@ public class OrderService {
 		Product product = productDao.findByProductId(vo.getProductId());
 		// 確定有商品
 		if (product == null) {
-			return new BasicResponse(ReplyMessage.PRODUCT_is_NOTFOUND.getCode(), //
-					ReplyMessage.PRODUCT_is_NOTFOUND.getMessage());
+			return new BasicResponse(ReplyMessage.PRODUCT_IS_NOTFOUND.getCode(), //
+					ReplyMessage.PRODUCT_IS_NOTFOUND.getMessage());
 		}
 		// 檢查商品是否為販售中
-		if (!product.getStatus().equals(ProductStatus.NotSale.getMassage())) {
-			return new BasicResponse(ReplyMessage.PRODUCT_is_UNSELL.getCode(), //
-					ReplyMessage.PRODUCT_is_UNSELL.getMessage());
+		if (!product.getStatus().equals(ProductStatus.OnSale.getMassage())) {
+			return new BasicResponse(ReplyMessage.PRODUCT_IS_UNSELL.getCode(), //
+					ReplyMessage.PRODUCT_IS_UNSELL.getMessage());
 		}
 		// 檢查買賣家是否為同一個帳號
 		if (product.getUserId() == user.getUserId()) {
@@ -67,14 +70,14 @@ public class OrderService {
 		LocalDate createDate = LocalDate.now();
 		// 血寫dao
 		// buyerId>productId>createDate>status buyerCheck、sellerCheck在dao給0就好
-		orderDao.addOrder(vo.getBuyerId(), vo.getProductId(), createDate, OrderStatus.PENDING.getMessage());
+		orderDao.addOrder(user.getUserId(), vo.getProductId(), createDate, OrderStatus.PENDING.getMessage());
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}
 
 	// 同意交易(賣家操作 vo.email是賣家的)
-	public BasicResponse acceptOrder(ChangeOrderStatusVo vo) {
+	public BasicResponse acceptOrder(String email ,ChangeOrderStatusVo vo) {
 
 		// 由訂單編號查詢完整訂單資訊
 		Order order = orderDao.getOrderById(vo.getOrderId());
@@ -84,10 +87,18 @@ public class OrderService {
 			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
-		// 有，以訂單資訊中的buyerId查詢買家資訊
-		User user = userDao.getById(order.getBuyerId());
-		// 當賣家email==買家email，則沒有進行此操作的權限
-		if (!vo.getEmail().equals(user.getUserEmail())) {
+		// 有，以session傳入email查詢user，此時session是賣家
+		User user = userDao.getEmail(email);
+		//當user=null
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+		//抓商品資訊
+		Product product=productDao.findByProductId(order.getProductId());
+		User owner = userDao.getById(product.getUserId());
+		//email.equals(order.s...)
+		if(!email.equals(owner.getUserEmail())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
@@ -106,7 +117,7 @@ public class OrderService {
 	}
 
 	// 買家主動取消訂單(vo.email是買家的)
-	public BasicResponse canaelOrder(ChangeOrderStatusVo vo) {
+	public BasicResponse canaelOrder(String email , ChangeOrderStatusVo vo) {
 		// 由訂單編號查詢完整訂單資訊
 		Order order = orderDao.getOrderById(vo.getOrderId());
 
@@ -116,9 +127,18 @@ public class OrderService {
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 
-		// 當vo email!=買家email，則沒有進行此操作的權限(因為vo是買家的，所以如果不相等則沒有進行此操作的權限)
-		User user = userDao.getById(order.getBuyerId());
-		if (!vo.getEmail().equals(user.getUserEmail())) {
+		//先檢查user有沒有資料，或他的狀態是不是正常，只要其一沒滿足就沒有權限
+		User user = userDao.getEmail(email);
+		System.out.println(user.getUserEmail());
+		if (user==null || !(user.getStatus().equals(UserStatus.Normal.getMessage()))) {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
+		//取得訂單中的買家資訊
+		User buyer = userDao.getById(order.getBuyerId());
+		System.out.println(buyer.getUserEmail());
+		//如email != 買家email，則沒有進行此操作的權限(因為email是買家的，所以如果不相等則沒有進行此操作的權限)
+		if(!user.getUserEmail().equals(buyer.getUserEmail())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
@@ -131,7 +151,7 @@ public class OrderService {
 
 	// 買賣家確認交易 delivery->交貨
 	// check資料0->1，兩個皆為1->change status
-	public BasicResponse checkDelivery(ChangeOrderStatusVo vo) {
+	public BasicResponse checkDelivery(String email,ChangeOrderStatusVo vo) {
 
 		Order order = orderDao.getOrderById(vo.getOrderId());
 
@@ -144,15 +164,19 @@ public class OrderService {
 			return new BasicResponse(ReplyMessage.ORDER_STATUS_ERROR.getCode(), //
 					ReplyMessage.ORDER_STATUS_ERROR.getMessage());
 		}
-
+		
+		//以order提取其中的buyerId找出buyer完整資料
+		User buyer = userDao.getById(order.getBuyerId());
+		//提取order其中的productId找出完整的product資料
 		Product product = productDao.findByProductId(order.getProductId());
-		User user = userDao.getById(order.getBuyerId());
+		//提取product中的userId找出完整的salesman資料
+		User salesman = userDao.getById(product.getUserId());
 		// 檢查是哪一方的帳號
-		if (vo.getEmail().equals(user.getUserEmail())) {
+		if (email.equals(buyer.getUserEmail())) {
 			orderDao.buyerCheack(order.getOrderId());
 		}
 
-		else if (vo.getEmail().equals(product.getProductName())) {
+		else if (email.equals(salesman.getUserEmail())) {
 			orderDao.salesCheack(order.getOrderId());
 		}
 		// 都不是
@@ -174,26 +198,7 @@ public class OrderService {
 	}
 
 	// 給予評價
-	public BasicResponse giveLevel(LevelVo vo) {
-		
-		Order order=orderDao.getOrderById(vo.getOrderId());
-		
-		User user=userDao.getById(order.getBuyerId());
-		
-		Product product=productDao.findByProductId(order.getProductId());
-		
-		User salesman=userDao.getById(product.getUserId());
-		
-		if(!vo.getEmail().equals(user.getUserEmail()))
-		{
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
-					ReplyMessage.NO_PERMISSIONS.getMessage());
-		}
-		
-		userDao.goodLevel(salesman.getUserEmail(), vo.getLevel());
-
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage());
-	}
+//	public BasicResponse giveLevel(LevelVo vo) {
+//	}
 
 }
