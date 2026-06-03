@@ -23,7 +23,7 @@ import com.example.HellTrain.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://lacolhost:4200")
 @RequestMapping("/product")
 public class ProductController {
 	@Autowired
@@ -83,7 +83,6 @@ public class ProductController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		
     	return productService.addProduct(email, req);
     }
     
@@ -95,7 +94,6 @@ public class ProductController {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-    	
     	return productService.upProduct(email, req);
     }
 }

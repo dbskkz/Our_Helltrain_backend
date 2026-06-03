@@ -51,7 +51,7 @@ public enum ReplyMessage {
 	TYPE_IS_NULL(400, "Type is null"),//請輸入類型(可能是report也可能是product的)
 	VIOLATIONTYPE_IS_NULL(400, "ViolationType is null"),//請輸入檢舉類型
 	REPORTTYPE_ERROR(400, "ReportType error"),//檢舉類型錯誤
-	ACCUSEDID_IS_NULL(400, "Accusedid is null"),//檢舉類型為空
+	TYPR_IS_ERROR(400, "Type is error"),//檢舉類型錯誤
 	//公告
 	TITLE_IS_NULL(400, "Title is null"),//標題為空
 	DATE_ERROR(400, "Date error"),//日期為空

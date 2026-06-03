@@ -3,6 +3,8 @@ package com.example.HellTrain.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ManagerDao;
@@ -18,7 +20,8 @@ public class ManagerService {
 	private ManagerDao managerDao;
 	
 	//新增管理員
-	public BasicResponse addManager(ManagerReq req) {
+	@PostMapping("/addmana")
+	public BasicResponse addManager(@RequestBody ManagerReq req) {
 		managerDao.addManager(req.getEmail(), req.getName(), encoder.encode(req.getPassword()));
 		
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());

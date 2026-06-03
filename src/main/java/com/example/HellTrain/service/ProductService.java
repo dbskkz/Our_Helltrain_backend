@@ -451,15 +451,13 @@ public class ProductService {
 			String locationJson = mapper.writeValueAsString(req.getLocation());
 			String gradeJson = mapper.writeValueAsString(req.getGrade());
 			String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup());
-
-			System.out.println("imgList 數量：" + req.getImgList().size());
-			System.out.println("上傳後 imgUrls：" + imgUrls);
 			
 			productDao.updata(req.getProductId(), req.getProductName(), req.getDescription(), req.getPrice(),
 					imgPathJson, typeJson, req.getProductCondition(), gradeJson, locationJson, deptGroupJson);
 
 		} catch (Exception e) {
-			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(), ReplyMessage.PLEASE_TRY_LATE.getMessage());
+			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
+					ReplyMessage.PLEASE_TRY_LATE.getMessage());
 		}
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //

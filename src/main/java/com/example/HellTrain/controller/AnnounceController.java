@@ -17,7 +17,7 @@ import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.service.AnnounceService;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://lacolhost:4200")
 @RequestMapping("/announce")
 public class AnnounceController {
 	

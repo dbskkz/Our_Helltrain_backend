@@ -1,16 +1,17 @@
 package com.example.HellTrain.response;
 
-import com.example.HellTrain.entity.Report;
+import com.example.HellTrain.vo.ReportVo;
 
 public class GetIdReportRes extends BasicResponse {
 
-	private Report report;
+	private ReportVo report;
 
-	public Report getReport() {
+
+	public ReportVo getReport() {
 		return report;
 	}
 
-	public void setReport(Report report) {
+	public void setReport(ReportVo report) {
 		this.report = report;
 	}
 
@@ -24,7 +25,7 @@ public class GetIdReportRes extends BasicResponse {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GetIdReportRes(int statusCode, String message, Report report) {
+	public GetIdReportRes(int statusCode, String message, ReportVo report) {
 		super(statusCode, message);
 		this.report = report;
 	}

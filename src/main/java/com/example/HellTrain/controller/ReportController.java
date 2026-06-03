@@ -19,7 +19,7 @@ import com.example.HellTrain.service.ReportService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://lacolhost:4200")
 @RequestMapping("/report")
 public class ReportController {
 	
@@ -36,7 +36,7 @@ public class ReportController {
 		return reportService.addReport(email, req);
 	}
 	
-	@PostMapping(value = "/getAllReport")
+	@GetMapping(value = "/getAllReport")
 	public ReportRes getAllReport() {
 		return reportService.getAllReport();
 	}

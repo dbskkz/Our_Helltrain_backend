@@ -2,7 +2,9 @@ package com.example.HellTrain.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +28,11 @@ import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
 import com.example.HellTrain.response.UserRes;
 import com.example.HellTrain.vo.SetInfoVo;
+import com.example.HellTrain.vo.UserVo;
 import com.example.HellTrain.vo.VerifyVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -44,6 +50,34 @@ public class UserService {
 	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\s]{2,20}$";// 姓名2-20碼
 	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
 	private final String phonepattern = "09-\\d{7,8}";
+
+	
+	private ObjectMapper mapper = new ObjectMapper();
+	private List<String> parseJsonList(String json) {
+	    if (json == null || json.isBlank()) return new ArrayList<>();
+	    try {
+	        return mapper.readValue(json, new TypeReference<List<String>>() {});
+	    } catch (Exception e) {
+	        return new ArrayList<>();
+	    }
+	}
+
+	private UserVo toVo(User user) {
+	    UserVo vo = new UserVo();
+	    vo.setUserId(user.getUserId());
+	    vo.setUserEmail(user.getUserEmail());
+	    vo.setUserName(user.getUserName());
+	    vo.setPhone(user.getPhone());
+	    vo.setLocation(parseJsonList(user.getLocation()));  // 轉 List
+	    vo.setSchool(user.getSchool());
+	    vo.setDepartment(user.getDepartment());
+	    vo.setStatus(user.getStatus());
+	    vo.setVerified(user.getVerified());
+	    vo.setGoodLevel(user.getGoodLevel());
+	    vo.setMsg(user.getMsg());
+	    vo.setImgPath(user.getImgPath());
+	    return vo;
+	}
 
 	private BasicResponse checkAccount(String email, String password) {
 		if (!email.endsWith(".edu.tw")) {
@@ -115,8 +149,15 @@ public class UserService {
 		LocalDateTime createDate = LocalDateTime.now();
 
 		/* 建立帳號並傳入加密後的密碼 */
-		userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
-				req.getLocation(), req.getSchool(), UserStatus.Unverified.getMessage(), createDate);
+		String locationJson;
+		try {
+			locationJson = mapper.writeValueAsString(req.getLocation());
+			userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
+					locationJson, req.getSchool(), UserStatus.Unverified.getMessage(), createDate);
+		} catch (JsonProcessingException e) {
+			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
+					ReplyMessage.PLEASE_TRY_LATE.getMessage());
+		}
 
 		/* 產生驗證碼並寄信 */
 		String code = codeStore.generate(req.getEmail());
@@ -134,7 +175,7 @@ public class UserService {
 			helper.setTo(email);
 			helper.setSubject("【HellTrain】Email 驗證碼");
 
-			//當有正式網站時localhost:4200會是網址
+			// 當有正式網站時localhost:4200會是網址
 			String verifyUrl = "http://localhost:4200/login?mode=register&step=2&email=" + email;
 
 			String content = """
@@ -206,7 +247,7 @@ public class UserService {
 			helper.setTo(email);
 			helper.setSubject("【HellTrain】帳號驗證提醒");
 
-			//當有正式網站時localhost:4200會是網址
+			// 當有正式網站時localhost:4200會是網址
 			String verifyUrl = "http://localhost:4200/login?mode=register&step=2&email=" + email;
 
 			String content = """
@@ -241,22 +282,22 @@ public class UserService {
 			sendReminderEmail(user.getUserEmail(), code); // ← 用新的方法
 		}
 	}
-	
-	//逾期未驗證刪除，1:00執行刪除
-	@Scheduled(cron = "0 0 1 * * *")  // 凌晨 1 點（提醒信寄完後才刪）
+
+	// 逾期未驗證刪除，1:00執行刪除
+	@Scheduled(cron = "0 0 1 * * *") // 凌晨 1 點（提醒信寄完後才刪）
 	public void cleanUnverifiedAccounts() {
-	    LocalDateTime deadline = LocalDateTime.now().minusDays(7);
-	    userdao.deleteUnverified(deadline);
+		LocalDateTime deadline = LocalDateTime.now().minusDays(7);
+		userdao.deleteUnverified(deadline);
 	}
 
 	/* 登入，默認大部分為一般使用者，故先以使用者資料庫進行比對 */
 	public LogInRes login(String email, String password) {
-		BasicResponse check=checkAccount(email, password);
+		BasicResponse check = checkAccount(email, password);
 		String role = "";// 帳號身分
 
 		/* 查詢帳號格式 */
 		if (check != null) {
-			return new LogInRes(check.getStatusCode(),
+			return new LogInRes(check.getStatusCode(), //
 					check.getMessage());
 		}
 
@@ -264,47 +305,39 @@ public class UserService {
 		User user = userdao.getAccount(email);
 		if (user != null) {
 
-	        // 3. 密碼錯
-	        if (!encoder.matches(password, user.getPassword())) {
-	            return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(),
-	                ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage());
-	        }
+			// 3. 密碼錯
+			if (!encoder.matches(password, user.getPassword())) {
+				return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(), //
+						ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage());
+			}
 
-	        role = "user";
+			role = "user";
 
-	        // 4. 停權
-	        if (user.getStatus().equals(UserStatus.Suspension.getMessage())) {
-	            return new LogInRes(ReplyMessage.ACCOUNT_IS_BANNED.getCode(),
-	                ReplyMessage.ACCOUNT_IS_BANNED.getMessage());
-	        }
+			// 4. 停權
+			if (user.getStatus().equals(UserStatus.Suspension.getMessage())) {
+				return new LogInRes(ReplyMessage.ACCOUNT_IS_BANNED.getCode(), //
+						ReplyMessage.ACCOUNT_IS_BANNED.getMessage());
+			}
 
-	        // 5. 未驗證
-	        if (user.getVerified() == null) {
-	            String code = codeStore.generate(user.getUserEmail());
-	            sendVerificationEmail(user.getUserEmail(), code);
-	            return new LogInRes(
-	                ReplyMessage.PLEASE_VERIFY.getCode(),
-	                ReplyMessage.PLEASE_VERIFY.getMessage()
-	            );
-	        }
+			// 5. 未驗證
+			if (user.getVerified() == null) {
+				String code = codeStore.generate(user.getUserEmail());
+				sendVerificationEmail(user.getUserEmail(), code);
+				return new LogInRes(ReplyMessage.PLEASE_VERIFY.getCode(), //
+						ReplyMessage.PLEASE_VERIFY.getMessage());
+			}
 
-	        // 6. 驗證過期
-	        if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
-	            String code = codeStore.generate(user.getUserEmail());
-	            sendVerificationEmail(user.getUserEmail(), code);
-	            return new LogInRes(
-	                ReplyMessage.VERIFICATION_IS_INVALID.getCode(),
-	                ReplyMessage.VERIFICATION_IS_INVALID.getMessage()
-	            );
-	        }
+			// 6. 驗證過期
+			if (user.getVerified().plusYears(1).isBefore(LocalDate.now())) {
+				String code = codeStore.generate(user.getUserEmail());
+				sendVerificationEmail(user.getUserEmail(), code);
+				return new LogInRes(ReplyMessage.VERIFICATION_IS_INVALID.getCode(), //
+						ReplyMessage.VERIFICATION_IS_INVALID.getMessage());
+			}
 
-	        return new LogInRes(
-	            ReplyMessage.SUCCESS.getCode(),
-	            ReplyMessage.SUCCESS.getMessage(),
-	            role,
-	            user
-	        );
-	    }
+			return new LogInRes(ReplyMessage.SUCCESS.getCode(), //
+					ReplyMessage.SUCCESS.getMessage(), role, toVo(user));
+		}
 
 		// 比對管理員資料庫
 		Manager manager = managerdao.getByEmail(email);
@@ -315,15 +348,14 @@ public class UserService {
 		}
 
 		return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(), //
-				ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage(), role, user);
+				ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage(), role,  toVo(user));
 	}
 
 	/* 資料修改 */
-	public BasicResponse setInfo(HttpSession session,SetInfoVo vo) {
-	    String email = (String) session.getAttribute("user_email");
+	public BasicResponse setInfo(HttpSession session, SetInfoVo vo) {
+		String email = (String) session.getAttribute("user_email");
 
 		User user = userdao.getAccount(email);
-		System.out.println(user.getUserEmail() +user.getUserName());
 		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
@@ -357,28 +389,34 @@ public class UserService {
 
 		String imgPath = null;
 
-	    if (vo.isDeleteImg()) {
-	        imgPath = defaultAvatar;
+		if (vo.isDeleteImg()) {
+			imgPath = defaultAvatar;
 
-	    } else if (StringUtils.hasText(vo.getImg())) {
-	        // 有傳 base64 → 上傳到 Cloudinary
-	        try {
-	            imgPath = cloudinaryService.uploadBase64(vo.getImg());
-	        } catch (Exception e) {
-	            return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
-	            		ReplyMessage.PLEASE_TRY_LATE.getMessage());
-	        }
+		} else if (StringUtils.hasText(vo.getImg())) {
+			// 有傳 base64 → 上傳到 Cloudinary
+			try {
+				imgPath = cloudinaryService.uploadBase64(vo.getImg());
+			} catch (Exception e) {
+				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+						ReplyMessage.PLEASE_TRY_LATE.getMessage());
+			}
 
-	    } else {
-	        // 沒傳圖片 → 保留原本的
-	        imgPath = user.getImgPath();
-	    }
+		} else {
+			// 沒傳圖片 → 保留原本的
+			imgPath = user.getImgPath();
+		}
 
 		// 存入前轉換，只有單一選項所以不需要Map
-		String locationStr = String.join(",", vo.getLocation());
+		String locationStr;
+		try {
+			locationStr = mapper.writeValueAsString(vo.getLocation());
+			userdao.setInfo(email, vo.getName(), imgPath, locationStr, vo.getSchool(),//
+					vo.getDepartment(), vo.getPhone(), vo.getMsg());
+		} catch (JsonProcessingException e) {
+			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
+					ReplyMessage.PLEASE_TRY_LATE.getMessage());
+		}
 
-		userdao.setInfo(email, vo.getName(), imgPath, locationStr, vo.getSchool(), vo.getDepartment(),
-				vo.getPhone(), vo.getMsg());
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 
@@ -415,8 +453,10 @@ public class UserService {
 	public UserRes getAllUser() {
 
 		List<User> userList = userdao.getAllUser();
+	    List<UserVo> voList = userList.stream().map(this::toVo)
+	            .collect(Collectors.toList());
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage(), userList);
+				ReplyMessage.SUCCESS.getMessage(), voList);
 	}
 
 	// 取得個別帳號詳情
@@ -428,7 +468,7 @@ public class UserService {
 		}
 
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage(), user);
+				ReplyMessage.SUCCESS.getMessage(), toVo(user));
 	}
 
 	// 帳號狀態變更(手動)
@@ -436,8 +476,7 @@ public class UserService {
 
 		String status;
 		User user = userdao.getById(usesrId);
-		if(user==null)
-		{
+		if (user == null) {
 			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
@@ -448,9 +487,9 @@ public class UserService {
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		} else {
 			status = UserStatus.Normal.getMessage();
-		userdao.changeStatus(usesrId, status);
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage());
+			userdao.changeStatus(usesrId, status);
+			return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+					ReplyMessage.SUCCESS.getMessage());
 		}
 	}
 

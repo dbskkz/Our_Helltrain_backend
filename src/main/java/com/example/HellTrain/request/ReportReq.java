@@ -4,9 +4,9 @@ import java.util.List;
 
 public class ReportReq {
 	
-	private int productId;//nn
+	private int productId;
 	
-	private int accusedId;//nn
+	private int accusedId;
 	
 	private String description;//nn
 	

@@ -25,7 +25,7 @@ import com.example.HellTrain.vo.VerifyVO;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "https://lacolhost:4200")
 @RequestMapping("/user")
 public class UserController {
 	

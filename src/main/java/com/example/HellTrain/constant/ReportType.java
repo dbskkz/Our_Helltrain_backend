@@ -3,7 +3,7 @@ package com.example.HellTrain.constant;
 public enum ReportType {
 
 	Product("商品"),
-	Sales("交易");
+	Sales("使用者");
 	
 	private final String message;
 
