@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.HellTrain.config.CloudinaryService;
+import com.example.HellTrain.constant.ActiveType;
 import com.example.HellTrain.constant.ProductStatus;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.constant.ReportStatus;
@@ -22,6 +23,7 @@ import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.Report;
 import com.example.HellTrain.entity.User;
+import com.example.HellTrain.request.CheckReport;
 import com.example.HellTrain.request.ReportReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetIdReportRes;
@@ -73,10 +75,10 @@ public class ReportService {
 		return vo;
 	}
 
-	public BasicResponse addReport(String email, ReportReq req) {
+	public BasicResponse addReport(int id, ReportReq req) {
 
 		// 1. 透過 session 接收 user (檢舉人)
-		User complainant = userDao.getAccount(email);
+		User complainant = userDao.getById(id);
 		if (complainant == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
@@ -85,17 +87,6 @@ public class ReportService {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
-
-		// 2. 驗證檢舉類型 (Type)
-//		if (!StringUtils.hasText(req.getType())) {
-//			return new BasicResponse(ReplyMessage.TYPE_IS_NULL.getCode(), //
-//					ReplyMessage.TYPE_IS_NULL.getMessage());
-//		}
-//		if (!req.getType().equals(ReportType.Product.getMessage())
-//				&& !req.getType().equals(ReportType.Sales.getMessage())) {
-//			return new BasicResponse(ReplyMessage.REPORTTYPE_ERROR.getCode(),
-//					ReplyMessage.REPORTTYPE_ERROR.getMessage());
-//		}
 
 		// 3. 檢查違規種類
 		if (!StringUtils.hasText(req.getViolationType())) {
@@ -146,8 +137,9 @@ public class ReportService {
 				return new BasicResponse(ReplyMessage.TYPR_IS_ERROR.getCode(), //
 						ReplyMessage.TYPR_IS_ERROR.getMessage());
 			}
-			reportDao.addReport(req.getProductId(), req.getAccusedId(), complainant.getUserId(), req.getDescription(),
-					filePathStr, reportDate, ReportStatus.Handle.getMessage(), type, req.getViolationType());
+			reportDao.addReport(req.getProductId(), req.getAccusedId(), id, //
+					req.getDescription(), filePathStr, reportDate,//
+					ReportStatus.Handle.getMessage(), type, req.getViolationType());
 
 		} catch (Exception e) {
 			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(), //
@@ -182,15 +174,25 @@ public class ReportService {
 	}
 
 	// 動作！！！
-	public BasicResponse check(int reportId) {
+	public BasicResponse check(CheckReport req) {
 
-		Report report = reportDao.getReportById(reportId);
+		Report report = reportDao.getReportById(req.getReportId());
 
 		if (report == null) {
 			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 
+		/*檢舉被駁回*/
+		//單純改變檢舉狀態其餘不動
+		if(req.getActive().equals(ActiveType.Reject.getMessage()))
+		{
+			reportDao.check(req.getReportId(), ReportStatus.Processed.getMessage());
+			return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
+					ReplyMessage.SUCCESS.getMessage());
+		}
+		
+		/*檢舉成功的狀況*/
 		// 檢舉類型為檢舉商品
 		if (report.getType().equals(ReportType.Product.getMessage())) {
 			// 下架商品
@@ -214,7 +216,7 @@ public class ReportService {
 			userDao.changeStatus(user.getUserId(), UserStatus.Suspension.getMessage());
 		}
 
-		reportDao.check(reportId, ReportStatus.Processed.getMessage());
+		reportDao.check(req.getReportId(), ReportStatus.Processed.getMessage());
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}

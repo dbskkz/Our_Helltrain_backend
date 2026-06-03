@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.request.GoodLevelReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.service.OrderService;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
@@ -16,7 +17,7 @@ import com.example.HellTrain.vo.OrderVo;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "https://lacolhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping("/order")
 public class OrderController {
 
@@ -25,46 +26,58 @@ public class OrderController {
 
 	@PostMapping(value  = "/addOrder")
 	public BasicResponse addOrder(HttpSession session, @RequestBody OrderVo vo) {
-		String email = (String) session.getAttribute("user_email");
-		if (email == null) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return orderService.addOrder(email,vo);
+		return orderService.addOrder(id,vo);
 	}
 
 	// 賣家同意請求，請求按鈕點下後同商品的其它等待中會強制轉為取消
 	@PostMapping(value = "/acceptOrder")
 	public BasicResponse acceptOrder(HttpSession session, @RequestBody ChangeOrderStatusVo vo) {
-		String email = (String) session.getAttribute("user_email");
-		if (email == null) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return orderService.acceptOrder(email,vo);
+		return orderService.acceptOrder(id,vo);
 	}
 
-	// 買家主動取消訂單(vo.email是買家的)
+	// 買家主動取消訂單
 	@PostMapping(value = "/canaelOrder")
 	public BasicResponse canaelOrder(HttpSession session, @RequestBody ChangeOrderStatusVo vo) {
-		String email = (String) session.getAttribute("user_email");
-		if (email == null) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
 
-		return orderService.canaelOrder(email,vo);
+		return orderService.canaelOrder(id,vo);
 	}
 
 	//確認雙方是否點擊確認
 	@PostMapping(value = "/delivery")
-	public BasicResponse checkDelivery(HttpSession session, @RequestBody ChangeOrderStatusVo vo) {
-		String email = (String) session.getAttribute("user_email");
-		if (email == null) {
+	public BasicResponse checkDelivery(HttpSession session,//
+			@RequestBody ChangeOrderStatusVo vo) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		
-		return orderService.checkDelivery(email,vo);
+		return orderService.checkDelivery(id,vo);
 	}
+	
+	//交易雙方給予評價
+	@PostMapping(value = "/giveLevel")
+	public BasicResponse giveLevel(HttpSession session, @RequestBody GoodLevelReq req) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
+			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
+					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+		}
+		return orderService.giveLevel(id, req);
+	}
+
 }

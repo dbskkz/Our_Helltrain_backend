@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.HellTrain.entity.Order;
+
 import jakarta.transaction.Transactional;
 
 @Repository
@@ -60,4 +61,16 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	@Transactional
 	@Query(value="update `order` set seller_check = 1 where order_id = ?1",nativeQuery = true)
 	public void salesCheack(int orderId);
+
+	//設定賣家評分(session存儲的為買家資訊時)
+	@Modifying
+	@Transactional
+	@Query(value="update `order` set salesman_rank = ?2 where order_id = ?1",nativeQuery = true)
+	public void setSalesRank(int orderId, int rank);
+
+	//設定買家評分(session存儲的為賣家資訊時)
+	@Modifying
+	@Transactional
+	@Query(value="update `order` set buyer_rank = ?2 where order_id = ?1",nativeQuery = true)
+	public void setbuyerRank(int orderId, int rank);
 }

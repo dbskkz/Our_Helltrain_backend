@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.servlet.http.HttpSession;
 
 @EnableScheduling // 讓此類別下的scheduled的方法生效
 @Service
@@ -352,10 +351,9 @@ public class UserService {
 	}
 
 	/* 資料修改 */
-	public BasicResponse setInfo(HttpSession session, SetInfoVo vo) {
-		String email = (String) session.getAttribute("user_email");
-
-		User user = userdao.getAccount(email);
+	public BasicResponse setInfo(int id, SetInfoVo vo) {
+		
+		User user = userdao.getById(id);
 		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
@@ -410,8 +408,9 @@ public class UserService {
 		String locationStr;
 		try {
 			locationStr = mapper.writeValueAsString(vo.getLocation());
-			userdao.setInfo(email, vo.getName(), imgPath, locationStr, vo.getSchool(),//
-					vo.getDepartment(), vo.getPhone(), vo.getMsg());
+			userdao.setInfo(user.getUserEmail(), vo.getName(), imgPath, //
+					locationStr, vo.getSchool(), vo.getDepartment(), vo.getPhone(), //
+					vo.getMsg());
 		} catch (JsonProcessingException e) {
 			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
 					ReplyMessage.PLEASE_TRY_LATE.getMessage());
@@ -423,9 +422,9 @@ public class UserService {
 	}
 
 	// 更改密碼
-	public BasicResponse changePassword(String email, String nowPwd, String newPwd) {
+	public BasicResponse changePassword(int id, String nowPwd, String newPwd) {
 
-		User user = userdao.getAccount(email);
+		User user = userdao.getById(id);
 
 		if (!nowPwd.matches(pwdPattern) || !encoder.matches(nowPwd, user.getPassword())) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
@@ -443,7 +442,7 @@ public class UserService {
 		}
 
 		// 寫寫dao
-		userdao.updatePad(email, encoder.encode(newPwd));
+		userdao.updatePad(user.getUserEmail(), encoder.encode(newPwd));
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());

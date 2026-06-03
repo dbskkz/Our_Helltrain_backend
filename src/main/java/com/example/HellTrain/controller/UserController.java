@@ -20,12 +20,13 @@ import com.example.HellTrain.response.UserRes;
 import com.example.HellTrain.service.UserService;
 import com.example.HellTrain.vo.ChangePasswordVo;
 import com.example.HellTrain.vo.SetInfoVo;
+import com.example.HellTrain.vo.UserVo;
 import com.example.HellTrain.vo.VerifyVO;
 
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "https://lacolhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping("/user")
 public class UserController {
 	
@@ -62,8 +63,10 @@ public class UserController {
 
 	    // 登入成功
 	    if (res.getStatusCode() == 200) {
-	        session.setAttribute("user_email", req.getEmail());
-	        // 30天
+	    	//由回傳資料中取出
+	    	UserVo user=(UserVo)res.getData();
+	    	session.setAttribute("user_id", user.getUserId());
+	    	// 30天
 	        session.setMaxInactiveInterval(2592000);
 	    }
 	    return res;
@@ -77,8 +80,8 @@ public class UserController {
 	//重新發送驗證碼
 	@PostMapping(value = "/resend")
 	public BasicResponse resendCode(@RequestBody  Map<String, String> body) {
-		String email=body.get("user_email");
-		return userService.resendCode(email);
+		String id=body.get("user_id");
+		return userService.resendCode(id);
 	}
 	
 	//修改密碼以外的個人資訊
@@ -86,12 +89,12 @@ public class UserController {
 	public BasicResponse setInfo(HttpSession session, @RequestBody  SetInfoVo vo) {
 		
 		//檢查登入session是否過期
-		String email=(String)session.getAttribute("user_email");
-		if(email==null) {
+		Integer id=(Integer)session.getAttribute("user_id");
+		if(id==null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return userService.setInfo(session ,vo);
+		return userService.setInfo(id ,vo);
 	}
 	
 	//修改密碼
@@ -99,12 +102,12 @@ public class UserController {
 	public BasicResponse changePassword(HttpSession session, @RequestBody ChangePasswordVo vo) { 
 		
 		//檢查登入session是否過期
-		String email=(String)session.getAttribute("user_email");
-		if(email==null) {
+		Integer id=(Integer)session.getAttribute("user_idl");
+		if(id==null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return userService.changePassword(email,vo.getNowPad(),vo.getNewPad());
+		return userService.changePassword(id,vo.getNowPad(),vo.getNewPad());
 	}
 	
 	//以Id改變該使用者狀態

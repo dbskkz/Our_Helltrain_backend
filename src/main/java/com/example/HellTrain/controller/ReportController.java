@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
+import com.example.HellTrain.request.CheckReport;
 import com.example.HellTrain.request.ReportReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetIdReportRes;
@@ -19,7 +20,7 @@ import com.example.HellTrain.service.ReportService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "https://lacolhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping("/report")
 public class ReportController {
 	
@@ -28,12 +29,12 @@ public class ReportController {
 	
 	@PostMapping(value = "/addReport")
 	public BasicResponse addReport(HttpSession session, @RequestBody ReportReq req) {
-		String email = (String) session.getAttribute("user_email");
-		if (email == null) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-		return reportService.addReport(email, req);
+		return reportService.addReport(id, req);
 	}
 	
 	@GetMapping(value = "/getAllReport")
@@ -47,8 +48,8 @@ public class ReportController {
 	}
 	
 	@PostMapping(value = "/check")
-	public BasicResponse check(@RequestBody int reportId) {
-		return reportService.check(reportId);
+	public BasicResponse check(@RequestBody CheckReport req) {
+		return reportService.check(req);
 	}
 
 }

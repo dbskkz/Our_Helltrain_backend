@@ -223,11 +223,11 @@ public class ProductService {
 		return convertToFrontEndFormat(result);
 	}
 
-	public BasicResponse addProduct(String email, ProductReq req) {
+	public BasicResponse addProduct(int id, ProductReq req) {
 
 		/* 檢查 */
 		// 帳號存在且狀態為正常
-		User user = userDao.getAccount(email);
+		User user = userDao.getById(id);
 		if (user == null || !user.getStatus().equals(UserStatus.Normal.getMessage())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),//
 			 ReplyMessage.NO_PERMISSIONS.getMessage());
@@ -319,8 +319,9 @@ public class ProductService {
 			String gradeJson = mapper.writeValueAsString(req.getGrade());
 			String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup());
 
-			productDao.insert(user.getUserId(), req.getProductName(), req.getDescription(), req.getPrice(), imgPathJson,
-					typeJson, shelfDate, req.getProductCondition(), status, gradeJson, locationJson, deptGroupJson);
+			productDao.insert(id, req.getProductName(), req.getDescription(),//
+					req.getPrice(), imgPathJson, typeJson, shelfDate,//
+					req.getProductCondition(), status, gradeJson, locationJson, deptGroupJson);
 
 		} catch (Exception e) {
 			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
@@ -331,10 +332,9 @@ public class ProductService {
 				ReplyMessage.SUCCESS.getMessage());
 	}
 
-	public BasicResponse upProduct(String email, ProductReq req) {
+	public BasicResponse upProduct(int id, ProductReq req) {
 
 		Product product = productDao.findByProductId(req.getProductId());
-		User user=userDao.getAccount(email);
 		/* 檢查 */
 		// 商品==null
 		if (product == null) {
@@ -343,7 +343,7 @@ public class ProductService {
 		}
 		
 		//檢查user是否為商品傭有者
-		if(product.getUserId()!=user.getUserId())
+		if(product.getUserId()!=id)
 		{
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
