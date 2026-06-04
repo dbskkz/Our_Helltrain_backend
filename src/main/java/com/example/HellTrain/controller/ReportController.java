@@ -20,7 +20,7 @@ import com.example.HellTrain.service.ReportService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping("/report")
 public class ReportController {
 	

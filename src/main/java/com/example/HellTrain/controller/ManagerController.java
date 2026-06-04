@@ -12,7 +12,7 @@ import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.service.ManagerService;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping("/manager")
 public class ManagerController {
 	
