@@ -22,7 +22,8 @@ import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.ManagerDao;
 import com.example.HellTrain.dao.UserDao;
-import com.example.HellTrain.entity.*;
+import com.example.HellTrain.entity.Manager;
+import com.example.HellTrain.entity.User;
 import com.example.HellTrain.request.UserReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.LogInRes;
@@ -50,8 +51,8 @@ public class UserService {
 	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
 	private final String phonepattern = "09-\\d{7,8}";
 
-	
 	private ObjectMapper mapper = new ObjectMapper();
+	
 	private List<String> parseJsonList(String json) {
 	    if (json == null || json.isBlank()) return new ArrayList<>();
 	    try {
@@ -61,21 +62,21 @@ public class UserService {
 	    }
 	}
 
-	private UserVo toVo(User user) {
-	    UserVo vo = new UserVo();
-	    vo.setUserId(user.getUserId());
-	    vo.setUserEmail(user.getUserEmail());
-	    vo.setUserName(user.getUserName());
-	    vo.setPhone(user.getPhone());
+	private UserVo toVo(User user) {//
+	    UserVo vo = new UserVo();//
+	    vo.setUserId(user.getUserId());//
+	    vo.setUserEmail(user.getUserEmail());//
+	    vo.setUserName(user.getUserName());//
+	    vo.setPhone(user.getPhone());//
 	    vo.setLocation(parseJsonList(user.getLocation()));  // 轉 List
-	    vo.setSchool(user.getSchool());
-	    vo.setDepartment(user.getDepartment());
-	    vo.setStatus(user.getStatus());
-	    vo.setVerified(user.getVerified());
-	    vo.setGoodLevel(user.getGoodLevel());
-	    vo.setMsg(user.getMsg());
-	    vo.setImgPath(user.getImgPath());
-	    return vo;
+	    vo.setSchool(user.getSchool());//
+	    vo.setDepartment(user.getDepartment());//
+	    vo.setStatus(user.getStatus());//
+	    vo.setVerified(user.getVerified());//
+	    vo.setGoodLevel(user.getGoodLevel());//
+	    vo.setMsg(user.getMsg());//
+	    vo.setImgPath(user.getImgPath());//
+	    return vo;//
 	}
 
 	private BasicResponse checkAccount(String email, String password) {
@@ -101,8 +102,10 @@ public class UserService {
 
 	@Autowired
 	private UserDao userdao;
+	//注入驗證碼相關文件
 	@Autowired
 	private VerificationCodeStore codeStore;
+	//注入上傳至雲端(cloudinaryService相關文件)
 	@Autowired
 	private CloudinaryService cloudinaryService;
 	@Autowired
@@ -113,58 +116,61 @@ public class UserService {
 	/* insert */
 	public BasicResponse addUser(UserReq req) {
 
-		/* 資料檢查 */
-		if (!StringUtils.hasText(req.getSchool())) {
-			return new BasicResponse(ReplyMessage.SCHOOL_IS_NULL.getCode(), //
-					ReplyMessage.SCHOOL_IS_NULL.getMessage());
-		}
+	    /* 資料檢查 */
+	    if (!StringUtils.hasText(req.getSchool())) {
+	        return new BasicResponse(ReplyMessage.SCHOOL_IS_NULL.getCode(),
+	                ReplyMessage.SCHOOL_IS_NULL.getMessage());
+	    }
 
-		if (!StringUtils.hasText(req.getLocation())) {
-			return new BasicResponse(ReplyMessage.LOCATION_IS_NULL.getCode(), //
-					ReplyMessage.LOCATION_IS_NULL.getMessage());
-		}
-		// 檢查姓名格式
-		if (!req.getName().matches(namePattern)) {
-			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
-					ReplyMessage.PARAM_NAME_ERROR.getMessage());
-		}
-		// 檢查email及password
-		if (checkAccount(req.getEmail(), req.getPassword()) != null) {
-			return checkAccount(req.getEmail(), req.getPassword());
-		}
+	    // 檢查地區
+	    if (req.getLocation() == null || !StringUtils.hasText(req.getLocation())) {
+	        return new BasicResponse(ReplyMessage.LOCATION_IS_NULL.getCode(),
+	        		ReplyMessage.LOCATION_IS_NULL.getMessage());
+	    }
+	    // 檢查姓名格式
+	    if (!req.getName().matches(namePattern)) {
+	        return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(),
+	                ReplyMessage.PARAM_NAME_ERROR.getMessage());
+	    }
 
-		// 檢查電話號碼格式
-		// 當phone有值，且與檢查函式中的格式不相符
-		if (req.getPhone() != null && checkphone(req.getPhone()) != null) {
-			return checkphone(req.getPhone());
-		}
+	    // 檢查email及password
+	    if (checkAccount(req.getEmail(), req.getPassword()) != null) {
+	        return checkAccount(req.getEmail(), req.getPassword());
+	    }
 
-		// 確認email是否被註冊過
-		if (userdao.selectCount(req.getEmail()) == 1) {
-			return new BasicResponse(ReplyMessage.EMAIL_HAS_FOUND.getCode(), //
-					ReplyMessage.EMAIL_HAS_FOUND.getMessage());
-		}
+	    // 檢查電話號碼格式
+	    if (req.getPhone() != null && checkphone(req.getPhone()) != null) {
+	        return checkphone(req.getPhone());
+	    }
 
-		LocalDateTime createDate = LocalDateTime.now();
+	    // 確認email是否被註冊過
+	    if (userdao.selectCount(req.getEmail()) == 1) {
+	        return new BasicResponse(ReplyMessage.EMAIL_HAS_FOUND.getCode(),
+	                ReplyMessage.EMAIL_HAS_FOUND.getMessage());
+	    }
 
-		/* 建立帳號並傳入加密後的密碼 */
-		String locationJson;
-		try {
-			locationJson = mapper.writeValueAsString(req.getLocation());
-			userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
-					locationJson, req.getSchool(), UserStatus.Unverified.getMessage(), createDate);
-		} catch (JsonProcessingException e) {
-			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
-					ReplyMessage.PLEASE_TRY_LATE.getMessage());
-		}
+	    LocalDateTime createDate = LocalDateTime.now();
 
-		/* 產生驗證碼並寄信 */
-		String code = codeStore.generate(req.getEmail());
-		sendVerificationEmail(req.getEmail(), code);
+	    /* 建立帳號並傳入加密後的密碼 */
+	    List<String> locationList = new ArrayList<>();
+	    locationList.add(req.getLocation());
+//	    locationJson = mapper.writeValueAsString(locationList);  // 變成 ["桃園縣"]
+	    String locationJson;
+	    try {
+	        locationJson = mapper.writeValueAsString(locationList);  // List<String> 直接序列化
+	        userdao.addUser(req.getEmail(), req.getName(), encoder.encode(req.getPassword()), req.getPhone(),
+	                locationJson, req.getSchool(), UserStatus.Unverified.getMessage(), createDate);
+	    } catch (JsonProcessingException e) {
+	        return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+	                ReplyMessage.PLEASE_TRY_LATE.getMessage());
+	    }
 
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
+	    /* 產生驗證碼並寄信 */
+	    String code = codeStore.generate(req.getEmail());
+	    sendVerificationEmail(req.getEmail(), code);
+
+	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 	}
-
 	/* 寄送驗證信 */
 	private void sendVerificationEmail(String email, String code) {
 		try {
@@ -302,6 +308,7 @@ public class UserService {
 
 		// 比對使用者資料庫，找出email相符的資料
 		User user = userdao.getAccount(email);
+		
 		if (user != null) {
 
 			// 3. 密碼錯
@@ -345,9 +352,15 @@ public class UserService {
 			return new LogInRes(ReplyMessage.SUCCESS.getCode(), //
 					ReplyMessage.SUCCESS.getMessage(), role, manager);
 		}
+		
+		if(userdao.getAccount(email)==null && managerdao.getByEmail(email)==null)
+		{
+			return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(), //
+					ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage());
+		}
 
 		return new LogInRes(ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getCode(), //
-				ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage(), role,  toVo(user));
+				ReplyMessage.EMAIL_OR_PASSWORD_ERROR.getMessage());
 	}
 
 	/* 資料修改 */

@@ -22,8 +22,9 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
 	@Modifying
 	@Transactional
-	@Query(value = "insert ignore into user (user_email, user_name, password, phone,"
-			+ " location, school, status,create_date) " + " value (?1,?2,?3,?4,?5,?6,?7,?8)", nativeQuery = true)
+	@Query(value = "insert ignore into user (user_email, user_name, password, phone,"//
+			+ " location, school, status,create_date) "//
+			+ " value (?1,?2,?3,?4,?5,?6,?7,?8)", nativeQuery = true)
 	public void addUser(String email, String name, String password, String phone, String location, String school,
 			String status, LocalDateTime creatDate);
 
