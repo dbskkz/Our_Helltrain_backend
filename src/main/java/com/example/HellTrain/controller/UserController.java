@@ -102,7 +102,7 @@ public class UserController {
 	public BasicResponse changePassword(HttpSession session, @RequestBody ChangePasswordVo vo) { 
 		
 		//檢查登入session是否過期
-		Integer id=(Integer)session.getAttribute("user_idl");
+		Integer id=(Integer)session.getAttribute("user_id");
 		if(id==null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());

@@ -49,6 +49,7 @@ public class UserReq {
 		this.email = email;
 	}
 
+
 	public String getLocation() {
 		return location;
 	}
