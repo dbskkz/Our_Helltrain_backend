@@ -177,6 +177,14 @@ public class ProductService {
 		}
 		return convertToFrontEndFormat(productDao.findByGrade(grade));
 	}
+	
+	// 6. 以學校搜尋
+	public GetProductDataRes getByUniversity(String school) {
+		if (school == null || school.isBlank()) {
+			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
+		}
+		return convertToFrontEndFormat(productDao.findBySchool(school));
+	}
 
 	// ── 6. 關鍵字搜尋 ─────────────────────────────────────────
 //    public GetProductDataRes searchByKeyword(String keyword) {

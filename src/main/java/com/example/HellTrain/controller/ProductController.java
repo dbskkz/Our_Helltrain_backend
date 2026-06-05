@@ -54,6 +54,12 @@ public class ProductController {
         return productService.searchByGrade(grade);
     }
 
+    // 以使用者校名取得商品
+    @GetMapping("/search/school")
+    public GetProductDataRes getByUniversity(@RequestParam("school") String school) {
+    	return productService.getByUniversity(school);
+    }
+    
     // 關鍵字
 //    @GetMapping("/search/type")
 //    public GetProductDataRes searchByKeyword(@RequestParam String keyword) {
