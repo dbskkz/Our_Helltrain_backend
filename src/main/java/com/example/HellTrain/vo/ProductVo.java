@@ -18,6 +18,8 @@ public class ProductVo {
 	private List<String> grade;
 	private List<String>  location;
 	private List<String> deptGroup;
+	private SellerVo seller;
+	
 	public int getProductId() {
 		return productId;
 	}
@@ -97,6 +99,13 @@ public class ProductVo {
 	public void setDeptGroup(List<String> deptGroup) {
 		this.deptGroup = deptGroup;
 	}
+	
+	public SellerVo getSeller() {
+		return seller;
+	}
+	public void setSeller(SellerVo seller) {
+		this.seller = seller;
+	}
 	public ProductVo() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -118,6 +127,25 @@ public class ProductVo {
 		this.grade = grade;
 		this.location = location;
 		this.deptGroup = deptGroup;
+	}
+	public ProductVo(int productId, int userId, String productName, String description, int price, List<String> imgPath,
+			List<String> type, LocalDate shelfDate, String productCondition, String status, List<String> grade,
+			List<String> location, List<String> deptGroup, SellerVo seller) {
+		super();
+		this.productId = productId;
+		this.userId = userId;
+		this.productName = productName;
+		this.description = description;
+		this.price = price;
+		this.imgPath = imgPath;
+		this.type = type;
+		this.shelfDate = shelfDate;
+		this.productCondition = productCondition;
+		this.status = status;
+		this.grade = grade;
+		this.location = location;
+		this.deptGroup = deptGroup;
+		this.seller = seller;
 	}
 	
 	
