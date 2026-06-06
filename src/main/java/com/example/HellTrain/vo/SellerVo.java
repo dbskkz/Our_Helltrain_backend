@@ -23,11 +23,12 @@ public class SellerVo {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	public String getDepartment() {
+	
+	public String getSchool() {
 		return school;
 	}
-	public void setDepartment(String department) {
-		this.school = department;
+	public void setSchool(String school) {
+		this.school = school;
 	}
 	public String getUserImgPath() {
 		return userImgPath;
@@ -39,11 +40,11 @@ public class SellerVo {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public SellerVo(int userId, String userName, String department, String userImgPath) {
+	public SellerVo(int userId, String userName, String school, String userImgPath) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
-		this.school = department;
+		this.school = school;
 		this.userImgPath = userImgPath;
 	}
     
