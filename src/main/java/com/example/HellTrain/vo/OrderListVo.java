@@ -15,13 +15,13 @@ public class OrderListVo {
     
     private LocalDate createDate;
     
-    private int buyerCheck;
+    private boolean buyerCheck;
     
-    private int sellerCheck;
+    private boolean sellerCheck;
     
     private String status;
     
-    private String productUser;
+    private String sellerName;
     
     private String productName;
     
@@ -47,21 +47,6 @@ public class OrderListVo {
 		this.createDate = createDate;
 	}
 
-	public int getBuyerCheck() {
-		return buyerCheck;
-	}
-
-	public void setBuyerCheck(int buyerCheck) {
-		this.buyerCheck = buyerCheck;
-	}
-
-	public int getSellerCheck() {
-		return sellerCheck;
-	}
-
-	public void setSellerCheck(int sellerCheck) {
-		this.sellerCheck = sellerCheck;
-	}
 
 	public String getStatus() {
 		return status;
@@ -71,12 +56,28 @@ public class OrderListVo {
 		this.status = status;
 	}
 
-	public String getProductUser() {
-		return productUser;
+	public boolean isBuyerCheck() {
+		return buyerCheck;
 	}
 
-	public void setProductUser(String productUser) {
-		this.productUser = productUser;
+	public void setBuyerCheck(boolean buyerCheck) {
+		this.buyerCheck = buyerCheck;
+	}
+
+	public boolean isSellerCheck() {
+		return sellerCheck;
+	}
+
+	public void setSellerCheck(boolean sellerCheck) {
+		this.sellerCheck = sellerCheck;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
 	}
 
 	public String getProductName() {
@@ -116,11 +117,11 @@ public class OrderListVo {
 		    
 		    	OrderListVo vo = new OrderListVo();//
 		        vo.setOrderId((int) row[0]);//
-		        vo.setCreateDate((LocalDate) row[1]);//
-		        vo.setBuyerCheck((int) row[2]);//
-		        vo.setSellerCheck((int) row[3]);//
+		        vo.setCreateDate(((java.sql.Date) row[1]).toLocalDate());
+		        vo.setBuyerCheck(((Byte) row[2]) == 1);//
+		        vo.setSellerCheck(((Byte) row[3]) == 1);//
 		        vo.setStatus((String) row[4]);//
-		        vo.setProductUser((String) row[5]);//
+		        vo.setSellerName((String) row[5]);//
 		        vo.setProductName((String) row[6]);//
 		        vo.setPrice((int) row[7]);//
 		        vo.setBuyerName((String) row[8]);//

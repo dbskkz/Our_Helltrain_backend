@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
@@ -95,7 +96,7 @@ public class OrderController {
 	
 	//取得商品的所有訂單
 	@GetMapping(value = "/getProductOrder")
-	public OrderRes getProductAllOrder(HttpSession session ,int productId) {
+	public OrderRes getProductAllOrder(HttpSession session ,@RequestParam("productId") int productId) {
 		Integer id = (Integer) session.getAttribute("user_id");
 		if (id == null) {
 			return new OrderRes(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
