@@ -3,6 +3,7 @@ package com.example.HellTrain.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,9 @@ import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.request.GoodLevelReq;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.OrderRes;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
+import com.example.HellTrain.vo.OrderListVo;
 import com.example.HellTrain.vo.OrderVo;
 
 @Service
@@ -32,20 +35,27 @@ public class OrderService {
 	@Autowired
 	private OrderDao orderDao;
 
+	private BasicResponse checkUserId(int userId) {
+		User user = userDao.getById(userId);
+		// 查無此買家帳號
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+		return null;
+	}
+
 	// 新增訂單
 	public BasicResponse addOrder(int id, OrderVo vo) {// (Get)
 
 //		User user = userDao.getById(vo.getBuyerId());
 
-		User user = userDao.getById(id);
-		// 查無此買家帳號
-		if (user == null) {
-			return new BasicResponse(ReplyMessage.EMAIL_NOT_FOUND.getCode(), //
-					ReplyMessage.EMAIL_NOT_FOUND.getMessage());
+		if (checkUserId(id) != null) {
+			return checkUserId(id);
 		}
+		User user = userDao.getById(id);
 
 		// 檢查帳號是否被停權。改成不等於正常，阿靠邀我她媽咧寫三小，但至少不會檢查有無驗證時間
-//		if(user.getStatus()==UserStatus.Suspension.getMessage()) {
 		if (!user.getStatus().equals(UserStatus.Normal.getMessage())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
@@ -277,4 +287,37 @@ public class OrderService {
 
 	}
 
+	public OrderRes getAllOrder(int userId) {// 直接使用session的資料找出該帳號的所有訂單資訊
+		// 檢查帳號是否存在
+		if (checkUserId(userId) != null) {
+			return (OrderRes) checkUserId(userId);
+		}
+
+		List<Object[]> results = orderDao.getUserAllOrder(userId);
+
+		List<OrderListVo> voList = results.stream().map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
+				.collect(Collectors.toList());
+
+		return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
+	}
+
+	public OrderRes getProductAllOrder(int id, int productId) {
+		if (checkUserId(id) != null) {
+			return (OrderRes) checkUserId(id);
+		}
+
+		if (productDao.findByProductId(productId) == null) {
+			return new OrderRes(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+
+		List<Object[]> results = orderDao.getByProductId(productId);
+
+		List<OrderListVo> voList = results.stream()//
+				.map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
+				.collect(Collectors.toList());
+
+		return new OrderRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), voList);
+	}
 }
