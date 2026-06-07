@@ -46,6 +46,8 @@ public enum ReplyMessage {
 	PRODUCT_IS_UNSELL(400, "Product is unsell"),//未販售的商品
 	NO_PERMISSIONS(400, "You have not Permissions"),//沒有權限
 	ORDER_STATUS_ERROR(400, "Order status error"),//訂單狀態異常(無法進行此操作)
+	ALREADY_RANKED(400, "The order is already ranked"),//使用者已給予過評價
+	INVALID_ERROR(400, "The parameter is error !"),//輸入參數錯誤(給予評分沒有在放圍內)
 	//Report
 	DESCRIPTION_IS_NULL(400, "Description is null"),//請輸入描述
 	TYPE_IS_NULL(400, "Type is null"),//請輸入類型(可能是report也可能是product的)

@@ -128,6 +128,11 @@ public class UserController {
 	public UserRes getUserData(@RequestParam("userId") int userId) {
 		return userService.getUserData(userId);
 	}
-
+	
+	public BasicResponse LogOut(HttpSession session) {
+		//清除session內容=>將session的有效時間歸0
+		session.invalidate();
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),ReplyMessage.SUCCESS.getMessage());
+	}
 
 }

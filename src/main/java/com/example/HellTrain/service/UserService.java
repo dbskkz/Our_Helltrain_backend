@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-@EnableScheduling // 讓此類別下的scheduled的方法生效
+@EnableScheduling // 讓此類別下的scheduled(排成)方法生效
 @Service
 public class UserService {
 
@@ -49,7 +49,7 @@ public class UserService {
 
 	private final String namePattern = "^[\\u4e00-\\u9fa5a-zA-Z\\s]{2,20}$";// 姓名2-20碼
 	private final String pwdPattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d!@#$%^&*\\-_]{8,}$";// 密碼至少8碼
-	private final String phonepattern = "09-\\d{7,8}";
+	private final String phonepattern = "09-\\d{8}";
 
 	private ObjectMapper mapper = new ObjectMapper();
 	
@@ -384,12 +384,7 @@ public class UserService {
 					ReplyMessage.SCHOOL_IS_NULL.getMessage());
 		}
 
-		if (vo.getDepartment() != null && vo.getDepartment().isBlank()) {
-			return new BasicResponse(ReplyMessage.DEPARTMENT_IS_NULL.getCode(), //
-					ReplyMessage.DEPARTMENT_IS_NULL.getMessage());
-		}
-
-		if (vo.getPhone() != null && checkphone(vo.getPhone()) != null) {
+		if (!vo.getPhone().isEmpty() && checkphone(vo.getPhone()) != null) {
 			return checkphone(vo.getPhone());
 		}
 

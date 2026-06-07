@@ -90,5 +90,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Transactional
 	@Query(value ="DELETE FROM user WHERE verified IS NULL AND create_date <= ?1", nativeQuery = true)
 	void deleteUnverified(LocalDateTime deadline);
+
+	@Modifying
+	@Transactional
+	@Query(value ="update user set good_level = ?2 where user_id = ?1", nativeQuery = true)
+	void upGoodLevel(int userId,float goodLevel);
 	
 }

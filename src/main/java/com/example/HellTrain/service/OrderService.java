@@ -1,6 +1,8 @@
 package com.example.HellTrain.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -134,7 +136,7 @@ public class OrderService {
 		// 取得訂單中的買家資訊
 		User buyer = userDao.getById(order.getBuyerId());
 		// 如email != 買家email，則沒有進行此操作的權限
-		//(因為email是買家的，所以如果不相等則沒有進行此操作的權限)
+		// (因為email是買家的，所以如果不相等則沒有進行此操作的權限)
 		if (!user.getUserEmail().equals(buyer.getUserEmail())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
@@ -166,18 +168,18 @@ public class OrderService {
 		Product product = productDao.findByProductId(order.getProductId());
 
 		// 檢查是哪一方的帳號
-				if (id==order.getBuyerId()) {
-					orderDao.buyerCheack(order.getOrderId());
-				}
+		if (id == order.getBuyerId()) {
+			orderDao.buyerCheack(order.getOrderId());
+		}
 
-				else if (id==product.getUserId()) {
-					orderDao.salesCheack(order.getOrderId());
-				}
-				// 都不是
-				else {
-					return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
-							ReplyMessage.NO_PERMISSIONS.getMessage());
-				}
+		else if (id == product.getUserId()) {
+			orderDao.salesCheack(order.getOrderId());
+		}
+		// 都不是
+		else {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
 
 		// 抓最新的order資料
 		Order update = orderDao.getOrderById(vo.getOrderId());
@@ -194,6 +196,11 @@ public class OrderService {
 	// 給予評價
 	public BasicResponse giveLevel(int id, GoodLevelReq req) {
 
+		// 檢查輸入分數
+		if (req.getLevel() < 1 || req.getLevel() > 5) {
+			return new BasicResponse(ReplyMessage.INVALID_ERROR.getCode(), //
+					ReplyMessage.INVALID_ERROR.getMessage());
+		}
 		User user = userDao.getById(id);
 		if (user == null) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
@@ -215,18 +222,59 @@ public class OrderService {
 		// 判斷帳號歸屬
 		if (id == buyer.getUserId()) {
 			// 當user為buyer時，給予的評價是賣家的
+			// 檢查是否給予過評價
+			if (order.getSalesmanRank() != 0) {
+				return new BasicResponse(ReplyMessage.ALREADY_RANKED.getCode(), //
+						ReplyMessage.ALREADY_RANKED.getMessage());
+			}
 			// 設定salesman_rank
 			orderDao.setSalesRank(req.getOrderId(), req.getLevel());
+			recalculateGoodLevel(salersman.getUserId());
 		} else if (id == salersman.getUserId()) {
 			// 當user為salesman時，給予的評價是買家的
+			// 檢查是否給予過評價
+			if (order.getBuyerRank() != 0) {
+				return new BasicResponse(ReplyMessage.ALREADY_RANKED.getCode(), //
+						ReplyMessage.ALREADY_RANKED.getMessage());
+			}
 			// 設定buyer_rank
 			orderDao.setbuyerRank(req.getOrderId(), req.getLevel());
+			recalculateGoodLevel(buyer.getUserId());
 		} else {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
+	}
+
+	// 私有方法 計算信譽等級
+	private void recalculateGoodLevel(int userId) {
+		// 取得使用者作為買家的所有評價
+		List<Float> buyerRank = orderDao.getAllBuyerRank(userId, //
+				OrderStatus.COMPLETED.getMessage());
+		// 取得使用者作為賣家時的所有評價
+		List<Float> salesmanRnak = orderDao.getAllSalesmanRank(userId, //
+				OrderStatus.COMPLETED.getMessage());
+
+		List<Float> allRank = new ArrayList<Float>();
+		allRank.addAll(buyerRank);
+		allRank.addAll(salesmanRnak);
+
+		if (allRank.isEmpty()) {
+			return;
+		}
+
+		// 計算平均
+		float avg = 0f;
+		float sum = 0f;
+		for (Float rank : allRank) {
+			sum += rank;
+		}
+
+		avg = sum / allRank.size();
+		userDao.upGoodLevel(userId, avg);
+
 	}
 
 }

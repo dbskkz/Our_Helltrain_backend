@@ -73,4 +73,15 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	@Transactional
 	@Query(value="update `order` set buyer_rank = ?2 where order_id = ?1",nativeQuery = true)
 	public void setbuyerRank(int orderId, int rank);
+	
+	//抓取user作為買家時的所有評分
+	@Query(value="select buyer_rank from `order` where buyer_id = ?1 and status = ?2",nativeQuery = true)
+	public List<Float> getAllBuyerRank(int userId, String status);
+
+	//抓取user作為賣家時的所有評分
+	@Query(value="select salesman_rank "
+			+ " from `order` o "
+			+ " join product p on p.product_id = o.product_id "
+			+ " where p.user_id  = ?1 and o.status = ?2",nativeQuery = true)
+	public List<Float> getAllSalesmanRank(int userId, String status);
 }
