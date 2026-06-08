@@ -24,3 +24,6 @@ bin/
 # 忽略所有自動產生的 log 檔案與資料夾
 logs/
 *.log
+
+#忽略對application-local.properties檔案的檢查(用來存放個人SQL帳號密碼)
+application-local.properties
