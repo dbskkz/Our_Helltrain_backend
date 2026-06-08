@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "collect")
+@IdClass(value = CollectId.class)
 public class Collect {
 	@Id
 	@Column(name = "user_id")

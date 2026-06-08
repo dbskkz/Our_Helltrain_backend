@@ -35,6 +35,7 @@ public class CollectId implements Serializable {
 		this.userId = userId;
 		this.collectId = collectId;
 	}
+	
 	@Override
 	public boolean equals(Object o) {
        /* 檢查是否為同一個記憶體位址 */

@@ -7,7 +7,7 @@ public enum ReplyMessage {
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//
-	PRODUCT_IS_NULL(400, "The product cannot be null !"),//沒有商品名稱
+	PRODUCT_IS_NULL(400, "The product name cannot be null !"),//沒有商品名稱
 	PRICE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	TYPE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	CONDITION_IS_NULL(400, "Product condition not described"),//未描述商品狀況
@@ -57,7 +57,8 @@ public enum ReplyMessage {
 	//公告
 	TITLE_IS_NULL(400, "Title is null"),//標題為空
 	DATE_ERROR(400, "Date error"),//日期為空
-	CONTENT_TEXT_OVER(400, "Counent text over"),//內文為空
+	CONTENT_TEXT_OVER(400, "Counent text over"),//內文過長
+	PRODUCT_IS_COLLECT(400, "The product is alreay collect"),//商品以收藏
 	;
 	
 	private int code;
