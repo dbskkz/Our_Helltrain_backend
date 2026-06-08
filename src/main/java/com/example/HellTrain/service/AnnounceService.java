@@ -87,56 +87,9 @@ public class AnnounceService {
 			return new BasicResponse(ReplyMessage.CONTENT_TEXT_OVER.getCode(),//
 					ReplyMessage.CONTENT_TEXT_OVER.getMessage());
 		}
-		
-		
-		
-//		// 1. 確認有上傳圖片（必填）
-//	    if (req.getImgPath() == null || req.getImgPath().isEmpty()) {
-//	        return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(),//
-//					ReplyMessage.NO_DATA_FOUND.getMessage());
-//	    }
-//
-//	    // 2. 檢查檔案類型
-//	    List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
-//	    if (!allowedTypes.contains(req.getImgPath().getContentType())) {
-//	        return new BasicResponse(ReplyMessage.FILE_FORMAT_ERROR.getCode(),//
-//					ReplyMessage.FILE_FORMAT_ERROR.getMessage());
-//	    }
-//
-//	    // 3. 檢查副檔名
-//	    String originalFilename = req.getImgPath().getOriginalFilename();
-//	    if (originalFilename == null || !originalFilename.contains(".")) {
-//	        return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(),//
-//					ReplyMessage.NO_DATA_FOUND.getMessage());
-//	    }
-//	    String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-//	    List<String> allowedExt = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
-//	    if (!allowedExt.contains(ext)) {
-//	        return new BasicResponse(ReplyMessage.FILE_NAMEFORMAT_ERROR.getCode(),//
-//					ReplyMessage.FILE_NAMEFORMAT_ERROR.getMessage());
-//	    }
-//
-//	    // 4. 檢查大小（2MB）
-//	    if (req.getImgPath().getSize() > 2 * 1024 * 1024) {
-//	        return new BasicResponse(ReplyMessage.FILE_SIZE_ERROR.getCode(),//
-//					ReplyMessage.FILE_SIZE_ERROR.getMessage());
-//	    }
-//
-//	    // 5. 儲存
-//	    try {
-//	        String newFilename = UUID.randomUUID().toString() + ext;
-//	        File dir = new File(uploadPath);
-//	        if (!dir.exists()) dir.mkdirs();
-//	        req.getImgPath().transferTo(new File(uploadPath + newFilename));
-
 	        // 新增公告dao
 	        annouDao.addAnnounce(req.getTitle(), imageUrl, req.getShelfDate(), req.getRemovalDate(),//
 	        		req.isPublish(), req.getContent());
-
-//	    } catch (IOException e) {
-//	        return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
-//					ReplyMessage.PLEASE_TRY_LATE.getMessage());
-//	    }
 		
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
 				ReplyMessage.SUCCESS.getMessage());
@@ -176,59 +129,7 @@ public class AnnounceService {
 					ReplyMessage.CONTENT_TEXT_OVER.getMessage());
 		}
 		
-//		// 有上傳新圖片才處理
-//		String imgPath;
-//
-//		if (req.getImgPath() != null && !req.getImgPath().isEmpty()) {
-//		    // 檢查類型、副檔名、大小（跟頭像一樣）
-//		    // ...
-//			// 1. 確認有上傳圖片（必填）
-//		    if (req.getImgPath() == null || req.getImgPath().isEmpty()) {
-//		        return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(),//
-//						ReplyMessage.NO_DATA_FOUND.getMessage());
-//		    }
-//
-//		    // 2. 檢查檔案類型
-//		    List<String> allowedTypes = List.of("image/jpeg", "image/png", "image/gif", "image/webp");
-//		    if (!allowedTypes.contains(req.getImgPath().getContentType())) {
-//		        return new BasicResponse(ReplyMessage.FILE_FORMAT_ERROR.getCode(),//
-//						ReplyMessage.FILE_FORMAT_ERROR.getMessage());
-//		    }
-//
-//		    // 3. 檢查副檔名
-//		    String originalFilename = req.getImgPath().getOriginalFilename();
-//		    if (originalFilename == null || !originalFilename.contains(".")) {
-//		        return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(),//
-//						ReplyMessage.NO_DATA_FOUND.getMessage());
-//		    }
-//		    String ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-//		    List<String> allowedExt = List.of(".jpg", ".jpeg", ".png", ".gif", ".webp");
-//		    if (!allowedExt.contains(ext)) {
-//		        return new BasicResponse(ReplyMessage.FILE_NAMEFORMAT_ERROR.getCode(),//
-//						ReplyMessage.FILE_NAMEFORMAT_ERROR.getMessage());
-//		    }
-//
-//		    // 4. 檢查大小（2MB）
-//		    if (req.getImgPath().getSize() > 2 * 1024 * 1024) {
-//		        return new BasicResponse(ReplyMessage.FILE_SIZE_ERROR.getCode(),//
-//						ReplyMessage.FILE_SIZE_ERROR.getMessage());
-//		    }
-//
-//		    try {
-//		        String newFilename = UUID.randomUUID().toString() + ext;
-//		        File dir = new File(uploadPath);
-//		        if (!dir.exists()) dir.mkdirs();
-//		        req.getImgPath().transferTo(new File(uploadPath + newFilename));
-//		        imgPath = newFilename;
-//		    } catch (IOException e) {
-//				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
-//						ReplyMessage.PLEASE_TRY_LATE.getMessage());		    }
-//
-//		} else {
-//		    // 沒上傳就保留原本的
-//		    Announcement announcement =annouDao.getById(req.getId());
-//		    imgPath = announcement.getImgPath();
-//		}
+
 		// 處理圖片
 		String imgUrl;
 		try {

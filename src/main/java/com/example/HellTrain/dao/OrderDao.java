@@ -24,8 +24,14 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	public void addOrder(int buyerId,int productId,LocalDate createDate,String status);
 	
 	//查詢商品的所有預定(賣家查詢)
-	@Query(value="select * from `order` where product_id = ?1",nativeQuery = true)
-	public List<Order> getByProductId(int productId);
+	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check, o.status,  seller.user_name,"
+			+ " p.product_name, p.price, buyer.user_name, p.img_path"
+			+ " FROM `order` o "
+			+ " JOIN product p ON o.product_id = p.product_id"
+			+ " JOIN `user` buyer ON buyer.user_id = o.buyer_id"
+			+ " JOIN user seller ON seller.user_id = p.user_id"
+			+ " WHERE p.product_id = ?1",nativeQuery = true)
+	public List<Object[]> getByProductId(int productId);
 	
 	//查詢預定編號(service使用)
 	@Query(value="select * from `order` where order_id = ?1",nativeQuery = true)
@@ -34,6 +40,16 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	//買家的所有預定
 	@Query(value="select * from `order` where buter_id = ?1",nativeQuery = true)
 	public List<Order> getByBuyId(int BuyerId);
+
+	//買家的所有預定
+	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check, o.status, seller.user_name, "
+			+ " p.product_name, p.price, buyer.user_name, p.img_path"
+			+ " FROM `order` o"
+			+ " JOIN product p ON o.product_id = p.product_id"
+			+ " JOIN user buyer ON buyer.user_id = o.buyer_id"
+			+ " JOIN user seller ON seller.user_id = p.user_id"
+			+ " WHERE p.user_id = ?1",nativeQuery = true)
+	public List<Object[]> getUserAllOrder(int BuyerId);
 	
 	@Modifying
 	@Transactional
@@ -73,4 +89,15 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	@Transactional
 	@Query(value="update `order` set buyer_rank = ?2 where order_id = ?1",nativeQuery = true)
 	public void setbuyerRank(int orderId, int rank);
+	
+	//抓取user作為買家時的所有評分
+	@Query(value="select buyer_rank from `order` where buyer_id = ?1 and status = ?2",nativeQuery = true)
+	public List<Float> getAllBuyerRank(int userId, String status);
+
+	//抓取user作為賣家時的所有評分
+	@Query(value="select salesman_rank "
+			+ " from `order` o "
+			+ " join product p on p.product_id = o.product_id "
+			+ " where p.user_id  = ?1 and o.status = ?2",nativeQuery = true)
+	public List<Float> getAllSalesmanRank(int userId, String status);
 }
