@@ -131,8 +131,23 @@ public class ProductService {
 		List<Product> productList = productDao.findByUserId(userId);
 		return convertToFrontEndFormat(productList);
 	}
+	
+	// 4. 以商品 ID 搜尋
+	public GetProductDataRes searchByProductId(int productId) {
+	    if (productId < 1) {
+	        return new GetProductDataRes(ReplyMessage.USER_ID_ERR.getCode(), ReplyMessage.USER_ID_ERR.getMessage());
+	    }
+	    
+	    Product product = productDao.findByProductId(productId);
+	    
+	    if (product == null) {
+	        return new GetProductDataRes(ReplyMessage.NO_DATA_FOUND.getCode(), ReplyMessage.NO_DATA_FOUND.getMessage());
+	    }
+	    
+	    return convertToFrontEndFormat(List.of(product)); // 包裝成 List
+	}
 
-	// 4. 以類型搜尋
+	// 5. 以類型搜尋
 	public GetProductDataRes searchByType(List<String> types) {
 		if (CollectionUtils.isEmpty(types)) {
 			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
@@ -142,7 +157,7 @@ public class ProductService {
 		return convertToFrontEndFormat(filtered);
 	}
 
-	// 5. 以年級搜尋
+	// 6. 以年級搜尋
 	public GetProductDataRes searchByGrade(String grade) {
 		if (grade == null || grade.isBlank()) {
 			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
@@ -150,7 +165,7 @@ public class ProductService {
 		return convertToFrontEndFormat(productDao.findByGrade(grade));
 	}
 	
-	// 6. 以學校搜尋
+	// 7. 以學校搜尋
 	public GetProductDataRes getByUniversity(String school) {
 		if (school == null || school.isBlank()) {
 			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
@@ -158,15 +173,7 @@ public class ProductService {
 		return convertToFrontEndFormat(productDao.findBySchool(school));
 	}
 
-	// ── 6. 關鍵字搜尋 ─────────────────────────────────────────
-//    public GetProductDataRes searchByKeyword(String keyword) {
-//        if (keyword == null || keyword.isBlank()) {
-//            return getAllProductsInformation();
-//        }
-//        return convertToFrontEndFormat(productDao.findByKeyword(keyword.trim()));
-//    }
-
-	// ── 7. 複合搜尋（前端主要呼叫這個）──────────────────────
+	// ── 8. 複合搜尋（前端主要呼叫這個）──────────────────────
 	public GetProductDataRes searchByConditions(SearchProductReq req) {
 		if (req == null) {
 			return getAllProductsInformation();

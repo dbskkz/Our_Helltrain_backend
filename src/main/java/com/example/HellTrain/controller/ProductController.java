@@ -43,6 +43,11 @@ public class ProductController {
 		return productService.searchBySellerId(userId);
 	}
 	
+	@GetMapping(value = "/search/productId")
+	public GetProductDataRes searchByProductId(@RequestParam("productId") int productId) {
+		return productService.searchByProductId(productId);
+	}
+	
 	@GetMapping(value = "/search/type")
 	public GetProductDataRes searchByType(@RequestParam("type") List<String> type) {
 		return productService.searchByType(type);
@@ -60,11 +65,6 @@ public class ProductController {
     	return productService.getByUniversity(school);
     }
     
-    // 關鍵字
-//    @GetMapping("/search/type")
-//    public GetProductDataRes searchByKeyword(@RequestParam String keyword) {
-//        return productService.searchByKeyword(keyword);
-//    }
 
     // ★ 複合搜尋（前端主要呼叫這個）
     // POST /product/search
