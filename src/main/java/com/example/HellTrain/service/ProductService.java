@@ -210,116 +210,239 @@ public class ProductService {
 		return convertToFrontEndFormat(result);
 	}
 
+//	public BasicResponse addProduct(int id, ProductReq req) {
+//
+//		/* 檢查 */
+//		// 帳號存在且狀態為正常
+//		User user = userDao.getById(id);
+//		if (user == null || !user.getStatus().equals(UserStatus.Normal.getMessage())) {
+//			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),//
+//			 ReplyMessage.NO_PERMISSIONS.getMessage());
+//		}
+//
+//		// 檢查商品稱是否有輸入
+//		if (!StringUtils.hasText(req.getProductName())) {
+//			return new BasicResponse(ReplyMessage.PRODUCT_NAME_NULL.getCode(),//
+//					ReplyMessage.PRODUCT_NAME_NULL.getMessage());
+//		}
+//
+//		// 檢查描述
+//		if (!StringUtils.hasText(req.getDescription())) {
+//			return new BasicResponse(ReplyMessage.DESCRIPTION_IS_NULL.getCode(),//
+//					ReplyMessage.DESCRIPTION_IS_NULL.getMessage());
+//		}
+//
+//		// 檢查價格
+//		if (req.getPrice() <= 0) {
+//			return new BasicResponse(ReplyMessage.PRICE_ERROR.getCode(),//
+//					ReplyMessage.PRICE_ERROR.getMessage());
+//		}
+//
+//		// 檢查是否有圖片（至少一張，最多7張）
+//		if (req.getImgList() == null || req.getImgList().isEmpty()) {
+//			return new BasicResponse(ReplyMessage.PLEASE_SET_FILE.getCode(),//
+//					ReplyMessage.PLEASE_SET_FILE.getMessage());
+//		}
+//		
+//		if (req.getImgList().size() >= 7) {
+//			return new BasicResponse(ReplyMessage.FILE_TOO_MANY.getCode(),//
+//					ReplyMessage.FILE_TOO_MANY.getMessage());
+//		}
+//		
+//		// 檢查類型
+//		if (req.getType() == null || req.getType().isEmpty()) {
+//			return new BasicResponse(ReplyMessage.TYPE_IS_NULL.getCode(),//
+//					ReplyMessage.TYPE_IS_NULL.getMessage());
+//		}
+//
+//		// 檢查商品狀況(condition)
+//		if (!StringUtils.hasText(req.getProductCondition())) {
+//			return new BasicResponse(ReplyMessage.CONDITION_IS_NULL.getCode(),//
+//					ReplyMessage.CONDITION_IS_NULL.getMessage());
+//		}
+//
+//		// 檢查商品的可交易地點(location)
+//		if (req.getLocation() == null || req.getLocation().isEmpty()) {
+//			return new BasicResponse(ReplyMessage.NO_DESIGNTED_LOCATION.getCode(),//
+//					ReplyMessage.NO_DESIGNTED_LOCATION.getMessage());
+//		}
+//
+//		// 檢查科系群deptGroup(list)
+//		if (req.getDeptGroup() == null || req.getDeptGroup().isEmpty()) {
+//			return new BasicResponse(ReplyMessage.NO_DEPTGROUP.getCode(),//
+//					ReplyMessage.NO_DEPTGROUP.getMessage());
+//		}
+//		
+//		//檢查年級是否為null
+//		if (req.getGrade() == null || req.getGrade().isEmpty()) {
+//		    return new BasicResponse(ReplyMessage.GRADE_IS_NULL.getCode(),//
+//		    		ReplyMessage.GRADE_IS_NULL.getMessage());
+//		}
+//
+//
+//		// 上傳圖片到 Cloudinary
+//		List<String> imgUrls = new ArrayList<>();
+//		for (String base64Image : req.getImgList()) {
+//			if (base64Image == null || base64Image.isBlank())
+//				continue;
+//			try {
+//				String imageUrl = cloudinaryService.uploadBase64(base64Image);
+//				imgUrls.add(imageUrl);
+//			} catch (Exception e) {
+//				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
+//						ReplyMessage.PLEASE_TRY_LATE.getMessage());
+//			}
+//		}
+//
+//		// 設定非賣家指定參數
+//		// 設定上架時間，目前預設新增日
+//		LocalDate shelfDate = LocalDate.now();
+//		// 設定商品狀態，目前預設販售中
+//		String status = ProductStatus.OnSale.getMassage();
+//
+//		// 轉成 JSON 字串存入 DB
+//		try {
+//			String imgPathJson = mapper.writeValueAsString(imgUrls);
+//			String typeJson = mapper.writeValueAsString(req.getType());
+//			String locationJson = mapper.writeValueAsString(req.getLocation());
+//			String gradeJson = mapper.writeValueAsString(req.getGrade());
+//			String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup());
+//
+//			productDao.insert(id, req.getProductName(), req.getDescription(),//
+//					req.getPrice(), imgPathJson, typeJson, shelfDate,//
+//					req.getProductCondition(), status, gradeJson, locationJson, deptGroupJson);
+//
+//		} catch (Exception e) {
+//			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
+//					ReplyMessage.PLEASE_TRY_LATE.getMessage());
+//		}
+//
+//		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
+//				ReplyMessage.SUCCESS.getMessage());
+//	}
+	
+	private BasicResponse checkparam(Product product, int userId) {
+		if (product == null) {
+	        return new BasicResponse(ReplyMessage.PRODUCT_IS_NOTFOUND.getCode(),
+	                ReplyMessage.PRODUCT_IS_NOTFOUND.getMessage());
+	    }
+
+	    if (product.getUserId() != userId) {
+	        return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),
+	                ReplyMessage.NO_PERMISSIONS.getMessage());
+	    }
+
+	    // 只有草稿才能發布
+	    if (!product.getStatus().equals(ProductStatus.NotSale.getMassage())) {
+	        return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),
+	                ReplyMessage.NO_PERMISSIONS.getMessage());
+	    }
+
+	    // 完整欄位檢查
+	    if (!StringUtils.hasText(product.getProductName())) {
+	        return new BasicResponse(ReplyMessage.PRODUCT_NAME_NULL.getCode(),
+	                ReplyMessage.PRODUCT_NAME_NULL.getMessage());
+	    }
+	    if (!StringUtils.hasText(product.getDescription())) {
+	        return new BasicResponse(ReplyMessage.DESCRIPTION_IS_NULL.getCode(),
+	                ReplyMessage.DESCRIPTION_IS_NULL.getMessage());
+	    }
+	    if (product.getPrice() <= 0) {
+	        return new BasicResponse(ReplyMessage.PRICE_ERROR.getCode(),
+	                ReplyMessage.PRICE_ERROR.getMessage());
+	    }
+
+	    List<String> imgList = parseJsonList(product.getImgPath());
+	    if (imgList.isEmpty()) {
+	        return new BasicResponse(ReplyMessage.PLEASE_SET_FILE.getCode(),
+	                ReplyMessage.PLEASE_SET_FILE.getMessage());
+	    }
+	    
+	    if (imgList.size() >= 7) {
+	        return new BasicResponse(ReplyMessage.FILE_TOO_MANY.getCode(),
+	                ReplyMessage.FILE_TOO_MANY.getMessage());
+	    }
+	    
+	    if (parseJsonList(product.getType()).isEmpty()) {
+	        return new BasicResponse(ReplyMessage.TYPE_IS_NULL.getCode(),
+	                ReplyMessage.TYPE_IS_NULL.getMessage());
+	    }
+	    if (!StringUtils.hasText(product.getProductCondition())) {
+	        return new BasicResponse(ReplyMessage.CONDITION_IS_NULL.getCode(),
+	                ReplyMessage.CONDITION_IS_NULL.getMessage());
+	    }
+	    if (parseJsonList(product.getLocation()).isEmpty()) {
+	        return new BasicResponse(ReplyMessage.NO_DESIGNTED_LOCATION.getCode(),
+	                ReplyMessage.NO_DESIGNTED_LOCATION.getMessage());
+	    }
+	    if (parseJsonList(product.getGrade()).isEmpty()) {
+	        return new BasicResponse(ReplyMessage.GRADE_IS_NULL.getCode(),
+	                ReplyMessage.GRADE_IS_NULL.getMessage());
+	    }
+	    if (parseJsonList(product.getDeptGroup()).isEmpty()) {
+	        return new BasicResponse(ReplyMessage.NO_DEPTGROUP.getCode(),
+	                ReplyMessage.NO_DEPTGROUP.getMessage());
+	    }
+	    
+	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+	    		ReplyMessage.SUCCESS.getMessage());
+	}
+	
+	
+	// 新增商品（永遠是草稿，不檢查欄位）
 	public BasicResponse addProduct(int id, ProductReq req) {
 
-		/* 檢查 */
-		// 帳號存在且狀態為正常
-		User user = userDao.getById(id);
-		if (user == null || !user.getStatus().equals(UserStatus.Normal.getMessage())) {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),//
-			 ReplyMessage.NO_PERMISSIONS.getMessage());
-		}
+	    User user = userDao.getById(id);
+	    if (user == null || !user.getStatus().equals(UserStatus.Normal.getMessage())) {
+	        return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),
+	                ReplyMessage.NO_PERMISSIONS.getMessage());
+	    }
 
-		// 檢查商品稱是否有輸入
-		if (!StringUtils.hasText(req.getProductName())) {
-			return new BasicResponse(ReplyMessage.PRODUCT_IS_NULL.getCode(),//
-					ReplyMessage.PRODUCT_IS_NULL.getMessage());
-		}
+	    try {
+	        String imgPathJson   = mapper.writeValueAsString(req.getImgList()   != null ? req.getImgList()   : List.of());
+	        String typeJson      = mapper.writeValueAsString(req.getType()      != null ? req.getType()      : List.of());
+	        String locationJson  = mapper.writeValueAsString(req.getLocation()  != null ? req.getLocation()  : List.of());
+	        String gradeJson     = mapper.writeValueAsString(req.getGrade()     != null ? req.getGrade()     : List.of());
+	        String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup() != null ? req.getDeptGroup() : List.of());
 
-		// 檢查描述
-		if (!StringUtils.hasText(req.getDescription())) {
-			return new BasicResponse(ReplyMessage.DESCRIPTION_IS_NULL.getCode(),//
-					ReplyMessage.DESCRIPTION_IS_NULL.getMessage());
-		}
+	        productDao.insert(id,
+	            req.getProductName()      != null ? req.getProductName()      : "",
+	            req.getDescription()      != null ? req.getDescription()      : "",
+	            req.getPrice(),
+	            imgPathJson, typeJson, LocalDate.now(),
+	            req.getProductCondition() != null ? req.getProductCondition() : "",
+	            ProductStatus.NotSale.getMassage(), // 寫死未上架
+	            gradeJson, locationJson, deptGroupJson);
 
-		// 檢查價格：不要理他！好啦前端有限制...
-		if (req.getPrice() <= 0) {
-			return new BasicResponse(ReplyMessage.PRICE_ERROR.getCode(),//
-					ReplyMessage.PRICE_ERROR.getMessage());
-		}
+	    } catch (Exception e) {
+	        return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+	                ReplyMessage.PLEASE_TRY_LATE.getMessage());
+	    }
 
-		// 檢查是否有圖片（至少一張，最多7張）
-		if (req.getImgList() == null || req.getImgList().isEmpty()) {
-			return new BasicResponse(ReplyMessage.PLEASE_SET_FILE.getCode(),//
-					ReplyMessage.PLEASE_SET_FILE.getMessage());
-		}
-		if (req.getImgList().size() >= 7) {
-			return new BasicResponse(ReplyMessage.FILE_TOO_MANY.getCode(),//
-					ReplyMessage.FILE_TOO_MANY.getMessage());
-		}
-		// 檢查類型
-		if (req.getType() == null || req.getType().isEmpty()) {
-			return new BasicResponse(ReplyMessage.TYPE_IS_NULL.getCode(),//
-					ReplyMessage.TYPE_IS_NULL.getMessage());
-		}
+	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage());
+	}
+	
+	// 發布商品（做完整檢查，通過才把 status 改成 OnSale）
+	public BasicResponse publishProduct(int userId, int productId) {
 
-		// 檢查商品狀況(condition)
-		if (!StringUtils.hasText(req.getProductCondition())) {
-			return new BasicResponse(ReplyMessage.CONDITION_IS_NULL.getCode(),//
-					ReplyMessage.CONDITION_IS_NULL.getMessage());
-		}
+	    Product product = productDao.findByProductId(productId);
+	    
+	    BasicResponse checkResult = checkparam(product, userId);
+	    if ( checkResult.getStatusCode() != 200)
+	    {
+	    	return checkResult;
+	    }
+	    
 
-		// 檢查商品的可交易地點(location)
-		if (req.getLocation() == null || req.getLocation().isEmpty()) {
-			return new BasicResponse(ReplyMessage.NO_DESIGNTED_LOCATION.getCode(),//
-					ReplyMessage.NO_DESIGNTED_LOCATION.getMessage());
-		}
+	    // 全部通過，更新 status
+	    productDao.updateStatus(productId, ProductStatus.OnSale.getMassage());
 
-		// 檢查科系群deptGroup(list)
-		if (req.getDeptGroup() == null || req.getDeptGroup().isEmpty()) {
-			return new BasicResponse(ReplyMessage.NO_DEPTGROUP.getCode(),//
-					ReplyMessage.NO_DEPTGROUP.getMessage());
-		}
-		
-		//檢查年級是否為null
-		if (req.getGrade() == null || req.getGrade().isEmpty()) {
-		    return new BasicResponse(ReplyMessage.GRADE_IS_NULL.getCode(),//
-		    		ReplyMessage.GRADE_IS_NULL.getMessage());
-		}
-
-
-		// 上傳圖片到 Cloudinary
-		List<String> imgUrls = new ArrayList<>();
-		for (String base64Image : req.getImgList()) {
-			if (base64Image == null || base64Image.isBlank())
-				continue;
-			try {
-				String imageUrl = cloudinaryService.uploadBase64(base64Image);
-				imgUrls.add(imageUrl);
-			} catch (Exception e) {
-				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
-						ReplyMessage.PLEASE_TRY_LATE.getMessage());
-			}
-		}
-
-		// 設定非賣家指定參數
-		// 設定上架時間，目前預設新增日
-		LocalDate shelfDate = LocalDate.now();
-		// 設定商品狀態，目前預設販售中
-		String status = ProductStatus.OnSale.getMassage();
-
-		// 轉成 JSON 字串存入 DB
-		try {
-			String imgPathJson = mapper.writeValueAsString(imgUrls);
-			String typeJson = mapper.writeValueAsString(req.getType());
-			String locationJson = mapper.writeValueAsString(req.getLocation());
-			String gradeJson = mapper.writeValueAsString(req.getGrade());
-			String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup());
-
-			productDao.insert(id, req.getProductName(), req.getDescription(),//
-					req.getPrice(), imgPathJson, typeJson, shelfDate,//
-					req.getProductCondition(), status, gradeJson, locationJson, deptGroupJson);
-
-		} catch (Exception e) {
-			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),//
-					ReplyMessage.PLEASE_TRY_LATE.getMessage());
-		}
-
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
-				ReplyMessage.SUCCESS.getMessage());
+	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage());
 	}
 
-	public BasicResponse upProduct(int id, ProductReq req) {
+	public BasicResponse updateProduct(int id, ProductReq req) {
 
 		Product product = productDao.findByProductId(req.getProductId());
 		/* 檢查 */
@@ -345,8 +468,8 @@ public class ProductService {
 
 		// 檢查商品稱是否有輸入
 		if (!StringUtils.hasText(req.getProductName())) {
-			return new BasicResponse(ReplyMessage.PRODUCT_IS_NULL.getCode(),//
-					ReplyMessage.PRODUCT_IS_NULL.getMessage());
+			return new BasicResponse(ReplyMessage.PRODUCT_NAME_NULL.getCode(),//
+					ReplyMessage.PRODUCT_NAME_NULL.getMessage());
 		}
 
 		// 檢查描述
@@ -439,7 +562,7 @@ public class ProductService {
 			String gradeJson = mapper.writeValueAsString(req.getGrade());
 			String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup());
 			
-			productDao.updata(req.getProductId(), req.getProductName(), req.getDescription(), req.getPrice(),
+			productDao.update(req.getProductId(), req.getProductName(), req.getDescription(), req.getPrice(),
 					imgPathJson, typeJson, req.getProductCondition(), gradeJson, locationJson, deptGroupJson);
 
 		} catch (Exception e) {

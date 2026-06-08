@@ -8,7 +8,7 @@ public enum ReplyMessage {
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//
-	PRODUCT_IS_NULL(400, "The product name cannot be null !"),//沒有商品名稱
+	PRODUCT_NAME_NULL(400, "The product name cannot be null !"),//沒有商品名稱
 	PRICE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	TYPE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	CONDITION_IS_NULL(400, "Product condition not described"),//未描述商品狀況

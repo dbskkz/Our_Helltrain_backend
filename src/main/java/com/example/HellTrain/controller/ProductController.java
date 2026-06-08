@@ -80,7 +80,7 @@ public class ProductController {
         return DeptGroupConst.ALL_GROUPS;
     }
     
-    @PostMapping("/addproduct")
+    @PostMapping("/add")
     public BasicResponse addProduct(HttpSession session, @RequestBody ProductReq req) {
 		//檢查登入session是否過期
     	Integer id=(Integer)session.getAttribute("user_id");
@@ -91,14 +91,25 @@ public class ProductController {
     	return productService.addProduct(id, req);
     }
     
-    @PostMapping("/upprod")
-    public BasicResponse upProduct(HttpSession session,@RequestBody ProductReq req) {
+    // 新增：發布商品
+    @PostMapping("/publish")
+    public BasicResponse publishProduct(HttpSession session, @RequestParam("productId") int productId) {
+        Integer id = (Integer) session.getAttribute("user_id");
+        if (id == null) {
+            return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
+                    ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+        }
+        return productService.publishProduct(id, productId);
+    }
+    
+    @PostMapping("/update")
+    public BasicResponse updateProduct(HttpSession session,@RequestBody ProductReq req) {
 		//檢查登入session是否過期
     	Integer id=(Integer)session.getAttribute("user_id");
 		if(id==null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
-    	return productService.upProduct(id, req);
+    	return productService.updateProduct(id, req);
     }
 }
