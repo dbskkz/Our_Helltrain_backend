@@ -3,6 +3,7 @@ package com.example.HellTrain.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.example.HellTrain.request.SearchProductReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.vo.ProductVo;
+import com.example.HellTrain.vo.SellerVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -62,81 +64,51 @@ public class ProductService {
 	}
 
 	// Product 轉 ProductVo，給 convertToFrontEndFormat 用
-	private ProductVo toVo(Product item) throws Exception {
-		return new ProductVo(item.getProductId(), item.getUserId(), item.getProductName(), item.getDescription(),
-				item.getPrice(), parseJsonList(item.getImgPath()), parseJsonList(item.getType()), item.getShelfDate(),
-				item.getProductCondition(), item.getStatus(), parseJsonList(item.getGrade()),
-				parseJsonList(item.getLocation()), parseJsonList(item.getDeptGroup()));
+	// 6/6 新增: SellerVo
+	// 改成接收已查好的 sellerVo，不在這裡查 DB
+	private ProductVo toVo(Product item, SellerVo sellerVo) throws Exception {
+	    return new ProductVo(
+	        item.getProductId(), item.getUserId(), item.getProductName(),
+	        item.getDescription(), item.getPrice(),
+	        parseJsonList(item.getImgPath()), parseJsonList(item.getType()),
+	        item.getShelfDate(), item.getProductCondition(), item.getStatus(),
+	        parseJsonList(item.getGrade()), parseJsonList(item.getLocation()),
+	        parseJsonList(item.getDeptGroup()), sellerVo
+	    );
 	}
-
-//	// 私有方法 : 將資料抽成前端接受的格式
-//	private GetProductDataRes convertToFrontEndFormat(List<Product> productList) {
-//		// 檢查 list 是否為空
-//		if (CollectionUtils.isEmpty(productList)) {
-//
-//			return new GetProductDataRes(ReplyMessage.NO_DATA_FOUND.getCode(), ReplyMessage.NO_DATA_FOUND.getMessage());
-//		}
-//
-//		// 資料轉換
-//		List<ProductVo> voList = new ArrayList<>();
-//
-//		for (Product item : productList) {
-//			try {
-//				List<String> imgPathList = null;
-//				List<String> typeList = null;
-//				List<String> locationList = null;
-//
-//				if (item.getImgPath() != null && !item.getImgPath().isEmpty()) {
-//					imgPathList = mapper.readValue(item.getImgPath(), new TypeReference<List<String>>() {
-//					});
-//				} else {
-//					imgPathList = new ArrayList<>(); // 避免 mapper.readValue() 收到 null 或空字串時噴錯。
-//				}
-//
-//				if (item.getLocation() != null && !item.getLocation().isEmpty()) {
-//					locationList = mapper.readValue(item.getLocation(), new TypeReference<List<String>>() {
-//					});
-//				} else {
-//					locationList = new ArrayList<>();
-//				}
-//
-//				if (item.getType() != null && !item.getType().isEmpty()) {
-//					typeList = mapper.readValue(item.getType(), new TypeReference<List<String>>() {
-//					});
-//				} else {
-//					typeList = new ArrayList<>();
-//				}
-//
-//				ProductVo vo = new ProductVo(item.getProductId(), item.getUserId(), item.getProductName(),
-//						item.getDescription(), item.getPrice(), imgPathList, typeList, item.getShelfDate(),
-//						item.getProductCondition(), item.getStatus(), item.getStock(), item.getGrade(), locationList);
-//
-//				voList.add(vo);
-//
-//			} catch (Exception e) {
-//				return new GetProductDataRes(ReplyMessage.PRODUCT_PARSE_ERROR.getCode(),
-//						ReplyMessage.PRODUCT_PARSE_ERROR.getMessage());
-//			}
-//		}
-//		return new GetProductDataRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
-//	}
 
 	// List<Product> 轉成前端格式
 	private GetProductDataRes convertToFrontEndFormat(List<Product> productList) {
-		if (CollectionUtils.isEmpty(productList)) {
-			return new GetProductDataRes(ReplyMessage.NO_DATA_FOUND.getCode(), ReplyMessage.NO_DATA_FOUND.getMessage());
-		}
+	    if (CollectionUtils.isEmpty(productList)) {
+	        return new GetProductDataRes(ReplyMessage.NO_DATA_FOUND.getCode(),
+	                ReplyMessage.NO_DATA_FOUND.getMessage());
+	    }
 
-		List<ProductVo> voList = new ArrayList<>();
-		for (Product item : productList) {
-			try {
-				voList.add(toVo(item));
-			} catch (Exception e) {
-				return new GetProductDataRes(ReplyMessage.PRODUCT_PARSE_ERROR.getCode(),
-						ReplyMessage.PRODUCT_PARSE_ERROR.getMessage());
-			}
-		}
-		return new GetProductDataRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
+	    // 批次查詢所有賣家，避免 N+1
+	    List<Integer> userIds = productList.stream()
+	            .map(Product::getUserId)
+	            .distinct()
+	            .collect(Collectors.toList());
+
+	    Map<Integer, SellerVo> sellerMap = userDao.findByUserIdIn(userIds)
+	            .stream()
+	            .collect(Collectors.toMap(
+	                User::getUserId,
+	                u -> new SellerVo(u.getUserId(), u.getUserName(), u.getSchool(), u.getImgPath())
+	            ));
+
+	    List<ProductVo> voList = new ArrayList<>();
+	    for (Product item : productList) {
+	        try {
+	            voList.add(toVo(item, sellerMap.get(item.getUserId())));
+	        } catch (Exception e) {
+	            return new GetProductDataRes(ReplyMessage.PRODUCT_PARSE_ERROR.getCode(),
+	                    ReplyMessage.PRODUCT_PARSE_ERROR.getMessage());
+	        }
+	    }
+
+	    return new GetProductDataRes(ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage(), voList);
 	}
 
 	// 1. 直接去資料庫撈取全部的商品資料
@@ -176,6 +148,14 @@ public class ProductService {
 			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
 		}
 		return convertToFrontEndFormat(productDao.findByGrade(grade));
+	}
+	
+	// 6. 以學校搜尋
+	public GetProductDataRes getByUniversity(String school) {
+		if (school == null || school.isBlank()) {
+			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
+		}
+		return convertToFrontEndFormat(productDao.findBySchool(school));
 	}
 
 	// ── 6. 關鍵字搜尋 ─────────────────────────────────────────

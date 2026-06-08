@@ -30,6 +30,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
 	@Query(value = "select * from user where user_email = ?1", nativeQuery = true)
 	public User getAccount(String email);
+	
+	// 佩霖寫的
+	@Query("SELECT u FROM User u WHERE u.userId IN :ids")
+	List<User> findByUserIdIn(@Param("ids") List<Integer> ids);
 
 	@Modifying
 	@Transactional

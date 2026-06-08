@@ -32,6 +32,12 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	// 新增：年級搜尋
 	@Query(value = "SELECT * FROM product WHERE grade = ?1", nativeQuery = true)
 	List<Product> findByGrade(String grade);
+	
+	// 新增：以校名搜尋
+	@Query(value = "SELECT p.* FROM product p "//
+			+ "INNER JOIN user u ON p.user_id = u.user_id "//
+			+ "WHERE u.school = ?", nativeQuery = true)
+	List<Product> findBySchool(String school);
 
 	// 新增：商品名稱模糊搜尋
 	@Query(value = "SELECT * FROM product WHERE product_name LIKE CONCAT('%', ?1, '%')", nativeQuery = true)
