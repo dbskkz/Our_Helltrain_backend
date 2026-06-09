@@ -139,6 +139,19 @@ public class UserController {
 		return userService.getUserData(userId);
 	}
 	
+	// 取得自己的資料（從 session）
+	@GetMapping(value = "/getMyInfo")
+	public UserRes getMyInfo(HttpSession session) {
+	    
+	    Integer id = (Integer) session.getAttribute("user_id");
+	    if (id == null) {
+	        return new UserRes(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
+	                ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+	    }
+	    
+	    return userService.getUserData(id);  // 直接用現有的 getUserData
+	}
+	
 	public BasicResponse LogOut(HttpSession session) {
 		//清除session內容=>將session的有效時間歸0
 		session.invalidate();
