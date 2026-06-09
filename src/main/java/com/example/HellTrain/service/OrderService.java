@@ -295,7 +295,8 @@ public class OrderService {
 
 		List<Object[]> results = orderDao.getUserAllOrder(userId);
 
-		List<OrderListVo> voList = results.stream().map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
+		List<OrderListVo> voList = results.stream()//
+				.map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
 				.collect(Collectors.toList());
 
 		return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);

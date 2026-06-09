@@ -1,5 +1,8 @@
 package com.example.HellTrain.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.CollectRes;
+import com.example.HellTrain.vo.CollectVoList;
 
 @Service
 public class CollectService {
@@ -72,21 +77,34 @@ public class CollectService {
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
-
 	}
-
-	public BasicResponse clearCollect(int id, int collectId) {
+	
+	//取得所有收藏
+	public CollectRes getAllCollect(int id) {
 		if (checkUser(id) != null) {
-			return null;
-		}
-		//確認是否有這筆收藏
-		if (collectDao.checkcollect(collectId) == null) {
-			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
-					ReplyMessage.NO_DATA_FOUND.getMessage());
+			return (CollectRes)checkUser(id);
 		}
 		
+	    //先刪除已下架商品的收藏
+	    collectDao.deleteInactiveCollects(id);
+		
+	    //再查出剩餘的收藏商品
+		List<Object[]> results = collectDao.catchCollect(id);
+		List<CollectVoList> voList = results.stream()//
+				.map(CollectVoList::from) // 每筆 Object[] 都呼叫 fromRow
+				.collect(Collectors.toList());
+		
+		return new CollectRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(),voList);
+	}
 
+	public BasicResponse clearCollect(int id, List<Integer> collectId) {
+		if (checkUser(id) != null) {
+			return checkUser(id);
+		}
+		
 		/* 點選刪除 */
+		collectDao.clearCollect(collectId);
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}

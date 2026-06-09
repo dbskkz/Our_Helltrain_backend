@@ -52,7 +52,10 @@ public class User {
 	private String imgPath;
 	
 	@Column(name = "create_date")
-	private LocalDateTime CreateDate;
+	private LocalDateTime createDate;
+	
+	@Column(name = "note")
+	private String note;
 	
 	public int getUserId() {
 		return userId;
@@ -136,10 +139,17 @@ public class User {
 		this.imgPath = imgPath;
 	}
 	public LocalDateTime getCreateDate() {
-		return CreateDate;
+		return createDate;
 	}
 	public void setCreateDate(LocalDateTime createDate) {
-		CreateDate = createDate;
+		this.createDate = createDate;
 	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+
 
 }
