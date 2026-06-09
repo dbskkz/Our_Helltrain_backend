@@ -168,7 +168,7 @@ public class ReportService {
 		{
 			reportDao.check(req.getReportId(), ReportStatus.Processed.getMessage());
 			//檢舉結果
-			reportDao.updateNote(req.getReportId(), "檢舉內容與事實有所出入，駁回檢舉");
+			reportDao.updateNote(req.getReportId(), "檢舉內容無效或與事實不符，駁回檢舉");
 			return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 					ReplyMessage.SUCCESS.getMessage());
 		}
