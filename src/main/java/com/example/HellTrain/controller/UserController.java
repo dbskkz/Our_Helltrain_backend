@@ -58,19 +58,29 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public LogInRes login(@RequestBody LoginReq req, HttpSession session) {
-	    // 執行登入
-	    LogInRes res = userService.login(req.getEmail(),req.getPassword());
+		// 執行登入
+		LogInRes res = userService.login(req.getEmail(), req.getPassword());
 
-	    // 登入成功
-	    if (res.getStatusCode() == 200) {
-	    	//由回傳資料中取出
-	    	UserVo user=(UserVo)res.getData();
-	    	session.setAttribute("user_id", user.getUserId());
-	    	// 30天
-	        session.setMaxInactiveInterval(2592000);
-	    }
-	    return res;
+		// 登入成功
+		if (res.getStatusCode() == 200) {
+			// 由回傳資料中取出
+			if ("user".equals(res.getRole())) {
+				// 一般使用者 → 存 user_id
+				UserVo user = (UserVo) res.getData();
+				session.setAttribute("user_id", user.getUserId());
+			}
+			// 30天
+			session.setMaxInactiveInterval(2592000);
+		} else if (res.getStatusCode() == 201) {
+			if ("manager".equals(res.getRole())) {
+				// 管理員 → 存 manager_email
+				session.setAttribute("manager_email", req.getEmail());
+			}
+			session.setMaxInactiveInterval(0);
+		}
+		return res;
 	}
+
 	//使用者輸入驗證碼後按下發送所需要街的資料回傳API(初次及後續驗證皆是這個)
 	@PostMapping(value = "/verify")
 	public BasicResponse verifyAndRegister(@RequestBody VerifyVO vo) {

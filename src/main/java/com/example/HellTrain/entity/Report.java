@@ -38,6 +38,9 @@ public class Report {
 
 	@Column(name = "violation_type")
 	private String violationType;
+	
+	@Column(name = "note")
+	private String note;
 
 	public int getReportId() {
 		return reportId;
@@ -117,6 +120,14 @@ public class Report {
 
 	public void setViolationType(String violationType) {
 		this.violationType = violationType;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }

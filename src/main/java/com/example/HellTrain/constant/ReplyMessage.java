@@ -4,10 +4,12 @@ public enum ReplyMessage {
 	SUCCESS(200, "Success!!"),
 	NO_DATA_FOUND(404, "No data found"),
 	USER_ID_ERR(400, "The user id is invalid !"),
+	CLASSMATE_NO_FOUND(404, "There is no member in the school. QQ"),
+	PRODUCT_ID_ERR(400, "The product id is invalid !"),
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//
-	PRODUCT_IS_NULL(400, "The product name cannot be null !"),//沒有商品名稱
+	PRODUCT_NAME_NULL(400, "The product name cannot be null !"),//沒有商品名稱
 	PRICE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	TYPE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	CONDITION_IS_NULL(400, "Product condition not described"),//未描述商品狀況

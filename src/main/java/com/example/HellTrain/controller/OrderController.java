@@ -94,7 +94,7 @@ public class OrderController {
 		return orderService.getAllOrder(id);
 	}
 	
-	//取得商品的所有訂單
+	//取得單一商品的所有訂單(賣家檢索同商品的申請用)
 	@GetMapping(value = "/getProductOrder")
 	public OrderRes getProductAllOrder(HttpSession session ,@RequestParam("productId") int productId) {
 		Integer id = (Integer) session.getAttribute("user_id");

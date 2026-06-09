@@ -32,16 +32,25 @@ public interface CollectDao extends JpaRepository<Collect, CollectId> {
 
 	@Modifying
 	@Transactional
-	@Query(value = "delete from collect where collect_id = ?1", nativeQuery = true)
-	public void clearCollect(int collectId);
+	@Query(value = "delete from collect where collect_id in (?)", nativeQuery = true)
+	public void clearCollect(List<Integer> collectId);
 	
 	@Query(value = "select * from collect where collect_id = ?1", nativeQuery = true)
-	public Collect checkcollect(int collectId);
+	public Collect checkCollect(int collectId);
 
 	@Query(value = "SELECT p.product_name, p.location, p.img_path, p.price, seller.user_name"//
 			+ " FROM collect c "//
 			+ " JOIN product p ON c.product_id = p.product_id "//
 			+ " JOIN user seller ON p.user_id = seller.user_id"//
 			+ " WHERE c.user_id = ?1", nativeQuery = true)
-	public List<Object[]> catchcollect(int userId);
+	public List<Object[]> catchCollect(int userId);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "DELETE FROM collect "
+	        + "WHERE user_id = ?1 "
+	        + "AND product_id IN ("
+	        + "SELECT product_id FROM product WHERE status != '販售中')",
+	        nativeQuery = true)
+	void deleteInactiveCollects(int userId);
 }

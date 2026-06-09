@@ -28,8 +28,8 @@ import com.example.HellTrain.request.ReportReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetIdReportRes;
 import com.example.HellTrain.response.ReportRes;
+import com.example.HellTrain.vo.ReportListVo;
 import com.example.HellTrain.vo.ReportVo;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -49,31 +49,6 @@ public class ReportService {
 
 	private ObjectMapper mapper = new ObjectMapper();
 
-	private List<String> parseJsonList(String json) {
-		if (json == null || json.isBlank())
-			return new ArrayList<>();
-		try {
-			return mapper.readValue(json, new TypeReference<List<String>>() {
-			});
-		} catch (Exception e) {
-			return new ArrayList<>();
-		}
-	}
-
-	private ReportVo toVo(Report report) {
-		ReportVo vo = new ReportVo();
-		vo.setReportId(report.getReportId());
-		vo.setProductId(report.getProductId());
-		vo.setComplainantId(report.getComplainantId());
-		vo.setAccusedId(report.getAccusedId());
-		vo.setDescription(report.getDescription());
-		vo.setFilePath(parseJsonList(report.getFilePath())); // 轉 List
-		vo.setReportDate(report.getReportDate());
-		vo.setStatus(report.getStatus());
-		vo.setType(report.getType());
-		vo.setViolationType(report.getViolationType());
-		return vo;
-	}
 
 	public BasicResponse addReport(int id, ReportReq req) {
 
@@ -153,8 +128,10 @@ public class ReportService {
 	public ReportRes getAllReport() {
 
 		// 血祭DAO
-		List<Report> report = reportDao.findAll();
-		List<ReportVo> voList = report.stream().map(this::toVo).collect(Collectors.toList());
+		List<Object[]> report = reportDao.getAllReport();
+		List<ReportVo> voList = report.stream()//
+				.map(ReportVo::fromRow)//
+				.collect(Collectors.toList());
 		return new ReportRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(), voList);
 	}
@@ -163,20 +140,22 @@ public class ReportService {
 	public GetIdReportRes getReportById(int reportId) {
 
 		// 再血dao
-		Report report = reportDao.getReportById(reportId);
+		Object[] report = reportDao.getReportById(reportId);
 
 		if (report == null) {
 			return new GetIdReportRes(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
+		
+		ReportListVo vo=ReportListVo.fromRow(report);
 		return new GetIdReportRes(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage(), toVo(report));
+				ReplyMessage.SUCCESS.getMessage(),vo);
 	}
 
 	// 動作！！！
 	public BasicResponse check(CheckReport req) {
 
-		Report report = reportDao.getReportById(req.getReportId());
+		Report report = reportDao.getReportId(req.getReportId());
 
 		if (report == null) {
 			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
@@ -188,6 +167,8 @@ public class ReportService {
 		if(req.getActive().equals(ActiveType.Reject.getMessage()))
 		{
 			reportDao.check(req.getReportId(), ReportStatus.Processed.getMessage());
+			//檢舉結果
+			reportDao.updateNote(req.getReportId(), "檢舉內容與事實有所出入，駁回檢舉");
 			return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 					ReplyMessage.SUCCESS.getMessage());
 		}
@@ -202,6 +183,8 @@ public class ReportService {
 						ReplyMessage.NO_DATA_FOUND.getMessage());
 			}
 			productDao.changeStatus(product.getProductId(), ProductStatus.Removed.getMassage());
+			//補上檢舉處裡結果
+			reportDao.updateNote(req.getReportId(), "確認檢舉內容屬實，已下架商品");
 		}
 
 		// 檢舉類型為使用者
@@ -214,6 +197,11 @@ public class ReportService {
 						ReplyMessage.NO_DATA_FOUND.getMessage());
 			}
 			userDao.changeStatus(user.getUserId(), UserStatus.Suspension.getMessage());
+			/*補上檢舉處理結果+使用者停權原因
+			 * 停權原因:檢舉類型+檢舉事件編號*/
+			reportDao.updateNote(req.getReportId(), "確認檢舉內容屬實，已停權使用者");
+			userDao.updateNote(user.getUserId(), //
+					report.getViolationType() + "（案件編號：" + req.getReportId() + "）");
 		}
 
 		reportDao.check(req.getReportId(), ReportStatus.Processed.getMessage());

@@ -367,6 +367,10 @@ public class UserService {
 	public BasicResponse setInfo(int id, SetInfoVo vo) {
 		
 		User user = userdao.getById(id);
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
 		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
@@ -426,13 +430,22 @@ public class UserService {
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
-
 	}
 
 	// 更改密碼
 	public BasicResponse changePassword(int id, String nowPwd, String newPwd) {
 
 		User user = userdao.getById(id);
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+		
+		if(nowPwd.isBlank() || newPwd.isBlank())
+		{
+			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
+					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
+		}
 
 		if (!nowPwd.matches(pwdPattern) || !encoder.matches(nowPwd, user.getPassword())) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
@@ -476,6 +489,22 @@ public class UserService {
 
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(), toVo(user));
+	}
+	
+	// 取得各校成員
+	public UserRes getUserDataBySchool(String school) {
+		List<User> users = userdao.getBySchool(school);
+		if (users == null || users.isEmpty()) {
+			return new UserRes(ReplyMessage.CLASSMATE_NO_FOUND.getCode(), //
+					ReplyMessage.CLASSMATE_NO_FOUND.getMessage());
+		}
+		
+		List<UserVo> voList = users.stream()
+	            .map(this::toVo)
+	            .collect(Collectors.toList());
+		
+		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), voList);
 	}
 
 	// 帳號狀態變更(手動)

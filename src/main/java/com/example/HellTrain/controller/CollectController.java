@@ -1,10 +1,14 @@
 package com.example.HellTrain.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
@@ -38,5 +42,16 @@ public class CollectController {
 		}
 
 		return collectService.addCollect(id, productId);
+	}
+	
+	@GetMapping(value = "/delete")
+	public BasicResponse clearCollect(HttpSession session,//
+			@RequestParam("collectId") List<Integer> collectId) {
+		// 檢查登入session是否過期
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (checkSession(id) != null) {
+			return checkSession(id);
+		}
+		return collectService.clearCollect(id, collectId);
 	}
 }
