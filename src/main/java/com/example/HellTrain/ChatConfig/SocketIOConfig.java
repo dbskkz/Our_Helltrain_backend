@@ -13,8 +13,8 @@ public class SocketIOConfig {
         config.setHostname("localhost");
         config.setPort(9092); // 聊天室專用的 Port，跟購物網站的 8080 分開
 
-        // 解決前端 Angular (4200) 連過來的跨來源問題 (CORS)
-//        config.setOrigin("http://localhost:4200"); 
+     // 允許前端只走 WebSocket 協定
+        config.setTransports(com.corundumstudio.socketio.Transport.WEBSOCKET);
 
         return new SocketIOServer(config);
     }
