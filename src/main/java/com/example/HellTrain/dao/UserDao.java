@@ -74,6 +74,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	// 提取個別使用者資料
 	@Query(value = "select * from user where user_id=?", nativeQuery = true)
 	public User getById(int id);
+	
+	// 提取各校使用者資料
+	@Query(value = "SELECT * FROM user WHERE school = ?", nativeQuery = true)
+	public List<User> getBySchool(String school);
 
 	// 改變使用者狀態(檢舉應對方法)
 	@Modifying

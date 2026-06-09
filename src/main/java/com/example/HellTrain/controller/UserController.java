@@ -116,6 +116,12 @@ public class UserController {
 		return userService.changeStatus(usesrId);
 	}
 	
+	// 取得各校使用者
+	@GetMapping(value = "/getClassmate")
+	public UserRes getUserDataBySchool(@RequestParam("school") String school) {
+		return userService.getUserDataBySchool(school);
+	}
+	
 	//取得所有使用者
 	@GetMapping(value = "/getUsers")
 	public UserRes getAllUser() {

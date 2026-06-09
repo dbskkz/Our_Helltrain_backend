@@ -4,6 +4,7 @@ public enum ReplyMessage {
 	SUCCESS(200, "Success!!"),
 	NO_DATA_FOUND(404, "No data found"),
 	USER_ID_ERR(400, "The user id is invalid !"),
+	CLASSMATE_NO_FOUND(404, "There is no member in the school. QQ"),
 	PRODUCT_ID_ERR(400, "The product id is invalid !"),
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//

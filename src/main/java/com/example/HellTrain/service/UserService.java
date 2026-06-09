@@ -426,7 +426,6 @@ public class UserService {
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
-
 	}
 
 	// 更改密碼
@@ -476,6 +475,22 @@ public class UserService {
 
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(), toVo(user));
+	}
+	
+	// 取得各校成員
+	public UserRes getUserDataBySchool(String school) {
+		List<User> users = userdao.getBySchool(school);
+		if (users == null || users.isEmpty()) {
+			return new UserRes(ReplyMessage.CLASSMATE_NO_FOUND.getCode(), //
+					ReplyMessage.CLASSMATE_NO_FOUND.getMessage());
+		}
+		
+		List<UserVo> voList = users.stream()
+	            .map(this::toVo)
+	            .collect(Collectors.toList());
+		
+		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), voList);
 	}
 
 	// 帳號狀態變更(手動)
