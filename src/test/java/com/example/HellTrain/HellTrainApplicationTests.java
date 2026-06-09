@@ -14,7 +14,7 @@ class HellTrainApplicationTests {
 	
 	@Test
 	void pwdGenerator() { // 改為 void
-		String pwd = "MitochondrionIsThePowerPlantOfBody1234";
+		String pwd = "l123456";
 		String encodedPwd = encoder.encode(pwd);
 		System.out.println("加密後的密碼： " + encodedPwd);
 	}
