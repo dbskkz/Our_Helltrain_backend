@@ -152,6 +152,7 @@ public class UserController {
 	    return userService.getUserData(id);  // 直接用現有的 getUserData
 	}
 	
+	@PostMapping(value = "/logOut")
 	public BasicResponse LogOut(HttpSession session) {
 		//清除session內容=>將session的有效時間歸0
 		session.invalidate();
