@@ -24,8 +24,8 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	public void addOrder(int buyerId,int productId,LocalDate createDate,String status);
 	
 	//查詢商品的所有預定(賣家查詢)
-	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check, o.status,  seller.user_name,"
-			+ " p.product_name, p.price, buyer.user_name, p.img_path"
+	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check, o.status,"
+			+ " seller.user_name, p.product_name, p.price, buyer.user_name, p.img_path"
 			+ " FROM `order` o "
 			+ " JOIN product p ON o.product_id = p.product_id"
 			+ " JOIN `user` buyer ON buyer.user_id = o.buyer_id"
@@ -41,14 +41,14 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	@Query(value="select * from `order` where buter_id = ?1",nativeQuery = true)
 	public List<Order> getByBuyId(int BuyerId);
 
-	//買家的所有預定
-	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check, o.status, seller.user_name, "
-			+ " p.product_name, p.price, buyer.user_name, p.img_path"
+	//買家的所有定單
+	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check,"
+			+ " o.status, seller.user_name, p.product_name, p.price, buyer.user_name, p.img_path"
 			+ " FROM `order` o"
 			+ " JOIN product p ON o.product_id = p.product_id"
 			+ " JOIN user buyer ON buyer.user_id = o.buyer_id"
 			+ " JOIN user seller ON seller.user_id = p.user_id"
-			+ " WHERE p.user_id = ?1",nativeQuery = true)
+			+ " WHERE p.user_id = ?1 or o.buyer_id = ?1",nativeQuery = true)
 	public List<Object[]> getUserAllOrder(int BuyerId);
 	
 	@Modifying

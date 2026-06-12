@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.request.GoodLevelReq;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.LevelRes;
 import com.example.HellTrain.response.OrderRes;
 import com.example.HellTrain.service.OrderService;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
@@ -74,13 +75,24 @@ public class OrderController {
 	
 	//交易雙方給予評價
 	@PostMapping(value = "/giveLevel")
-	public BasicResponse giveLevel(HttpSession session, @RequestBody GoodLevelReq req) {
+	public BasicResponse giveLevel(HttpSession session,//
+			@RequestBody GoodLevelReq req) {
 		Integer id = (Integer) session.getAttribute("user_id");
 		if (id == null) {
 			return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(), //
 					ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
 		}
 		return orderService.giveLevel(id, req);
+	}
+	
+	//取得單一訂單評價
+	@GetMapping("/getLevel")
+	public LevelRes getLevel(@RequestParam("orderId") int orderId,//
+			HttpSession session) {
+	    Integer userId = (Integer) session.getAttribute("user_id");
+	    if (userId == null) return new LevelRes(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),//
+	    		ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+	    return orderService.getLevel(userId, orderId);
 	}
 	
 	//取得使用者的所有訂單
@@ -94,7 +106,7 @@ public class OrderController {
 		return orderService.getAllOrder(id);
 	}
 	
-	//取得商品的所有訂單
+	//取得單一商品的所有訂單(賣家檢索同商品的申請用)
 	@GetMapping(value = "/getProductOrder")
 	public OrderRes getProductAllOrder(HttpSession session ,@RequestParam("productId") int productId) {
 		Integer id = (Integer) session.getAttribute("user_id");

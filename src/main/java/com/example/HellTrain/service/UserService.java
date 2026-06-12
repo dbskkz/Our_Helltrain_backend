@@ -367,6 +367,10 @@ public class UserService {
 	public BasicResponse setInfo(int id, SetInfoVo vo) {
 		
 		User user = userdao.getById(id);
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
 		// 檢查姓名格式
 		if (!vo.getName().matches(namePattern)) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
@@ -432,6 +436,16 @@ public class UserService {
 	public BasicResponse changePassword(int id, String nowPwd, String newPwd) {
 
 		User user = userdao.getById(id);
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+		
+		if(nowPwd.isBlank() || newPwd.isBlank())
+		{
+			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //
+					ReplyMessage.PARAM_PASSWORD_ERROR.getMessage());
+		}
 
 		if (!nowPwd.matches(pwdPattern) || !encoder.matches(nowPwd, user.getPassword())) {
 			return new BasicResponse(ReplyMessage.PARAM_PASSWORD_ERROR.getCode(), //

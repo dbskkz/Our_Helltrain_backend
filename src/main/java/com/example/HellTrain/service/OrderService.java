@@ -20,6 +20,7 @@ import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.request.GoodLevelReq;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.LevelRes;
 import com.example.HellTrain.response.OrderRes;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
 import com.example.HellTrain.vo.OrderListVo;
@@ -204,16 +205,16 @@ public class OrderService {
 	}
 
 	// 給予評價
-	public BasicResponse giveLevel(int id, GoodLevelReq req) {
+	public LevelRes giveLevel(int id, GoodLevelReq req) {
 
 		// 檢查輸入分數
 		if (req.getLevel() < 1 || req.getLevel() > 5) {
-			return new BasicResponse(ReplyMessage.INVALID_ERROR.getCode(), //
+			return new LevelRes(ReplyMessage.INVALID_ERROR.getCode(), //
 					ReplyMessage.INVALID_ERROR.getMessage());
 		}
 		User user = userDao.getById(id);
 		if (user == null) {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 
@@ -226,7 +227,7 @@ public class OrderService {
 		User salersman = userDao.getById(product.getUserId());
 		// 確認訂單狀況，如果不是完成就不能執行
 		if (!order.getStatus().equals(OrderStatus.COMPLETED.getMessage())) {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 		// 判斷帳號歸屬
@@ -234,7 +235,7 @@ public class OrderService {
 			// 當user為buyer時，給予的評價是賣家的
 			// 檢查是否給予過評價
 			if (order.getSalesmanRank() != 0) {
-				return new BasicResponse(ReplyMessage.ALREADY_RANKED.getCode(), //
+				return new LevelRes(ReplyMessage.ALREADY_RANKED.getCode(), //
 						ReplyMessage.ALREADY_RANKED.getMessage());
 			}
 			// 設定salesman_rank
@@ -244,18 +245,20 @@ public class OrderService {
 			// 當user為salesman時，給予的評價是買家的
 			// 檢查是否給予過評價
 			if (order.getBuyerRank() != 0) {
-				return new BasicResponse(ReplyMessage.ALREADY_RANKED.getCode(), //
+				return new LevelRes(ReplyMessage.ALREADY_RANKED.getCode(), //
 						ReplyMessage.ALREADY_RANKED.getMessage());
 			}
 			// 設定buyer_rank
 			orderDao.setbuyerRank(req.getOrderId(), req.getLevel());
 			recalculateGoodLevel(buyer.getUserId());
 		} else {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage());
+		order=orderDao.getOrderById(id);
+		return new LevelRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(),//
+				order.getBuyerRank(),order.getSalesmanRank());
 	}
 
 	// 私有方法 計算信譽等級
@@ -286,6 +289,27 @@ public class OrderService {
 		userDao.upGoodLevel(userId, avg);
 
 	}
+	
+	public LevelRes getLevel(int userId, int orderId) {
+	    
+	    Order order = orderDao.getOrderById(orderId);
+	    if (order == null) {
+	        return new LevelRes(ReplyMessage.NO_DATA_FOUND.getCode(),
+	        		ReplyMessage.NO_DATA_FOUND.getMessage());
+	    }
+	    
+	    // 確認是訂單的買家或賣家才能查看
+	    Product product = productDao.findByProductId(order.getProductId());
+	    if (userId != order.getBuyerId() && userId != product.getUserId()) {
+	        return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(),
+	        		ReplyMessage.NO_PERMISSIONS.getMessage());
+	    }
+	    
+	    return new LevelRes(ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage(),
+	            order.getBuyerRank(),
+	            order.getSalesmanRank());
+	}
 
 	public OrderRes getAllOrder(int userId) {// 直接使用session的資料找出該帳號的所有訂單資訊
 		// 檢查帳號是否存在
@@ -295,7 +319,8 @@ public class OrderService {
 
 		List<Object[]> results = orderDao.getUserAllOrder(userId);
 
-		List<OrderListVo> voList = results.stream().map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
+		List<OrderListVo> voList = results.stream()//
+				.map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
 				.collect(Collectors.toList());
 
 		return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
