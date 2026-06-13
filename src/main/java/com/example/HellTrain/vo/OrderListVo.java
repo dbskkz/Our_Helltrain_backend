@@ -29,6 +29,40 @@ public class OrderListVo {
 
 	private String imgPath;
 
+	private int buyerId;
+
+	private int sellerId;
+
+	private int buyerRank;
+
+	private int salesmanRank;
+
+	public OrderListVo() {
+		super();
+	}
+
+	public OrderListVo(Integer  orderId, LocalDate createDate, 
+			Byte  buyerCheck, Byte  sellerCheck, String status,
+			String sellerName, String productName, Integer  price, 
+			String buyerName, String imgPath, Integer  buyerId,
+			Integer  sellerId, Integer  buyerRank, Integer  salesmanRank) {
+		super();
+		this.orderId = orderId;
+		this.createDate = createDate;
+		 this.buyerCheck = buyerCheck != null && buyerCheck == 1;
+		    this.sellerCheck = sellerCheck != null && sellerCheck == 1;
+		this.status = status;
+		this.sellerName = sellerName;
+		this.productName = productName;
+		this.price = price;
+		this.buyerName = buyerName;
+		this.imgPath = imgPath;
+		this.buyerId = buyerId;
+		this.sellerId = sellerId;
+		this.buyerRank = buyerRank;
+		this.salesmanRank = salesmanRank;
+	}
+
 	public int getOrderId() {
 		return orderId;
 	}
@@ -109,6 +143,40 @@ public class OrderListVo {
 		this.imgPath = imgPath;
 	}
 
+	public int getBuyerId() {
+		return buyerId;
+	}
+
+	public void setBuyerId(int buyerId) {
+		this.buyerId = buyerId;
+	}
+
+	public int getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(int sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public int getBuyerRank() {
+		return buyerRank;
+	}
+
+	public void setBuyerRank(int buyerRank) {
+		this.buyerRank = buyerRank;
+	}
+
+	public int getSalesmanRank() {
+		return salesmanRank;
+	}
+
+	public void setSalesmanRank(int salesmanRank) {
+		this.salesmanRank = salesmanRank;
+	}
+
+	
+	// fromRow 的部分
 	public static OrderListVo fromRow(Object[] row) {
 
 		OrderListVo vo = new OrderListVo();//
