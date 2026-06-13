@@ -56,11 +56,17 @@ public class OrderListVo {
 		this.productName = productName;
 		this.price = price;
 		this.buyerName = buyerName;
-		this.imgPath = imgPath;
 		this.buyerId = buyerId;
 		this.sellerId = sellerId;
 		this.buyerRank = buyerRank;
 		this.salesmanRank = salesmanRank;
+		if (imgPath != null && !imgPath.trim().isEmpty()) {
+	        List<String> imgList = parseJsonList(imgPath); 
+	        // 如果解析出來有圖片，就只拿第 0 張；沒有的話就給 null
+	        this.imgPath = (imgList != null && !imgList.isEmpty()) ? imgList.get(0) : null;
+	    } else {
+	        this.imgPath = null;
+	    }
 	}
 
 	public int getOrderId() {
