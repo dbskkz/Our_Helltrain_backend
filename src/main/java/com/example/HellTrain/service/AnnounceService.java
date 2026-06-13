@@ -66,9 +66,9 @@ public class AnnounceService {
 
 		String imageUrl = null;
 
-		// 是 base64，上傳到 cloudinary
-		imageUrl = cloudinaryService.uploadBase64(req.getImgPath());
-
+		if (req.getImgPath() != null) {
+		    imageUrl = cloudinaryService.uploadBase64(req.getImgPath());
+		}
 		// 檢查時間
 		// 當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
 		if (req.getShelfDate().isBefore(LocalDate.now())) {
