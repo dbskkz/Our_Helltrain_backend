@@ -76,6 +76,7 @@ public class UserService {
 	    vo.setGoodLevel(user.getGoodLevel());//
 	    vo.setMsg(user.getMsg());//
 	    vo.setImgPath(user.getImgPath());//
+	    vo.setNote(user.getNote());
 	    return vo;//
 	}
 

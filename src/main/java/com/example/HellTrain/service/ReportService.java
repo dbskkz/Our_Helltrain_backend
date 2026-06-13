@@ -140,14 +140,14 @@ public class ReportService {
 	public GetIdReportRes getReportById(int reportId) {
 
 		// 再血dao
-		Object[] report = reportDao.getReportById(reportId);
+		List<Object[]> report = reportDao.getReportById(reportId);
 
-		if (report == null) {
+		if (report == null|| report.isEmpty()) {
 			return new GetIdReportRes(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 		
-		ReportListVo vo=ReportListVo.fromRow(report);
+		ReportListVo vo=ReportListVo.fromRow(report.get(0));
 		return new GetIdReportRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(),vo);
 	}

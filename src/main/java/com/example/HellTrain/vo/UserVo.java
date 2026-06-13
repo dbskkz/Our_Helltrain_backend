@@ -16,6 +16,7 @@ public class UserVo {
     private float goodLevel;
     private String msg;
     private String imgPath;
+    private String note;
 	public int getUserId() {
 		return userId;
 	}
@@ -87,6 +88,12 @@ public class UserVo {
 	}
 	public void setImgPath(String imgPath) {
 		this.imgPath = imgPath;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
 	}
     
 }
