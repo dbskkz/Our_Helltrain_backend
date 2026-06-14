@@ -41,16 +41,14 @@ public class OrderListVo {
 		super();
 	}
 
-	public OrderListVo(Integer  orderId, LocalDate createDate, 
-			Byte  buyerCheck, Byte  sellerCheck, String status,
-			String sellerName, String productName, Integer  price, 
-			String buyerName, String imgPath, Integer  buyerId,
-			Integer  sellerId, Integer  buyerRank, Integer  salesmanRank) {
+	public OrderListVo(Integer orderId, LocalDate createDate, Byte buyerCheck, Byte sellerCheck, String status,
+			String sellerName, String productName, Integer price, String buyerName, String imgPath, Integer buyerId,
+			Integer sellerId, Integer buyerRank, Integer salesmanRank) {
 		super();
 		this.orderId = orderId;
 		this.createDate = createDate;
-		 this.buyerCheck = buyerCheck != null && buyerCheck == 1;
-		    this.sellerCheck = sellerCheck != null && sellerCheck == 1;
+		this.buyerCheck = buyerCheck != null && buyerCheck == 1;
+		this.sellerCheck = sellerCheck != null && sellerCheck == 1;
 		this.status = status;
 		this.sellerName = sellerName;
 		this.productName = productName;
@@ -61,12 +59,12 @@ public class OrderListVo {
 		this.buyerRank = buyerRank;
 		this.salesmanRank = salesmanRank;
 		if (imgPath != null && !imgPath.trim().isEmpty()) {
-	        List<String> imgList = parseJsonList(imgPath); 
-	        // 如果解析出來有圖片，就只拿第 0 張；沒有的話就給 null
-	        this.imgPath = (imgList != null && !imgList.isEmpty()) ? imgList.get(0) : null;
-	    } else {
-	        this.imgPath = null;
-	    }
+			List<String> imgList = parseJsonList(imgPath);
+			// 如果解析出來有圖片，就只拿第 0 張；沒有的話就給 null
+			this.imgPath = (imgList != null && !imgList.isEmpty()) ? imgList.get(0) : null;
+		} else {
+			this.imgPath = null;
+		}
 	}
 
 	public int getOrderId() {
@@ -181,7 +179,6 @@ public class OrderListVo {
 		this.salesmanRank = salesmanRank;
 	}
 
-	
 	// fromRow 的部分
 	public static OrderListVo fromRow(Object[] row) {
 
