@@ -113,15 +113,15 @@ public class ProductService {
 
 	// 1. 直接去資料庫撈取全部的商品資料
 	public GetProductDataRes getAllProductsInformation() {
-		List<Product> productList = productDao.getAllData();
+		List<Product> productList = productDao.getAllOnSale();
 		return convertToFrontEndFormat(productList);
 	} // GetAllData結束
 
-	// 2. 以價位區間搜尋
-	public GetProductDataRes searchByPrice(int minPrice, int maxPrice) {
-		List<Product> productList = productDao.findByPriceBetween(minPrice, maxPrice);
-		return convertToFrontEndFormat(productList);
-	}
+	// 2. 以價位區間搜尋 (無用 可刪)
+//	public GetProductDataRes searchByPrice(int minPrice, int maxPrice) {
+//		List<Product> productList = productDao.findByPriceBetween(minPrice, maxPrice);
+//		return convertToFrontEndFormat(productList);
+//	}
 
 	// 3. 以賣家 ID 搜尋
 	public GetProductDataRes searchBySellerId(int userId) {
@@ -152,18 +152,18 @@ public class ProductService {
 		if (CollectionUtils.isEmpty(types)) {
 			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
 		}
-		List<Product> filtered = productDao.getAllData().stream().filter(p -> jsonContainsAny(p.getType(), types))
+		List<Product> filtered = productDao.getAllOnSale().stream().filter(p -> jsonContainsAny(p.getType(), types))
 				.collect(Collectors.toList());
 		return convertToFrontEndFormat(filtered);
 	}
 
-	// 6. 以年級搜尋
-	public GetProductDataRes searchByGrade(String grade) {
-		if (grade == null || grade.isBlank()) {
-			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
-		}
-		return convertToFrontEndFormat(productDao.findByGrade(grade));
-	}
+	// 6. 以年級搜尋 (無用 可刪)
+//	public GetProductDataRes searchByGrade(String grade) {
+//		if (grade == null || grade.isBlank()) {
+//			return new GetProductDataRes(ReplyMessage.INVALID_PARAM.getCode(), ReplyMessage.INVALID_PARAM.getMessage());
+//		}
+//		return convertToFrontEndFormat(productDao.findByGrade(grade));
+//	}
 	
 	// 7. 以學校搜尋
 	public GetProductDataRes getByUniversity(String school) {
@@ -186,9 +186,11 @@ public class ProductService {
 
 		// Step 2：Java 層過濾 grades（DB 欄位是普通字串，可以直接比對）
 		if (!CollectionUtils.isEmpty(req.getGrades())) {
-			result = result.stream().filter(p -> req.getGrades().contains(p.getGrade())).collect(Collectors.toList());
+		    result = result.stream()
+		        .filter(p -> jsonContainsAny(p.getGrade(), req.getGrades()))
+		        .collect(Collectors.toList());
 		}
-
+		
 		// Step 3：Java 層過濾 conditions（productCondition 是普通字串）
 		if (!CollectionUtils.isEmpty(req.getConditions())) {
 			result = result.stream().filter(p -> req.getConditions().contains(p.getProductCondition()))

@@ -171,6 +171,7 @@ public class UserService {
 
 	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 	}
+	
 	/* 寄送驗證信 */
 	private void sendVerificationEmail(String email, String code) {
 		try {
@@ -310,6 +311,7 @@ public class UserService {
 		User user = userdao.getAccount(email);
 		
 		if (user != null) {
+			
 
 			// 3. 密碼錯
 			if (!encoder.matches(password, user.getPassword())) {

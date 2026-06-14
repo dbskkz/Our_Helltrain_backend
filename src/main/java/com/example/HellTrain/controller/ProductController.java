@@ -33,10 +33,10 @@ public class ProductController {
 		return productService.getAllProductsInformation();
 	}
 	
-	@GetMapping(value = "/search/price")
-	public GetProductDataRes searchByPrice(@RequestParam("minPrice") int minPrice, @RequestParam("maxPrice") int maxPrice) {
-		return productService.searchByPrice(minPrice, maxPrice);
-	}
+//	@GetMapping(value = "/search/price")
+//	public GetProductDataRes searchByPrice(@RequestParam("minPrice") int minPrice, @RequestParam("maxPrice") int maxPrice) {
+//		return productService.searchByPrice(minPrice, maxPrice);
+//	}
 	
 	@GetMapping(value = "/search/userId")
 	public GetProductDataRes searchBySellerId(@RequestParam("userId") int userId) {
@@ -53,11 +53,11 @@ public class ProductController {
 		return productService.searchByType(type);
 	}
 	
-	 // 年級
-    @GetMapping("/search/grade")
-    public GetProductDataRes searchByGrade(@RequestParam("grade") String grade) {
-        return productService.searchByGrade(grade);
-    }
+//	 // 年級
+//    @GetMapping("/search/grade")
+//    public GetProductDataRes searchByGrade(@RequestParam("grade") String grade) {
+//        return productService.searchByGrade(grade);
+//    }
 
     // 以使用者校名取得商品
     @GetMapping("/search/school")

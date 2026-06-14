@@ -13,11 +13,12 @@ import com.example.HellTrain.entity.Product;
 
 import jakarta.transaction.Transactional;
 
+// 6/13 修改 : 只選取販售中的商品
 @Repository
 public interface ProductDao extends JpaRepository<Product, Integer> {
 
-	@Query(value = "SELECT * FROM product", nativeQuery = true)
-	List<Product> getAllData();
+	@Query(value = "SELECT * FROM product WHERE status = '販售中'", nativeQuery = true)
+	List<Product> getAllOnSale();
 
 	@Query(value = "SELECT * FROM product WHERE price >= ?1 AND price <= ?2", nativeQuery = true)
 	List<Product> findByPriceBetween(int minPrice, int maxPrice);
@@ -26,7 +27,7 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	List<Product> findByUserId(int userId);
 
 	// 修正：原本 %?% 語法錯誤，改用 CONCAT
-	@Query(value = "SELECT * FROM product WHERE type LIKE CONCAT('%', ?1, '%')", nativeQuery = true)
+	@Query(value = "SELECT * FROM product WHERE type LIKE CONCAT('%', ?1, '%') AND status = '販售中'", nativeQuery = true)
 	List<Product> findByType(String type);
 
 	// 新增：年級搜尋
@@ -36,7 +37,7 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	// 新增：以校名搜尋
 	@Query(value = "SELECT p.* FROM product p "//
 			+ "INNER JOIN user u ON p.user_id = u.user_id "//
-			+ "WHERE u.school = ?", nativeQuery = true)
+			+ "WHERE u.school = ?1 AND p.status = '販售中'", nativeQuery = true)
 	List<Product> findBySchool(String school);
 
 	// 新增：商品名稱模糊搜尋
@@ -49,15 +50,16 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 			WHERE (:keyword IS NULL OR product_name LIKE CONCAT('%', :keyword, '%'))
 			  AND (:minPrice IS NULL OR price >= :minPrice)
 			  AND (:maxPrice IS NULL OR price <= :maxPrice)
+			  AND status = '販售中'
 			""", nativeQuery = true)
 	List<Product> findByMultiConditions(@Param("keyword") String productName, @Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice);
 
-	// 以Id取得告別商品情報
+	// 以商品ID搜尋
 	@Query(value = "SELECT * FROM product WHERE product_id = ?1", nativeQuery = true)
 	public Product findByProductId(int productId);
 
-	// 更改商品狀況販售中、交易中、下嫁等等
+	// 更改商品狀況販售中、交易中、下架等等
 	@Modifying
 	@Transactional
 	@Query(value = "update product set status = ?2 where product_id = ?1", nativeQuery = true)
