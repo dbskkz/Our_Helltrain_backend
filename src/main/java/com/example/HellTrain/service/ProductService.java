@@ -24,7 +24,7 @@ import com.example.HellTrain.request.SearchProductReq;
 import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.GetProductDataRes;
 import com.example.HellTrain.vo.ProductVo;
-import com.example.HellTrain.vo.SellerVo;
+import com.example.HellTrain.vo.SimpleUserVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -66,7 +66,7 @@ public class ProductService {
 	// Product 轉 ProductVo，給 convertToFrontEndFormat 用
 	// 6/6 新增: SellerVo
 	// 改成接收已查好的 sellerVo，不在這裡查 DB
-	private ProductVo toVo(Product item, SellerVo sellerVo) throws Exception {
+	private ProductVo toVo(Product item, SimpleUserVo sellerVo) throws Exception {
 	    return new ProductVo(
 	        item.getProductId(), item.getUserId(), item.getProductName(),
 	        item.getDescription(), item.getPrice(),
@@ -90,11 +90,11 @@ public class ProductService {
 	            .distinct()
 	            .collect(Collectors.toList());
 
-	    Map<Integer, SellerVo> sellerMap = userDao.findByUserIdIn(userIds)
+	    Map<Integer, SimpleUserVo> sellerMap = userDao.findByUserIdIn(userIds)
 	            .stream()
 	            .collect(Collectors.toMap(
 	                User::getUserId,
-	                u -> new SellerVo(u.getUserId(), u.getUserName(), u.getSchool(), u.getImgPath())
+	                u -> new SimpleUserVo(u.getUserId(), u.getUserName(), u.getSchool(), u.getImgPath(), u.getDepartment())
 	            ));
 
 	    List<ProductVo> voList = new ArrayList<>();
