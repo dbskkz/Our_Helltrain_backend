@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.example.HellTrain.config.CloudinaryService;
@@ -31,6 +32,7 @@ import com.example.HellTrain.response.ReportRes;
 import com.example.HellTrain.vo.ReportListVo;
 import com.example.HellTrain.vo.ReportVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Service
 public class ReportService {
@@ -153,6 +155,7 @@ public class ReportService {
 	}
 
 	// 動作！！！
+	@Transactional(rollbackFor = Exception.class)
 	public BasicResponse check(CheckReport req) {
 
 		Report report = reportDao.getReportId(req.getReportId());

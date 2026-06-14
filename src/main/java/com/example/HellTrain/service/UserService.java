@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+//@EnableScheduling(正式專案要放在main中)
 @EnableScheduling // 讓此類別下的scheduled(排成)方法生效
 @Service
 public class UserService {
