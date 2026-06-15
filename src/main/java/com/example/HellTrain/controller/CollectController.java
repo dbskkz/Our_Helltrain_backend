@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.CollectRes;
 import com.example.HellTrain.service.CollectService;
 
 import jakarta.servlet.http.HttpSession;
@@ -44,7 +45,7 @@ public class CollectController {
 		return collectService.addCollect(id, productId);
 	}
 	
-	@GetMapping(value = "/delete")
+	@PostMapping(value = "/delete")
 	public BasicResponse clearCollect(HttpSession session,//
 			@RequestParam("collectId") List<Integer> collectId) {
 		// 檢查登入session是否過期
@@ -53,5 +54,15 @@ public class CollectController {
 			return checkSession(id);
 		}
 		return collectService.clearCollect(id, collectId);
+	}
+	
+	@GetMapping(value = "/getUserCllect")
+	public CollectRes getAllCollect(HttpSession session) {
+		Integer id = (Integer) session.getAttribute("user_id");
+		if (checkSession(id) != null) {
+			return (CollectRes)checkSession(id);
+		}
+		
+		return collectService.getAllCollect(id);
 	}
 }
