@@ -13,6 +13,7 @@ import com.example.HellTrain.constant.ProductStatus;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.OrderDao;
+import com.example.HellTrain.dao.OrderListProjection;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.Order;
@@ -317,14 +318,29 @@ public class OrderService {
 			return (OrderRes) checkUserId(userId);
 		}
 
-		List<Object[]> results = orderDao.getUserAllOrder(userId);
+		 List<OrderListProjection> results = orderDao.getUserAllOrder(userId);
 
-		List<OrderListVo> voList = results.stream()//
-				.map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
-				.collect(Collectors.toList());
+		    List<OrderListVo> voList = results.stream()
+		        .map(p -> new OrderListVo(
+		            p.getOrderId(),
+		            p.getCreateDate(),
+		            p.getBuyerCheck(),
+		            p.getSellerCheck(),
+		            p.getStatus(),
+		            p.getSellerName(),
+		            p.getProductName(),
+		            p.getPrice(),
+		            p.getBuyerName(),
+		            p.getImgPath(),
+		            p.getBuyerId(),
+		            p.getSellerId(),
+		            p.getBuyerRank(),
+		            p.getSalesmanRank()
+		        ))
+		        .collect(Collectors.toList());
 
-		return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
-	}
+		    return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
+		}
 
 	public OrderRes getProductAllOrder(int id, int productId) {
 		if (checkUserId(id) != null) {
