@@ -30,9 +30,9 @@ public class ChatRoom {
 	@NotNull(message = ValidMessage.RECEIVER_ID_IS_NULL)
 	@Column(name = "receiver_id")
 	private int receiverId;
-	
+
 	@Column(name = "created_at", updatable = false) // updatable=false 表示這欄位一旦寫入就不能被修改
-	private LocalDateTime createdAt;
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	// getter & setter
 	public int getRoomId() {

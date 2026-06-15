@@ -32,12 +32,12 @@ public class ChatMessage {
 	@NotEmpty(message = ValidMessage.MESSAGE_CONTENT_IS_EMPTY)
 	@Column(name = "message_content")
 	private String messageContent;
-	
+
 	@Column(name = "is_read")
 	private boolean isRead;
-	
+
 	@Column(name = "created_at", updatable = false) // updatable=false 表示這欄位一旦寫入就不能被修改
-	private LocalDateTime createdAt;
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	// getter & setter
 	public int getMessageId() {

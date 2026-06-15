@@ -21,13 +21,13 @@ public class ChatService {
         server.addEventListener("join_room", Map.class, (client, data, ackSender) -> {
             // 1. 從前端傳來的資料中，拿到資料庫的房間流水號 (例如 1)
             String roomId = String.valueOf(data.get("roomId"));
-            String userId = String.valueOf(data.get("userId"));
+            String userName = (String) data.get("userName");
 
             // 2. 讓這個連線（Client）加入這個流水號標籤的房間
             // 如果這個房間本來不存在，Netty-Socketio 會自動幫你建立！
             client.joinRoom(roomId);
 
-            System.out.println("🏠 使用者 [" + userId + "] 順利進入了房間流水號: " + roomId);
+            System.out.println("🏠 使用者 [" + userName + "] 順利進入了房間流水號: " + roomId);
         });
 
         // 監聽前端送過來的 'chatevent' 事件
