@@ -17,6 +17,8 @@ public class CollectVoList {
 	private int price;
 
 	private String sellerName;
+	
+	private int collectId;
 
 	public String getProductName() {
 		return productName;
@@ -58,6 +60,14 @@ public class CollectVoList {
 		this.sellerName = sellerName;
 	}
 
+	public int getCollectId() {
+		return collectId;
+	}
+
+	public void setCollectId(int collectId) {
+		this.collectId = collectId;
+	}
+
 	public static CollectVoList from(Object[] row) {
 		CollectVoList vo = new CollectVoList();
 		vo.setProductName((String) row[0]);
@@ -66,6 +76,7 @@ public class CollectVoList {
 		vo.setImgPath(imgList.isEmpty() ? null : imgList.get(0));
 		vo.setPrice((int) row[3]);
 		vo.setSellerName((String) row[4]);
+		vo.setCollectId((int) row[5]);
 		return vo;
 	}
 
