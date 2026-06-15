@@ -18,7 +18,7 @@ public enum ReplyMessage {
 	NO_DEPTGROUP(400, "No designated trading deptgroup"),//沒有指定學群
 	GRADE_IS_NULL(400,"Grade cannot be null"),//
 	//管理員
-	WELCOME_MANAGER(201,"Manager is login"),//判斷登入者為管理員
+	WELCOME_MANAGER(200,"Manager is login"),//判斷登入者為管理員
 	//帳號驗證相關
 	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
 	VERIFICATION_IS_INVALID(403, "Verification is invalid"),//驗證已過期

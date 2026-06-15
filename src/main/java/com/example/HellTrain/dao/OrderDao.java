@@ -42,14 +42,28 @@ public interface OrderDao extends JpaRepository<Order, Integer> {
 	public List<Order> getByBuyId(int BuyerId);
 
 	//買家的所有定單
-	@Query(value="SELECT o.order_id, o.create_date, o.buyer_check, o.seller_check,"
-			+ " o.status, seller.user_name, p.product_name, p.price, buyer.user_name, p.img_path"
-			+ " FROM `order` o"
-			+ " JOIN product p ON o.product_id = p.product_id"
-			+ " JOIN user buyer ON buyer.user_id = o.buyer_id"
-			+ " JOIN user seller ON seller.user_id = p.user_id"
-			+ " WHERE p.user_id = ?1 or o.buyer_id = ?1",nativeQuery = true)
-	public List<Object[]> getUserAllOrder(int BuyerId);
+	@Query(value = "SELECT " +
+		    "o.order_id AS orderId, " +
+		    "o.create_date AS createDate, " +
+		    "o.buyer_check AS buyerCheck, " +
+		    "o.seller_check AS sellerCheck, " +
+		    "o.status AS status, " +
+		    "seller.user_name AS sellerName, " +
+		    "p.product_name AS productName, " +
+		    "p.price AS price, " +
+		    "buyer.user_name AS buyerName, " +
+		    "p.img_path AS imgPath, " +
+		    "o.buyer_id AS buyerId, " +
+		    "p.user_id AS sellerId, " +
+		    "o.buyer_rank AS buyerRank, " +       
+		    "o.salesman_rank AS salesmanRank " +  
+		    "FROM `order` o " +
+		    "JOIN product p ON o.product_id = p.product_id " +
+		    "JOIN user buyer ON buyer.user_id = o.buyer_id " +
+		    "JOIN user seller ON seller.user_id = p.user_id " +
+		    "WHERE p.user_id = ?1 OR o.buyer_id = ?1",
+		    nativeQuery = true)
+		public List<OrderListProjection> getUserAllOrder(int buyerId);
 	
 	@Modifying
 	@Transactional

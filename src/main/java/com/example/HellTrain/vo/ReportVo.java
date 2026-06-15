@@ -8,7 +8,7 @@ public class ReportVo {
     private int reportId;
     private String type;
     private int productId;
-    private String accusedName;
+    private int accusedId;
     private String complainantName;
     private LocalDate reportDate;
     private String status;
@@ -44,13 +44,15 @@ public class ReportVo {
 	}
 
 
-	public String getAccusedName() {
-		return accusedName;
+
+
+	public int getAccusedId() {
+		return accusedId;
 	}
 
 
-	public void setAccusedName(String accusedName) {
-		this.accusedName = accusedName;
+	public void setAccusedId(int accusedId) {
+		this.accusedId = accusedId;
 	}
 
 
@@ -89,7 +91,7 @@ public class ReportVo {
         vo.setReportId((int) row[0]);
         vo.setType((String) row[1]);
         vo.setProductId((int) row[2]);
-        vo.setAccusedName((String) row[3]);
+        vo.setAccusedId((int) row[3]);
         vo.setComplainantName((String) row[4]);
         vo.setReportDate(((java.sql.Date) row[5]).toLocalDate());
         vo.setStatus((String) row[6]);

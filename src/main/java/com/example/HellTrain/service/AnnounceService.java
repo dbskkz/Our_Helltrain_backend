@@ -19,8 +19,8 @@ import com.example.HellTrain.response.BasicResponse;
 @Service
 public class AnnounceService {
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	@Autowired
 	private AnnounceDao annouDao;
 
@@ -29,13 +29,12 @@ public class AnnounceService {
 
 		// dao
 		Announcement annou = annouDao.getById(announceId);
-		if(annou==null)
-		{
-			return new AnnounceRes(ReplyMessage.NO_DATA_FOUND.getCode(),//
+		if (annou == null) {
+			return new AnnounceRes(ReplyMessage.NO_DATA_FOUND.getCode(), //
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 
-		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(),//
+		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.NO_DATA_FOUND.getMessage(), annou);
 	}
 
@@ -43,17 +42,17 @@ public class AnnounceService {
 	public AnnounceRes getAllAnnounce() {
 
 		List<Announcement> annouList = annouDao.getAllAnnouncement();
-		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(),//
-				ReplyMessage.SUCCESS.getMessage(),annouList);
+		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), annouList);
 	}
-	
-	//取得架上公告
+
+	// 取得架上公告
 	public AnnounceRes getOnActive() {
-		
+
 		List<Announcement> annouList = annouDao.getOnActive();
 
-		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(),//
-				ReplyMessage.SUCCESS.getMessage(),annouList);
+		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), annouList);
 	}
 
 	// 新增公告
@@ -61,91 +60,86 @@ public class AnnounceService {
 
 		// 檢查標題
 		if (!StringUtils.hasText(req.getTitle())) {
-			return new BasicResponse(ReplyMessage.TITLE_IS_NULL.getCode(),//
+			return new BasicResponse(ReplyMessage.TITLE_IS_NULL.getCode(), //
 					ReplyMessage.TITLE_IS_NULL.getMessage());
 		}
 
-        String imageUrl = null;
+		String imageUrl = null;
+
 		if (req.getImgPath() != null) {
-            imageUrl = cloudinaryService.uploadBase64(req.getImgPath());
-        }
+		    imageUrl = cloudinaryService.uploadBase64(req.getImgPath());
+		}
 		// 檢查時間
-		//當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
+		// 當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
 		if (req.getShelfDate().isBefore(LocalDate.now())) {
-			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(),//
+			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
 					ReplyMessage.DATE_ERROR.getMessage());
 		}
-		//當開始時間 在 結束時間 之後(isAfter)>開始時間比結束時間晚
+		// 當開始時間 在 結束時間 之後(isAfter)>開始時間比結束時間晚
 		if (req.getShelfDate().isAfter(req.getRemovalDate())) {
-			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(),//
+			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
 					ReplyMessage.DATE_ERROR.getMessage());
 		}
-		
-		//檢查內文長度
-		if(req.getContent().length()>300)
-		{
-			return new BasicResponse(ReplyMessage.CONTENT_TEXT_OVER.getCode(),//
+
+		// 檢查內文長度
+		if (req.getContent() != null && req.getContent().length() > 300) {
+			return new BasicResponse(ReplyMessage.CONTENT_TEXT_OVER.getCode(), //
 					ReplyMessage.CONTENT_TEXT_OVER.getMessage());
 		}
-	        // 新增公告dao
-	        annouDao.addAnnounce(req.getTitle(), imageUrl, req.getShelfDate(), req.getRemovalDate(),//
-	        		req.isPublish(), req.getContent());
-		
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
+		// 新增公告dao
+		annouDao.addAnnounce(req.getTitle(), imageUrl, req.getShelfDate(), req.getRemovalDate(), //
+				req.isPublish(), req.getContent());
+
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 	}
-	
+
 	public BasicResponse updata(AnnounceReq req) {
-		
+
 		// 檢查公告是否存在
 		Announcement announcement = annouDao.getById(req.getId());
 		if (announcement == null) {
-		    return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(),
-		            ReplyMessage.NO_DATA_FOUND.getMessage());
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
-		
+
 		// 檢查標題
 		if (!StringUtils.hasText(req.getTitle())) {
-			return new BasicResponse(ReplyMessage.TITLE_IS_NULL.getCode(),//
+			return new BasicResponse(ReplyMessage.TITLE_IS_NULL.getCode(), //
 					ReplyMessage.TITLE_IS_NULL.getMessage());
 		}
 
 		// 檢查時間
-		//當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
+		// 當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
 		if (req.getShelfDate().isBefore(LocalDate.now())) {
-			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(),//
+			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
 					ReplyMessage.DATE_ERROR.getMessage());
 		}
-		//當開始時間 在 結束時間 之後(isAfter)>開始時間比結束時間晚
+		// 當開始時間 在 結束時間 之後(isAfter)>開始時間比結束時間晚
 		if (req.getShelfDate().isAfter(req.getRemovalDate())) {
-			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(),//
+			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
 					ReplyMessage.DATE_ERROR.getMessage());
 		}
-		
-		//檢查內文長度
-		if(req.getContent().length()>300)
-		{
-			return new BasicResponse(ReplyMessage.CONTENT_TEXT_OVER.getCode(),//
+
+		// 檢查內文長度
+		if (req.getContent() != null && req.getContent().length() > 300) {
+			return new BasicResponse(ReplyMessage.CONTENT_TEXT_OVER.getCode(), //
 					ReplyMessage.CONTENT_TEXT_OVER.getMessage());
 		}
-		
 
 		// 處理圖片
 		String imgUrl;
 		try {
-		    // req.getImgBase64() 是 null 時，保留原本的圖片
-		    imgUrl = req.getImgPath() != null 
-		        ? cloudinaryService.resolveImageUrl(req.getImgPath())
-		        : announcement.getImgPath();  // 直接用剛才查出來的
+			// req.getImgBase64() 是 null 時，保留原本的圖片
+			imgUrl = req.getImgPath() != null ? cloudinaryService.resolveImageUrl(req.getImgPath())
+					: announcement.getImgPath(); // 直接用剛才查出來的
 		} catch (IOException e) {
-		    return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
-		            ReplyMessage.PLEASE_TRY_LATE.getMessage());
+			return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(), ReplyMessage.PLEASE_TRY_LATE.getMessage());
 		}
 		annouDao.upddataAnnounce(req.getId(), req.getTitle(), imgUrl, req.getShelfDate(), req.getRemovalDate(),
 				req.isPublish(), req.getContent());
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(),//
+		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
-		
+
 	}
-	
+
 }
