@@ -44,6 +44,8 @@ public enum ReplyMessage {
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
+	// 許願用
+	TOO_MANY(429, "You have reached the wish limit !"),
 	//Order用
 	PRODUCT_IS_NOTFOUND(400, "Product is not found"),//找不到商品
 	PRODUCT_IS_UNSELL(400, "Product is unsell"),//未販售的商品

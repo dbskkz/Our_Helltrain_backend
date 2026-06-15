@@ -8,52 +8,36 @@ import jakarta.persistence.*;
 @Table(name = "wish")
 public class Wish {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-    private int id;
+	private int id;
 
-    @Column(name = "user_id")
-    private int userId;
+	@Column(name = "user_id")
+	private int userId;
 
-    @Column(name = "title")
-    private String title;
+	@Column(name = "title")
+	private String title;
 
-    @Column(name = "description")
-    private String description;
-    
-    @Column(name = "type")
-    private String type;
+	@Column(name = "description")
+	private String description;
 
-    @Column(name = "budget_min")
-    private int budgetMin;
+	@Column(name = "type")
+	private String type;
 
-    @Column(name = "budget_max")
-    private int budgetMax;
+	@Column(name = "budget_min")
+	private int budgetMin;
 
-    @Column(name = "status")
-    private String status;
+	@Column(name = "budget_max")
+	private int budgetMax;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+	@Column(name = "status")
+	private String status;
 
-	public Wish() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
 
-	public Wish(int id, int userId, String title, String description, String type, int budgetMin, int budgetMax,
-			String status, LocalDateTime createdAt) {
-		super();
-		this.id = id;
-		this.userId = userId;
-		this.title = title;
-		this.description = description;
-		this.type = type;
-		this.budgetMin = budgetMin;
-		this.budgetMax = budgetMax;
-		this.status = status;
-		this.createdAt = createdAt;
-	}
+	@Column(name = "expired_at")
+	private LocalDateTime expiredAt;
 
 	public int getId() {
 		return id;
@@ -127,5 +111,32 @@ public class Wish {
 		this.createdAt = createdAt;
 	}
 
+	public LocalDateTime getExpiredAt() {
+		return expiredAt;
+	}
+
+	public void setExpiredAt(LocalDateTime expiredAt) {
+		this.expiredAt = expiredAt;
+	}
+
+	public Wish() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Wish(int id, int userId, String title, String description, String type, int budgetMin, int budgetMax,
+			String status, LocalDateTime createdAt, LocalDateTime expiredAt) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.title = title;
+		this.description = description;
+		this.type = type;
+		this.budgetMin = budgetMin;
+		this.budgetMax = budgetMax;
+		this.status = status;
+		this.createdAt = createdAt;
+		this.expiredAt = expiredAt;
+	}
 
 }
