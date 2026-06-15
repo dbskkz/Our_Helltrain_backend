@@ -56,7 +56,7 @@ public class CollectController {
 		return collectService.clearCollect(id, collectId);
 	}
 	
-	@GetMapping(value = "/getUserCllect")
+	@GetMapping(value = "/getUserCollect")
 	public CollectRes getAllCollect(HttpSession session) {
 		Integer id = (Integer) session.getAttribute("user_id");
 		if (checkSession(id) != null) {
