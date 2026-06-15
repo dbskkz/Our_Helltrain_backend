@@ -21,7 +21,14 @@ public class ReportListVo {
 	private String productName;
 	private String accusedName;
 	private String complainantName;
+	private int accusedId;
 	
+	public int getAccusedId() {
+		return accusedId;
+	}
+	public void setAccusedId(int accusedId) {
+		this.accusedId = accusedId;
+	}
 	public int getReportId() {
 		return reportId;
 	}
@@ -97,8 +104,8 @@ public class ReportListVo {
 
 	public static ReportListVo fromRow(Object[] row) {
 		ReportListVo vo = new ReportListVo();
-	    vo.setReportId((int) row[0]);
-	    vo.setProductId((int) row[1]);
+	    vo.setReportId((Integer) row[0]);
+	    vo.setProductId(row[1] != null ? (Integer) row[1] : 0);
 	    vo.setDescription((String) row[2]);
 	    
 	    // file_path 是逗號分隔或 JSON，轉成 List
@@ -109,9 +116,11 @@ public class ReportListVo {
 	    vo.setType((String) row[6]);
 	    vo.setViolationType((String) row[7]);
 	    vo.setNote((String) row[8]);
-	    vo.setProductName((String) row[9]);
-	    vo.setAccusedName((String) row[10]);
+	    vo.setProductName(row[9] != null ? (String) row[9] : null);
+	    vo.setAccusedName(row[10] != null ? (String) row[10] : null);
 	    vo.setComplainantName((String) row[11]);
+	    vo.setAccusedId(row[12] != null ? (Integer) row[12] : 0);
+	    
 	    return vo;
 	}
 	private static List<String> parseJsonList(String json) {

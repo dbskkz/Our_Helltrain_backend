@@ -18,7 +18,7 @@ public class ProductVo {
 	private List<String> grade;
 	private List<String>  location;
 	private List<String> deptGroup;
-	private SellerVo seller;
+	private SimpleUserVo seller;
 	
 	public int getProductId() {
 		return productId;
@@ -100,10 +100,10 @@ public class ProductVo {
 		this.deptGroup = deptGroup;
 	}
 	
-	public SellerVo getSeller() {
+	public SimpleUserVo getSeller() {
 		return seller;
 	}
-	public void setSeller(SellerVo seller) {
+	public void setSeller(SimpleUserVo seller) {
 		this.seller = seller;
 	}
 	public ProductVo() {
@@ -130,7 +130,7 @@ public class ProductVo {
 	}
 	public ProductVo(int productId, int userId, String productName, String description, int price, List<String> imgPath,
 			List<String> type, LocalDate shelfDate, String productCondition, String status, List<String> grade,
-			List<String> location, List<String> deptGroup, SellerVo seller) {
+			List<String> location, List<String> deptGroup, SimpleUserVo seller) {
 		super();
 		this.productId = productId;
 		this.userId = userId;

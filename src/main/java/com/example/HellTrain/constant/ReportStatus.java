@@ -3,8 +3,8 @@ package com.example.HellTrain.constant;
 public enum ReportStatus {
 
 	/*處理中、已處理*/
-	Processed("已處裡"),
-	Handle("處理中");
+	Processed("已處理"),
+	Handle("未處理");
 	
 	
 	private final String message;

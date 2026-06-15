@@ -18,7 +18,7 @@ public enum ReplyMessage {
 	NO_DEPTGROUP(400, "No designated trading deptgroup"),//沒有指定學群
 	GRADE_IS_NULL(400,"Grade cannot be null"),//
 	//管理員
-	WELCOME_MANAGER(201,"Manager is login"),//判斷登入者為管理員
+	WELCOME_MANAGER(200,"Manager is login"),//判斷登入者為管理員
 	//帳號驗證相關
 	VERIFICATION_CODE_IS_SEND(200, "Verification code is send"),//發送新的驗證碼
 	VERIFICATION_IS_INVALID(403, "Verification is invalid"),//驗證已過期
@@ -44,6 +44,8 @@ public enum ReplyMessage {
 	FILE_SIZE_ERROR(400,"File size error"),//
 	PLEASE_TRY_LATE(400,"Please try late"),//
 	PASSWORD_NOT_CHANGE(400,"Password not change"),//檢查更改的密碼是否與原密碼一致
+	// 許願用
+	TOO_MANY(429, "You have reached the wish limit !"),
 	//Order用
 	PRODUCT_IS_NOTFOUND(400, "Product is not found"),//找不到商品
 	PRODUCT_IS_UNSELL(400, "Product is unsell"),//未販售的商品

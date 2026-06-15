@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
+//@EnableScheduling(正式專案要放在main中)
 @EnableScheduling // 讓此類別下的scheduled(排成)方法生效
 @Service
 public class UserService {
@@ -76,6 +77,7 @@ public class UserService {
 	    vo.setGoodLevel(user.getGoodLevel());//
 	    vo.setMsg(user.getMsg());//
 	    vo.setImgPath(user.getImgPath());//
+	    vo.setNote(user.getNote());
 	    return vo;//
 	}
 
@@ -171,6 +173,7 @@ public class UserService {
 
 	    return new BasicResponse(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 	}
+	
 	/* 寄送驗證信 */
 	private void sendVerificationEmail(String email, String code) {
 		try {
@@ -310,6 +313,7 @@ public class UserService {
 		User user = userdao.getAccount(email);
 		
 		if (user != null) {
+			
 
 			// 3. 密碼錯
 			if (!encoder.matches(password, user.getPassword())) {
