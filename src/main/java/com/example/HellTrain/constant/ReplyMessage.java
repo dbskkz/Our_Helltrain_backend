@@ -4,10 +4,13 @@ public enum ReplyMessage {
 	SUCCESS(200, "Success!!"),
 	NO_DATA_FOUND(404, "No data found"),
 	USER_ID_ERR(400, "The user id is invalid !"),
+
+	CLASSMATE_NO_FOUND(404, "There is no member in the school. QQ"),
+	PRODUCT_ID_ERR(400, "The product id is invalid !"),
 	PRODUCT_PARSE_ERROR(400, "Product data format parse error !"),//
 	INVALID_PARAM(400, "The parameter cannot be empty !"),//
 	//
-	PRODUCT_IS_NULL(400, "The product cannot be null !"),//沒有商品名稱
+	PRODUCT_NAME_NULL(400, "The product name cannot be null !"),//沒有商品名稱
 	PRICE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	TYPE_ERROR(400, "Price cannot less then one dollar"),//價格異常
 	CONDITION_IS_NULL(400, "Product condition not described"),//未描述商品狀況
@@ -46,6 +49,8 @@ public enum ReplyMessage {
 	PRODUCT_IS_UNSELL(400, "Product is unsell"),//未販售的商品
 	NO_PERMISSIONS(400, "You have not Permissions"),//沒有權限
 	ORDER_STATUS_ERROR(400, "Order status error"),//訂單狀態異常(無法進行此操作)
+	ALREADY_RANKED(400, "The order is already ranked"),//使用者已給予過評價
+	INVALID_ERROR(400, "The parameter is error !"),//輸入參數錯誤(給予評分沒有在放圍內)
 	//Report
 	DESCRIPTION_IS_NULL(400, "Description is null"),//請輸入描述
 	TYPE_IS_NULL(400, "Type is null"),//請輸入類型(可能是report也可能是product的)
@@ -55,7 +60,8 @@ public enum ReplyMessage {
 	//公告
 	TITLE_IS_NULL(400, "Title is null"),//標題為空
 	DATE_ERROR(400, "Date error"),//日期為空
-	CONTENT_TEXT_OVER(400, "Counent text over"),//內文為空
+	CONTENT_TEXT_OVER(400, "Counent text over"),//內文過長
+	PRODUCT_IS_COLLECT(400, "The product is alreay collect"),//商品以收藏
 	;
 	
 	private int code;

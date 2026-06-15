@@ -1,6 +1,9 @@
 package com.example.HellTrain.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import com.example.HellTrain.constant.ProductStatus;
 import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.constant.UserStatus;
 import com.example.HellTrain.dao.OrderDao;
+import com.example.HellTrain.dao.OrderListProjection;
 import com.example.HellTrain.dao.ProductDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.Order;
@@ -17,7 +21,10 @@ import com.example.HellTrain.entity.Product;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.request.GoodLevelReq;
 import com.example.HellTrain.response.BasicResponse;
+import com.example.HellTrain.response.LevelRes;
+import com.example.HellTrain.response.OrderRes;
 import com.example.HellTrain.vo.ChangeOrderStatusVo;
+import com.example.HellTrain.vo.OrderListVo;
 import com.example.HellTrain.vo.OrderVo;
 
 @Service
@@ -30,20 +37,27 @@ public class OrderService {
 	@Autowired
 	private OrderDao orderDao;
 
+	private BasicResponse checkUserId(int userId) {
+		User user = userDao.getById(userId);
+		// 查無此買家帳號
+		if (user == null) {
+			return new BasicResponse(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+		return null;
+	}
+
 	// 新增訂單
 	public BasicResponse addOrder(int id, OrderVo vo) {// (Get)
 
 //		User user = userDao.getById(vo.getBuyerId());
 
-		User user = userDao.getById(id);
-		// 查無此買家帳號
-		if (user == null) {
-			return new BasicResponse(ReplyMessage.EMAIL_NOT_FOUND.getCode(), //
-					ReplyMessage.EMAIL_NOT_FOUND.getMessage());
+		if (checkUserId(id) != null) {
+			return checkUserId(id);
 		}
+		User user = userDao.getById(id);
 
 		// 檢查帳號是否被停權。改成不等於正常，阿靠邀我她媽咧寫三小，但至少不會檢查有無驗證時間
-//		if(user.getStatus()==UserStatus.Suspension.getMessage()) {
 		if (!user.getStatus().equals(UserStatus.Normal.getMessage())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
@@ -134,7 +148,7 @@ public class OrderService {
 		// 取得訂單中的買家資訊
 		User buyer = userDao.getById(order.getBuyerId());
 		// 如email != 買家email，則沒有進行此操作的權限
-		//(因為email是買家的，所以如果不相等則沒有進行此操作的權限)
+		// (因為email是買家的，所以如果不相等則沒有進行此操作的權限)
 		if (!user.getUserEmail().equals(buyer.getUserEmail())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
@@ -166,18 +180,18 @@ public class OrderService {
 		Product product = productDao.findByProductId(order.getProductId());
 
 		// 檢查是哪一方的帳號
-				if (id==order.getBuyerId()) {
-					orderDao.buyerCheack(order.getOrderId());
-				}
+		if (id == order.getBuyerId()) {
+			orderDao.buyerCheack(order.getOrderId());
+		}
 
-				else if (id==product.getUserId()) {
-					orderDao.salesCheack(order.getOrderId());
-				}
-				// 都不是
-				else {
-					return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
-							ReplyMessage.NO_PERMISSIONS.getMessage());
-				}
+		else if (id == product.getUserId()) {
+			orderDao.salesCheack(order.getOrderId());
+		}
+		// 都不是
+		else {
+			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+					ReplyMessage.NO_PERMISSIONS.getMessage());
+		}
 
 		// 抓最新的order資料
 		Order update = orderDao.getOrderById(vo.getOrderId());
@@ -192,11 +206,16 @@ public class OrderService {
 	}
 
 	// 給予評價
-	public BasicResponse giveLevel(int id, GoodLevelReq req) {
+	public LevelRes giveLevel(int id, GoodLevelReq req) {
 
+		// 檢查輸入分數
+		if (req.getLevel() < 1 || req.getLevel() > 5) {
+			return new LevelRes(ReplyMessage.INVALID_ERROR.getCode(), //
+					ReplyMessage.INVALID_ERROR.getMessage());
+		}
 		User user = userDao.getById(id);
 		if (user == null) {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 
@@ -209,24 +228,137 @@ public class OrderService {
 		User salersman = userDao.getById(product.getUserId());
 		// 確認訂單狀況，如果不是完成就不能執行
 		if (!order.getStatus().equals(OrderStatus.COMPLETED.getMessage())) {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 		// 判斷帳號歸屬
 		if (id == buyer.getUserId()) {
 			// 當user為buyer時，給予的評價是賣家的
+			// 檢查是否給予過評價
+			if (order.getSalesmanRank() != 0) {
+				return new LevelRes(ReplyMessage.ALREADY_RANKED.getCode(), //
+						ReplyMessage.ALREADY_RANKED.getMessage());
+			}
 			// 設定salesman_rank
 			orderDao.setSalesRank(req.getOrderId(), req.getLevel());
+			recalculateGoodLevel(salersman.getUserId());
 		} else if (id == salersman.getUserId()) {
 			// 當user為salesman時，給予的評價是買家的
+			// 檢查是否給予過評價
+			if (order.getBuyerRank() != 0) {
+				return new LevelRes(ReplyMessage.ALREADY_RANKED.getCode(), //
+						ReplyMessage.ALREADY_RANKED.getMessage());
+			}
 			// 設定buyer_rank
 			orderDao.setbuyerRank(req.getOrderId(), req.getLevel());
+			recalculateGoodLevel(buyer.getUserId());
 		} else {
-			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), //
+			return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(), //
 					ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
-		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.SUCCESS.getMessage());
+		order=orderDao.getOrderById(id);
+		return new LevelRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(),//
+				order.getBuyerRank(),order.getSalesmanRank());
 	}
 
+	// 私有方法 計算信譽等級
+	private void recalculateGoodLevel(int userId) {
+		// 取得使用者作為買家的所有評價
+		List<Float> buyerRank = orderDao.getAllBuyerRank(userId, //
+				OrderStatus.COMPLETED.getMessage());
+		// 取得使用者作為賣家時的所有評價
+		List<Float> salesmanRnak = orderDao.getAllSalesmanRank(userId, //
+				OrderStatus.COMPLETED.getMessage());
+
+		List<Float> allRank = new ArrayList<Float>();
+		allRank.addAll(buyerRank);
+		allRank.addAll(salesmanRnak);
+
+		if (allRank.isEmpty()) {
+			return;
+		}
+
+		// 計算平均
+		float avg = 0f;
+		float sum = 0f;
+		for (Float rank : allRank) {
+			sum += rank;
+		}
+
+		avg = sum / allRank.size();
+		userDao.upGoodLevel(userId, avg);
+
+	}
+	
+	public LevelRes getLevel(int userId, int orderId) {
+	    
+	    Order order = orderDao.getOrderById(orderId);
+	    if (order == null) {
+	        return new LevelRes(ReplyMessage.NO_DATA_FOUND.getCode(),
+	        		ReplyMessage.NO_DATA_FOUND.getMessage());
+	    }
+	    
+	    // 確認是訂單的買家或賣家才能查看
+	    Product product = productDao.findByProductId(order.getProductId());
+	    if (userId != order.getBuyerId() && userId != product.getUserId()) {
+	        return new LevelRes(ReplyMessage.NO_PERMISSIONS.getCode(),
+	        		ReplyMessage.NO_PERMISSIONS.getMessage());
+	    }
+	    
+	    return new LevelRes(ReplyMessage.SUCCESS.getCode(),
+	            ReplyMessage.SUCCESS.getMessage(),
+	            order.getBuyerRank(),
+	            order.getSalesmanRank());
+	}
+
+	public OrderRes getAllOrder(int userId) {// 直接使用session的資料找出該帳號的所有訂單資訊
+		// 檢查帳號是否存在
+		if (checkUserId(userId) != null) {
+			return (OrderRes) checkUserId(userId);
+		}
+
+		 List<OrderListProjection> results = orderDao.getUserAllOrder(userId);
+
+		    List<OrderListVo> voList = results.stream()
+		        .map(p -> new OrderListVo(
+		            p.getOrderId(),
+		            p.getCreateDate(),
+		            p.getBuyerCheck(),
+		            p.getSellerCheck(),
+		            p.getStatus(),
+		            p.getSellerName(),
+		            p.getProductName(),
+		            p.getPrice(),
+		            p.getBuyerName(),
+		            p.getImgPath(),
+		            p.getBuyerId(),
+		            p.getSellerId(),
+		            p.getBuyerRank(),
+		            p.getSalesmanRank()
+		        ))
+		        .collect(Collectors.toList());
+
+		    return new OrderRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage(), voList);
+		}
+
+	public OrderRes getProductAllOrder(int id, int productId) {
+		if (checkUserId(id) != null) {
+			return (OrderRes) checkUserId(id);
+		}
+
+		if (productDao.findByProductId(productId) == null) {
+			return new OrderRes(ReplyMessage.NO_DATA_FOUND.getCode(), //
+					ReplyMessage.NO_DATA_FOUND.getMessage());
+		}
+
+		List<Object[]> results = orderDao.getByProductId(productId);
+
+		List<OrderListVo> voList = results.stream()//
+				.map(OrderListVo::fromRow) // 每筆 Object[] 都呼叫 fromRow
+				.collect(Collectors.toList());
+
+		return new OrderRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), voList);
+	}
 }

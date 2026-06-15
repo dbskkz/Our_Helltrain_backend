@@ -30,6 +30,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
 	@Query(value = "select * from user where user_email = ?1", nativeQuery = true)
 	public User getAccount(String email);
+	
+	// 佩霖寫的
+	@Query("SELECT u FROM User u WHERE u.userId IN :ids")
+	List<User> findByUserIdIn(@Param("ids") List<Integer> ids);
 
 	@Modifying
 	@Transactional
@@ -70,6 +74,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	// 提取個別使用者資料
 	@Query(value = "select * from user where user_id=?", nativeQuery = true)
 	public User getById(int id);
+	
+	// 提取各校使用者資料
+	@Query(value = "SELECT * FROM user WHERE school = ?", nativeQuery = true)
+	public List<User> getBySchool(String school);
 
 	// 改變使用者狀態(檢舉應對方法)
 	@Modifying
@@ -90,5 +98,15 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Transactional
 	@Query(value ="DELETE FROM user WHERE verified IS NULL AND create_date <= ?1", nativeQuery = true)
 	void deleteUnverified(LocalDateTime deadline);
+
+	@Modifying
+	@Transactional
+	@Query(value ="update user set good_level = ?2 where user_id = ?1", nativeQuery = true)
+	void upGoodLevel(int userId,float goodLevel);
+
+	@Modifying
+	@Transactional
+	@Query(value ="update user set note = ?2 where user_id = ?1", nativeQuery = true)
+	void updateNote(int userId,String note);
 	
 }
