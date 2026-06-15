@@ -34,23 +34,22 @@ public interface ReportDao extends JpaRepository<Report, Integer> {
 	);
 	
 	//取的所有檢舉資料，選擇欄位對應前端表格
-	@Query(value="SELECT r.report_id,  r.type, r.product_id, a.user_name, c.user_name, "
-			+ "r.report_date, r.status"
-			+ "FROM report "
-			+ "JOIN user a ON r.accused_id = a.user_id "
-			+ "JOIN user c ON r.complainant_id = c.user_id ",nativeQuery = true)
+	@Query(value="SELECT r.report_id,  r.type, r.product_id, r.accused_id, c.user_name, "
+			+ " r.report_date, r.status"
+			+ " FROM report r"
+			+ " LEFT JOIN user c ON r.complainant_id = c.user_id ",nativeQuery = true)
 	public List<Object[]> getAllReport();
 	
 	//檢舉需要JOIN檢舉人、被檢舉人或商品
 	@Query(value="SELECT r.report_id, r.product_id, r.description, r.file_path, r.report_date, "
 			+ " r.status, r.type, r.violation_type, r.note, p.product_name, "
-			+ " a.user_name, c.usessr_name"
-			+ "FROM report "
-			+ "JOIN product p ON r.product_id = p.product_id "
-			+ "JOIN user a ON r.accused_id = a.user_id "
-			+ "JOIN user c ON r.complainant_id = c.user_id "
-			+ "WHERE report_id = ?",nativeQuery = true)
-	public Object[] getReportById(int reportId);
+			+ " a.user_name, c.user_name, a.user_id"
+			+ " FROM report r"
+			+ " LEFT JOIN product p ON r.product_id = p.product_id "
+			+ " LEFT JOIN user a ON r.accused_id = a.user_id "
+			+ " LEFT JOIN user c ON r.complainant_id = c.user_id "
+			+ " WHERE r.report_id = ?",nativeQuery = true)
+	public List<Object[]> getReportById(int reportId);
 	
 	@Query(value="SELECT * FROM report WHERE report_id = ?",nativeQuery = true)
 	public Report getReportId(int reportId);
