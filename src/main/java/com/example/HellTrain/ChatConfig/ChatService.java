@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
@@ -67,10 +69,12 @@ public class ChatService {
                 vo.setMessageId(savedEntity.getMessageId());      // 訊息流水號
                 vo.setRoomId(savedEntity.getRoomId());            // 房間流水號
                 
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
                 if (savedEntity.getCreatedAt() != null) {
-                    vo.setCreatedAt(savedEntity.getCreatedAt());
+                    vo.setCreatedAt(savedEntity.getCreatedAt().format(formatter));
                 } else {
-                    vo.setCreatedAt(java.time.LocalDateTime.now());
+                    vo.setCreatedAt(java.time.LocalDateTime.now().format(formatter));
                 }
                 
                 vo.setMessageContent(savedEntity.getMessageContent()); //  訊息內容

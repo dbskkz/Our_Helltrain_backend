@@ -1,5 +1,6 @@
 package com.example.HellTrain.service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,19 @@ public class ChatMessageService {
 		vo.setMessageId(entity.getMessageId());
 		vo.setRoomId(entity.getRoomId());
 		vo.setMessageContent(entity.getMessageContent());
-		vo.setCreatedAt(entity.getCreatedAt());
 		vo.setSenderId(entity.getSenderId());
+		
+		
+		if (entity.getCreatedAt() != null) {
+		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		    vo.setCreatedAt(entity.getCreatedAt().format(formatter));
+		}
 
 		// ⚠️ 先保留（後面可優化）
-		userDao.findById(entity.getSenderId()).ifPresent(user -> vo.setSenderName(user.getUserName()));
+		userDao.findById(entity.getSenderId()).ifPresent(user -> {
+	        vo.setSenderName(user.getUserName());
+	        vo.setSenderImg(user.getImgPath()); 
+	    });
 
 		return vo;
 	}

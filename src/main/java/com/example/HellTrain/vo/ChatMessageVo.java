@@ -1,13 +1,12 @@
 package com.example.HellTrain.vo;
 
-import java.time.LocalDateTime;
 
 public class ChatMessageVo {
 	private int messageId;
 	
 	private int roomId;
 	
-	private LocalDateTime createdAt;
+	private String createdAt;
 	
 	private String messageContent;
 	
@@ -23,7 +22,7 @@ public class ChatMessageVo {
 		super();
 	}
 
-	public ChatMessageVo(int messageId, int roomId, LocalDateTime createdAt, String messageContent, boolean isRead,
+	public ChatMessageVo(int messageId, int roomId, String createdAt, String messageContent, boolean isRead,
 			int senderId, String senderName, String senderImg) {
 		super();
 		this.messageId = messageId;
@@ -53,11 +52,11 @@ public class ChatMessageVo {
 		this.roomId = roomId;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public String getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
 
