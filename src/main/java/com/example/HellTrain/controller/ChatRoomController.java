@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.HellTrain.entity.ChatRoom;
+import com.example.HellTrain.response.ChatRoomRes;
 import com.example.HellTrain.service.ChatRoomService;
 
 
@@ -20,11 +21,10 @@ public class ChatRoomController {
     private ChatRoomService chatRoomService;
 	
 	@PostMapping("/get-or-create")
-    public ResponseEntity<ChatRoom> getOrCreateRoom(@RequestBody Map<String, Integer> ChatRoomReq) {
+    public ChatRoomRes getOrCreateRoom(@RequestBody Map<String, Integer> ChatRoomReq) {
         int initiatorId = ChatRoomReq.get("initiatorId");
         int receiverId = ChatRoomReq.get("receiverId");
 
-        ChatRoom room = chatRoomService.getOrCreateRoom(initiatorId, receiverId);
-        return ResponseEntity.ok(room);
+        return chatRoomService.getOrCreateRoom(initiatorId, receiverId);
     }
 }

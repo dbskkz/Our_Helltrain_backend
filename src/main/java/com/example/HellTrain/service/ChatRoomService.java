@@ -3,8 +3,10 @@ package com.example.HellTrain.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ChatRoomDao;
 import com.example.HellTrain.entity.ChatRoom;
+import com.example.HellTrain.response.ChatRoomRes;
 
 @Service
 public class ChatRoomService {
@@ -12,24 +14,24 @@ public class ChatRoomService {
 	@Autowired
 	private ChatRoomDao chatRoomDao;
 
-	public ChatRoom getOrCreateRoom(int initiatorId, int receiverId) {
-		// 查「我發起，對方接收」
-		ChatRoom room = chatRoomDao.findByInitiatorIdAndReceiverId(initiatorId, receiverId);
-		if (room != null) {
-			return room;
+	public ChatRoomRes getOrCreateRoom(int initiatorId, int receiverId) {
+		ChatRoom room = chatRoomDao.findChatRoom(initiatorId, receiverId);
+
+		if (room == null) {
+			ChatRoom newRoom = new ChatRoom();
+			newRoom.setInitiatorId(initiatorId);
+			newRoom.setReceiverId(receiverId);
+
+			room = chatRoomDao.save(newRoom);
 		}
 
-		// 查「對方發起，我接收」
-		ChatRoom roomReverse = chatRoomDao.findByInitiatorIdAndReceiverId(receiverId, initiatorId);
-		if (roomReverse != null) {
-			return roomReverse;
-		}
-		
-		// 找不到，建新房間
-		ChatRoom newRoom = new ChatRoom();
-        newRoom.setInitiatorId(initiatorId);
-        newRoom.setReceiverId(receiverId);
-        
-        return chatRoomDao.save(newRoom);
+		 ChatRoomRes res = new ChatRoomRes(
+	                ReplyMessage.SUCCESS.getCode(),
+	                ReplyMessage.SUCCESS.getMessage()
+	        );
+
+	        res.setRoomId(room.getRoomId());
+
+	        return res;
 	}
 }
