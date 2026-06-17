@@ -35,7 +35,7 @@ public class AnnounceService {
 		}
 
 		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.NO_DATA_FOUND.getMessage(), annou);
+				ReplyMessage.SUCCESS.getMessage(), annou);
 	}
 
 	// 抓取所有公告資料
@@ -110,10 +110,10 @@ public class AnnounceService {
 
 		// 檢查時間
 		// 當開始時間 在 現在時間 之前(isBefore)>開始時間早於現在時間
-		if (req.getShelfDate().isBefore(LocalDate.now())) {
-			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
-					ReplyMessage.DATE_ERROR.getMessage());
-		}
+//		if (req.getShelfDate().isBefore(LocalDate.now())) {
+//			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //
+//					ReplyMessage.DATE_ERROR.getMessage());
+//		}
 		// 當開始時間 在 結束時間 之後(isAfter)>開始時間比結束時間晚
 		if (req.getShelfDate().isAfter(req.getRemovalDate())) {
 			return new BasicResponse(ReplyMessage.DATE_ERROR.getCode(), //

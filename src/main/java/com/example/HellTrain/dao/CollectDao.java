@@ -40,7 +40,7 @@ public interface CollectDao extends JpaRepository<Collect, CollectId> {
 
 	@Query(value = "SELECT p.product_name, p.img_path, p.description, p.product_condition,"
 			+ " p.price, seller.user_name, seller.img_path, seller.school, p.location,"
-			+ " c.collect_id"//
+			+ " c.collect_id, c.product_id, seller.user_id"//
 			+ " FROM collect c "//
 			+ " JOIN product p ON c.product_id = p.product_id "//
 			+ " JOIN user seller ON p.user_id = seller.user_id"//

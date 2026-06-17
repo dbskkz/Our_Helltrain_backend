@@ -188,7 +188,7 @@ public class UserService {
 
 			String content = """
 					<div style="font-family: Arial, sans-serif; padding: 20px;">
-					    <h2>HellTrain 帳號驗證</h2>
+					    <h2>二手GO 帳號驗證</h2>
 					    <p>您的驗證碼為：<strong>%s</strong></p>
 					    <p>15分鐘內有效，請勿告知他人。</p>
 					    <a href="%s" style="background-color: #FB831D; color: white;
@@ -260,7 +260,7 @@ public class UserService {
 
 			String content = """
 					<div style="font-family: Arial, sans-serif; padding: 20px;">
-					    <h2>HellTrain 帳號驗證提醒！！！</h2>
+					    <h2>二手GO 帳號驗證提醒！！！</h2>
 					    <p>您的帳號尚未完成驗證，將在 <strong>24小時後</strong> 被刪除。</p>
 					    <p>您的驗證碼為：<strong>%s</strong></p>
 					    <p>15分鐘內有效，請勿告知他人。</p>
