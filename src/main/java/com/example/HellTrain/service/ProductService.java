@@ -1,12 +1,14 @@
 package com.example.HellTrain.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -94,7 +96,7 @@ public class ProductService {
 	            .stream()
 	            .collect(Collectors.toMap(
 	                User::getUserId,
-	                u -> new SimpleUserVo(u.getUserId(), u.getUserName(), u.getSchool(), u.getImgPath(), u.getDepartment())
+	                u -> new SimpleUserVo(u.getUserId(), u.getUserName(), u.getSchool(), u.getImgPath(), u.getDepartment(), u.getGoodLevel())
 	            ));
 
 	    List<ProductVo> voList = new ArrayList<>();
@@ -575,6 +577,12 @@ public class ProductService {
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
 
-	}
+	} // The end of update
 
+	// 逾期下架
+	@Scheduled(cron = "0 0 1 * * *") 
+	public void cleanExpiredProducts() {
+		LocalDateTime deadline = LocalDateTime.now().minusDays(30);
+		productDao.RemoveFromShelves(deadline, ProductStatus.Removed.getMassage());
+	}
 }

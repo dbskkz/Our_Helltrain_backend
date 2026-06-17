@@ -10,6 +10,7 @@ public class WishesVo {
 	private String title;
 	private String description;
 	private List<String> type;
+	private List<String> location;
 	private int budgetMin;
 	private int budgetMax;
 	private String status;
@@ -55,6 +56,14 @@ public class WishesVo {
 
 	public void setType(List<String> type) {
 		this.type = type;
+	}
+
+	public List<String> getLocation() {
+		return location;
+	}
+
+	public void setLocation(List<String> location) {
+		this.location = location;
 	}
 
 	public int getBudgetMin() {
@@ -110,14 +119,16 @@ public class WishesVo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public WishesVo(int id, int userId, String title, String description, List<String> type, int budgetMin,
-			int budgetMax, String status, LocalDateTime createdAt, LocalDateTime expiredAt, SimpleUserVo wisher) {
+	public WishesVo(int id, int userId, String title, String description, List<String> type, List<String> location,
+			int budgetMin, int budgetMax, String status, LocalDateTime createdAt, LocalDateTime expiredAt,
+			SimpleUserVo wisher) {
 		super();
 		this.id = id;
 		this.userId = userId;
 		this.title = title;
 		this.description = description;
 		this.type = type;
+		this.location = location;
 		this.budgetMin = budgetMin;
 		this.budgetMax = budgetMax;
 		this.status = status;
