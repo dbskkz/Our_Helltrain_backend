@@ -574,7 +574,99 @@ public class ProductService {
 
 		return new BasicResponse(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage());
+	}
+		
+		//以下吳新增
+		// ── 新增草稿（不驗證欄位，status 寫死 NotSale）──
+		public BasicResponse createDraft(int userId, ProductReq req) {
+		    User user = userDao.getById(userId);
+		    if (user == null || !user.getStatus().equals(UserStatus.Normal.getMessage())) {
+		        return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),
+		                ReplyMessage.NO_PERMISSIONS.getMessage());
+		    }
+		    try {
+		        String imgPathJson   = mapper.writeValueAsString(req.getImgList()   != null ? req.getImgList()   : List.of());
+		        String typeJson      = mapper.writeValueAsString(req.getType()      != null ? req.getType()      : List.of());
+		        String locationJson  = mapper.writeValueAsString(req.getLocation()  != null ? req.getLocation()  : List.of());
+		        String gradeJson     = mapper.writeValueAsString(req.getGrade()     != null ? req.getGrade()     : List.of());
+		        String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup() != null ? req.getDeptGroup() : List.of());
 
+		        productDao.insert(userId,
+		            req.getProductName()      != null ? req.getProductName()      : "",
+		            req.getDescription()      != null ? req.getDescription()      : "",
+		            req.getPrice(),
+		            imgPathJson, typeJson, LocalDate.now(),
+		            req.getProductCondition() != null ? req.getProductCondition() : "",
+		            ProductStatus.NotSale.getMassage(),
+		            gradeJson, locationJson, deptGroupJson);
+
+		        int newId = productDao.getLastInsertIdByUser(userId);
+
+		        return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+		                ReplyMessage.SUCCESS.getMessage()) {
+		            private final int productId = newId;
+		            public int getProductId() { return productId; }
+		        };
+
+		    } catch (Exception e) {
+		        return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+		                ReplyMessage.PLEASE_TRY_LATE.getMessage());
+		    }
+		}
+
+		// ── 更新草稿 ──
+		public BasicResponse updateDraft(int userId, ProductReq req) {
+		    Product product = productDao.findByProductId(req.getProductId());
+		    if (product == null || product.getUserId() != userId) {
+		        return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(),
+		                ReplyMessage.NO_PERMISSIONS.getMessage());
+		    }
+		    try {
+		        String imgPathJson   = mapper.writeValueAsString(req.getImgList()   != null ? req.getImgList()   : List.of());
+		        String typeJson      = mapper.writeValueAsString(req.getType()      != null ? req.getType()      : List.of());
+		        String locationJson  = mapper.writeValueAsString(req.getLocation()  != null ? req.getLocation()  : List.of());
+		        String gradeJson     = mapper.writeValueAsString(req.getGrade()     != null ? req.getGrade()     : List.of());
+		        String deptGroupJson = mapper.writeValueAsString(req.getDeptGroup() != null ? req.getDeptGroup() : List.of());
+
+		        productDao.update(req.getProductId(),
+		            req.getProductName()      != null ? req.getProductName()      : "",
+		            req.getDescription()      != null ? req.getDescription()      : "",
+		            req.getPrice(),
+		            imgPathJson, typeJson,
+		            req.getProductCondition() != null ? req.getProductCondition() : "",
+		            gradeJson, locationJson, deptGroupJson);
+
+		        return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+		                ReplyMessage.SUCCESS.getMessage());
+
+		    } catch (Exception e) {
+		        return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+		                ReplyMessage.PLEASE_TRY_LATE.getMessage());
+		    }
+		}
+
+		// ── 草稿清單 ──
+		public GetProductDataRes getDraftsByUser(int userId) {
+		    List<Product> list = productDao.findByUserIdAndStatus(userId, ProductStatus.NotSale.getMassage());
+		    return convertToFrontEndFormat(list);
+		}
+
+		// ── 已上架清單 ──
+		public GetProductDataRes getPublishedByUser(int userId) {
+		    List<Product> list = productDao.findByUserIdAndStatus(userId, ProductStatus.OnSale.getMassage());
+		    return convertToFrontEndFormat(list);
+		}
+
+		// ── 下架（改 status 回 NotSale）──
+		public void unpublishById(int id) {
+		    productDao.updateStatus(id, ProductStatus.NotSale.getMassage());
+		}
+
+		// ── 刪除草稿 ──
+		public BasicResponse deleteDraft(int id) {
+		    productDao.deleteByProductId(id);
+		    return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+		            ReplyMessage.SUCCESS.getMessage());
 	}
 
 }

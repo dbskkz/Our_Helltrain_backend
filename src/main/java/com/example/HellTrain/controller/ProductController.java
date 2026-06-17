@@ -1,7 +1,6 @@
 package com.example.HellTrain.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+// 吳新增
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.example.HellTrain.constant.DeptGroupConst;
 import com.example.HellTrain.constant.ReplyMessage;
@@ -112,4 +115,68 @@ public class ProductController {
 		}
     	return productService.updateProduct(id, req);
     }
+    
+    //以下為吳新增
+    // ── 新增草稿 ──
+    @PostMapping("/draft")
+    public BasicResponse createDraft(HttpSession session, @RequestBody ProductReq req) {
+    		Integer userId = (Integer) session.getAttribute("user_id");
+        if (userId == null) {
+            return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
+                    ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+        }
+        return productService.createDraft(userId, req);
+    }
+    
+    // ── 更新草稿 ──
+    @PutMapping("/draft/{id}")
+    public BasicResponse updateDraft(HttpSession session,
+            @PathVariable int id,
+            @RequestBody ProductReq req) {
+        Integer userId = (Integer) session.getAttribute("user_id");
+        if (userId == null) {
+            return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
+                    ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+        }
+        req.setProductId(id);
+        return productService.updateDraft(userId, req);
+    }
+    
+ // ── 草稿清單 ──
+    @GetMapping("/user/{userId}/drafts")
+    public GetProductDataRes getDraftsByUser(@PathVariable int userId) {
+        return productService.getDraftsByUser(userId);
+    }
+
+    // ── 已上架清單 ──
+    @GetMapping("/user/{userId}/published")
+    public GetProductDataRes getPublishedByUser(@PathVariable int userId) {
+        return productService.getPublishedByUser(userId);
+    }
+
+    // ── 上架 ──
+    @PutMapping("/{id}/publish")
+    public BasicResponse publishById(HttpSession session, @PathVariable int id) {
+        Integer userId = (Integer) session.getAttribute("user_id");
+        if (userId == null) {
+            return new BasicResponse(ReplyMessage.PLEASE_LOGIN_FIRST.getCode(),
+                    ReplyMessage.PLEASE_LOGIN_FIRST.getMessage());
+        }
+        return productService.publishProduct(userId, id);
+    }
+
+    // ── 下架 ──
+    @PutMapping("/{id}/unpublish")
+    public BasicResponse unpublishById(@PathVariable int id) {
+        productService.unpublishById(id);
+        return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
+                ReplyMessage.SUCCESS.getMessage());
+    }
+
+    // ── 刪除草稿 ──
+    @DeleteMapping("/{id}")
+    public BasicResponse deleteById(@PathVariable int id) {
+        return productService.deleteDraft(id);
+    }
+    
 }
