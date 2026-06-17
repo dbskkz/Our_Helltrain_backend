@@ -4,7 +4,7 @@ public enum ReportStatus {
 
 	/*處理中、已處理*/
 	Processed("已處理"),
-	Handle("待處理");
+	Handle("未處理");
 	
 	
 	private final String message;

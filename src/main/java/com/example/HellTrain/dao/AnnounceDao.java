@@ -32,7 +32,7 @@ public interface AnnounceDao extends JpaRepository<Announcement, Integer> {
 	
 	//Active:因為date的資料庫型態是字串，所以用
 	@Query(value = "select * from announcement where shelf_date <= CURDATE()"
-			+ "and publish = 1", nativeQuery = true)
+			+"and CURDATE() <= removal_date and publish = 1", nativeQuery = true)
 	public List<Announcement> getOnActive();
 	
 	@Modifying
