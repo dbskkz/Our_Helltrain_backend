@@ -1,6 +1,7 @@
 package com.example.HellTrain.dao;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -88,6 +89,7 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	@Query(value = "update product set status = ?2 where product_id = ?1", nativeQuery = true)
 	public void updateStatus(int productId ,String status);
 	
+
 	//以下吳新增
 	// 依 userId + status 撈清單（草稿或已上架）
 	@Query(value = "SELECT * FROM product WHERE user_id = ?1 AND status = ?2", nativeQuery = true)
@@ -103,4 +105,12 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	@Query(value = "SELECT MAX(product_id) FROM product WHERE user_id = ?1", nativeQuery = true)
 	int getLastInsertIdByUser(int userId);
 
+	//修改商品資訊
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE product SET status = ?2 WHERE shelf_date <= ?1 AND status = '販售中'", nativeQuery = true)
+	public void RemoveFromShelves(LocalDateTime shelfDate ,String status);
+
+
+	
 }

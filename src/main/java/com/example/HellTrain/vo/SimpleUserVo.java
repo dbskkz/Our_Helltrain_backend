@@ -11,19 +11,22 @@ public class SimpleUserVo {
 	private String school;
 	private String userImgPath;
 	private String department;
+	private double goodLevel;
 
 	public SimpleUserVo() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public SimpleUserVo(int userId, String userName, String school, String userImgPath, String department) {
+	public SimpleUserVo(int userId, String userName, String school, String userImgPath, String department,
+			double goodLevel) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.school = school;
 		this.userImgPath = userImgPath;
 		this.department = department;
+		this.goodLevel = goodLevel;
 	}
 
 	public int getUserId() {
@@ -64,6 +67,14 @@ public class SimpleUserVo {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public double getGoodLevel() {
+		return goodLevel;
+	}
+
+	public void setGoodLevel(double goodLevel) {
+		this.goodLevel = goodLevel;
 	}
 
 }

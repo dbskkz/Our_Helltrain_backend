@@ -28,7 +28,7 @@ import com.example.HellTrain.vo.WishesVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @EnableScheduling 
 @Service
@@ -71,6 +71,7 @@ public class WishService {
             wish.getTitle(),
             wish.getDescription(),
             parseJsonList(wish.getType()),   // DB 存 JSON 字串，轉成 List<String>
+            parseJsonList(wish.getLocation()),   // DB 存 JSON 字串，轉成 List<String>
             wish.getBudgetMin(),
             wish.getBudgetMax(),
             wish.getStatus(),
@@ -98,7 +99,7 @@ public class WishService {
                 .collect(Collectors.toMap(
                     User::getUserId,
                     u -> new SimpleUserVo(u.getUserId(), u.getUserName(),
-                                         u.getSchool(), u.getImgPath(), u.getDepartment())
+                                         u.getSchool(), u.getImgPath(), u.getDepartment(), u.getGoodLevel())
                 ));
 
         List<WishesVo> voList = wishList.stream()
@@ -119,10 +120,10 @@ public class WishService {
         }
 
         // 分類不能為空
-        if (CollectionUtils.isEmpty(req.getType())) {
-            return new BasicResponse(ReplyMessage.INVALID_PARAM.getCode(),
-                    "請至少選擇一個分類");
-        }
+//        if (CollectionUtils.isEmpty(req.getType())) {
+//            return new BasicResponse(ReplyMessage.INVALID_PARAM.getCode(),
+//                    "請至少選擇一個分類");
+//        }
 
         // 預算區間合理性檢查
         if (req.getBudgetMin() < 0 || req.getBudgetMax() < 0) {
@@ -141,7 +142,7 @@ public class WishService {
 
     // ── POST：新增許願 ────────────────────────────────────────
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public BasicResponse addWish(int userId, WishReq req) {
 
         // 1. 確認使用者存在且狀態正常
@@ -167,12 +168,14 @@ public class WishService {
         // 3. 轉換格式並寫入 DB
         try {
             String typeJson = mapper.writeValueAsString(req.getType());
+            String locationJson = mapper.writeValueAsString(req.getLocation());
 
             wishDao.insert(
                 userId,
                 req.getTitle(),
                 req.getDescription() != null ? req.getDescription() : "",
                 typeJson,
+                locationJson,
                 req.getBudgetMin(),
                 req.getBudgetMax(),
                 "active",                      // 預設狀態

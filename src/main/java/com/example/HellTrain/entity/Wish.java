@@ -38,6 +38,9 @@ public class Wish {
 
 	@Column(name = "expired_at")
 	private LocalDateTime expiredAt;
+	
+	@Column(name = "location")
+	private String location;
 
 	public int getId() {
 		return id;
@@ -119,13 +122,21 @@ public class Wish {
 		this.expiredAt = expiredAt;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	public Wish() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Wish(int id, int userId, String title, String description, String type, int budgetMin, int budgetMax,
-			String status, LocalDateTime createdAt, LocalDateTime expiredAt) {
+			String status, LocalDateTime createdAt, LocalDateTime expiredAt, String location) {
 		super();
 		this.id = id;
 		this.userId = userId;
@@ -137,6 +148,9 @@ public class Wish {
 		this.status = status;
 		this.createdAt = createdAt;
 		this.expiredAt = expiredAt;
+		this.location = location;
 	}
+
+	
 
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.example.HellTrain.entity.User;
 import com.example.HellTrain.entity.Wish;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface WishDao extends JpaRepository<Wish, Integer>{
@@ -20,10 +20,10 @@ public interface WishDao extends JpaRepository<Wish, Integer>{
 	// INSERT 新許願
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO wish (user_id, title, description, type, "
+    @Query(value = "INSERT INTO wish (user_id, title, description, type, location, "
                  + "budget_min, budget_max, status, created_at, expired_at) "
-                 + "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)", nativeQuery = true)
-    void insert(int userId, String title, String description, String category,
+                 + "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)", nativeQuery = true)
+    void insert(int userId, String title, String description, String category, String location,
                 int budgetMin, int budgetMax, String status,
                 LocalDateTime createdAt, LocalDateTime expiredAt);
 
