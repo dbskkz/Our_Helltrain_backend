@@ -35,7 +35,7 @@ public class AnnounceService {
 		}
 
 		return new AnnounceRes(ReplyMessage.SUCCESS.getCode(), //
-				ReplyMessage.NO_DATA_FOUND.getMessage(), annou);
+				ReplyMessage.SUCCESS.getMessage(), annou);
 	}
 
 	// 抓取所有公告資料

@@ -27,6 +27,8 @@ public class CollectVoList {
 	private List<String> location;
 	
 	private int collectId;
+	
+	private int productId;
 
 	public String getProductName() {
 		return productName;
@@ -109,6 +111,14 @@ public class CollectVoList {
 		this.collectId = collectId;
 	}
 
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
 	public static CollectVoList from(Object[] row) {
 		CollectVoList vo = new CollectVoList();
 		vo.setProductName((String) row[0]);
@@ -122,6 +132,7 @@ public class CollectVoList {
 		vo.setSchool((String) row[7]);
 		vo.setLocation(parseJsonList((String) row[8]));	
 		vo.setCollectId((int) row[9]);
+		vo.setProductId((int) row[10]);
 		return vo;
 	}
 
