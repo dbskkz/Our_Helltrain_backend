@@ -5,7 +5,7 @@ import java.util.List;
 import com.example.HellTrain.vo.ChatMessageVo;
 
 public class ChatMessageRes extends BasicResponse {
-	List<ChatMessageVo> chatMessageVo;
+	private List<ChatMessageVo> chatMessageVo;
 
 	public ChatMessageRes() {
 		super();

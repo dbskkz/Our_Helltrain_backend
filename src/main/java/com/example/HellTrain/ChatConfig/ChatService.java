@@ -55,7 +55,12 @@ public class ChatService {
                 messageEntity.setRoomId(Integer.parseInt(roomId));
                 messageEntity.setSenderId(senderId);
                 messageEntity.setMessageContent(content);
-                messageEntity.setRead(false); // 預設未讀
+                // 如果房間人數=2，預設已讀
+                if (getRoomUserCount(Integer.parseInt(roomId)) == 2) {
+                    messageEntity.setRead(true); 
+                } else {
+                    messageEntity.setRead(false); 
+                }
 
                 // 存檔並收回完整的實體物件
                 ChatMessage savedEntity = chatMessageDao.save(messageEntity);
@@ -105,11 +110,21 @@ public class ChatService {
         System.out.println("==== Socket.io 伺服器已在 Port 9092 啟動 ====");
     }
 
-    // 當 Spring Boot 關閉時，優雅地關閉 Socket 伺服器
+    // 當 Spring Boot 關閉時，關閉 Socket 伺服器
     @PreDestroy
     public void stopServer() {
         if (server != null) {
             server.stop();
         }
+    }
+    
+    private int getRoomUserCount(int roomId) {
+        // 因為 rooms 在 socket 裡面通常是字串，我們把它轉成 String
+        String roomName = String.valueOf(roomId);
+        
+        if (server.getRoomOperations(roomName) != null) {
+            return server.getRoomOperations(roomName).getClients().size();
+        }
+        return 0;
     }
 }
