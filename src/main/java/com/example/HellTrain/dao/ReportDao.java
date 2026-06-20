@@ -43,7 +43,7 @@ public interface ReportDao extends JpaRepository<Report, Integer> {
 	//檢舉需要JOIN檢舉人、被檢舉人或商品
 	@Query(value="SELECT r.report_id, r.product_id, r.description, r.file_path, r.report_date, "
 			+ " r.status, r.type, r.violation_type, r.note, p.product_name, "
-			+ " a.user_name, c.user_name, a.user_id"
+			+ " a.user_name, c.user_name, a.user_id, p.user_id, c.user_id"
 			+ " FROM report r"
 			+ " LEFT JOIN product p ON r.product_id = p.product_id "
 			+ " LEFT JOIN user a ON r.accused_id = a.user_id "
