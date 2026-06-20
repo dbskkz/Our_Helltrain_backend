@@ -22,6 +22,8 @@ public class ReportListVo {
 	private String accusedName;
 	private String complainantName;
 	private int accusedId;
+	private int productUserId;
+	private int compId;
 	
 	public int getAccusedId() {
 		return accusedId;
@@ -102,6 +104,20 @@ public class ReportListVo {
 		this.complainantName = complainantName;
 	}
 
+	public int getProductUserId() {
+		return productUserId;
+	}
+	public void setProductUserId(int productUserId) {
+		this.productUserId = productUserId;
+	}
+	
+	public int getCompId() {
+		return compId;
+	}
+	public void setCompId(int compId) {
+		this.compId = compId;
+	}
+	
 	public static ReportListVo fromRow(Object[] row) {
 		ReportListVo vo = new ReportListVo();
 	    vo.setReportId((Integer) row[0]);
@@ -120,7 +136,8 @@ public class ReportListVo {
 	    vo.setAccusedName(row[10] != null ? (String) row[10] : null);
 	    vo.setComplainantName((String) row[11]);
 	    vo.setAccusedId(row[12] != null ? (Integer) row[12] : 0);
-	    
+	    vo.setProductUserId(row[13] !=null ? (Integer)row[13] : 0);
+	    vo.setCompId((int) row[14]);
 	    return vo;
 	}
 	private static List<String> parseJsonList(String json) {
