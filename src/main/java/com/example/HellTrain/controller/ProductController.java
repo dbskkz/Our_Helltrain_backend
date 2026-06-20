@@ -165,18 +165,18 @@ public class ProductController {
         return productService.publishProduct(userId, id);
     }
 
-    // ── 下架 ──
-    @PutMapping("/{id}/unpublish")
-    public BasicResponse unpublishById(@PathVariable int id) {
-        productService.unpublishById(id);
+    // ── 下架 ──  絲絨會用到不要刪
+    @PostMapping("unpublish")
+    public BasicResponse unpublishById(@RequestParam("productId") int productId) {
+        productService.unpublishById(productId);
         return new BasicResponse(ReplyMessage.SUCCESS.getCode(),
                 ReplyMessage.SUCCESS.getMessage());
     }
 
-    // ── 刪除草稿 ──
-    @DeleteMapping("/{id}")
-    public BasicResponse deleteById(@PathVariable int id) {
-        return productService.deleteDraft(id);
+    // ── 刪除草稿 ──  絲絨會用到不要刪
+    @PostMapping("/delete")
+    public BasicResponse deleteById(@RequestParam("productId") int productId) {
+        return productService.deleteDraft(productId);
     }
     
 }
