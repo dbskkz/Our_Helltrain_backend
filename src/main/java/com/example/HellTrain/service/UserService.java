@@ -510,6 +510,22 @@ public class UserService {
 		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
 				ReplyMessage.SUCCESS.getMessage(), voList);
 	}
+	
+	// 取得地區成員
+	public UserRes getUserDataByLocation(String location) {
+		List<User> users = userdao.getByLocation(location);
+		if (users == null || users.isEmpty()) {
+			return new UserRes(ReplyMessage.CLASSMATE_NO_FOUND.getCode(), //
+					ReplyMessage.CLASSMATE_NO_FOUND.getMessage());
+		}
+		
+		List<UserVo> voList = users.stream()
+	            .map(this::toVo)
+	            .collect(Collectors.toList());
+		
+		return new UserRes(ReplyMessage.SUCCESS.getCode(), //
+				ReplyMessage.SUCCESS.getMessage(), voList);
+	}
 
 	// 帳號狀態變更(手動)
 	public BasicResponse changeStatus(int usesrId) {

@@ -132,10 +132,15 @@ public class UserController {
 		return userService.getUserDataBySchool(school);
 	}
 	
+	// 取得各地區使用者
+	@GetMapping(value = "/getTheNearBy")
+	public UserRes getUserDataByLocation(@RequestParam("location") String location) {
+		return userService.getUserDataByLocation(location);
+	}
+	
 	//取得所有使用者
 	@GetMapping(value = "/getUsers")
 	public UserRes getAllUser() {
-
 		return userService.getAllUser();
 	}
 	
