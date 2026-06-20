@@ -48,12 +48,14 @@ public interface ProductDao extends JpaRepository<Product, Integer> {
 	// 新增：複合搜尋（productName + price，其餘在 Java 層過濾）
 	@Query(value = """
 			SELECT * FROM product
-			WHERE (:keyword IS NULL OR product_name LIKE CONCAT('%', :keyword, '%'))
+			WHERE (:keyword IS NULL 
+			OR product_name LIKE CONCAT('%', :keyword, '%') 
+			OR `type` LIKE CONCAT('%', :keyword, '%'))
 			  AND (:minPrice IS NULL OR price >= :minPrice)
 			  AND (:maxPrice IS NULL OR price <= :maxPrice)
 			  AND status = '販售中'
 			""", nativeQuery = true)
-	List<Product> findByMultiConditions(@Param("keyword") String productName, @Param("minPrice") Integer minPrice,
+	List<Product> findByMultiConditions(@Param("keyword") String keyword, @Param("minPrice") Integer minPrice,
 			@Param("maxPrice") Integer maxPrice);
 
 	// 以商品ID搜尋

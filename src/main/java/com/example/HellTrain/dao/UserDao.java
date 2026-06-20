@@ -78,6 +78,10 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	// 提取各校使用者資料
 	@Query(value = "SELECT * FROM user WHERE school = ? AND status = '正常'", nativeQuery = true)
 	public List<User> getBySchool(String school);
+	
+	// 提取各地區使用者資料
+	@Query(value = "SELECT * FROM user WHERE location LIKE CONCAT('%', ?1 , '%') AND status = '正常'", nativeQuery = true)
+	public List<User> getByLocation(String location);
 
 	// 改變使用者狀態(檢舉應對方法)
 	@Modifying
