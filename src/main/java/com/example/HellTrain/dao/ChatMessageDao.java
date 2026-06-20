@@ -31,6 +31,6 @@ public interface ChatMessageDao extends JpaRepository<ChatMessage, Integer> {
 	
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE chat_message SET is_read = true WHERE room_id = ?1 AND sender_id = ?2 AND is_read = false", nativeQuery = true)
+	@Query(value = "update chat_message set is_read = true where room_id = ?1 and sender_id = ?2 and is_read = false", nativeQuery = true)
 	public int readAllMessages(int roomId, int targetUserId);
 }

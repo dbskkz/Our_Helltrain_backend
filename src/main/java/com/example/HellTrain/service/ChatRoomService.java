@@ -1,6 +1,7 @@
 package com.example.HellTrain.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class ChatRoomService {
 		ChatRoomRes res = new ChatRoomRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
 
 		res.setRoomId(room.getRoomId());
+		res.setProductId(room.getProductId());
 
 		return res;
 	}
@@ -58,6 +60,7 @@ public class ChatRoomService {
 	private ChatRoomVo convertToVo(ChatRoom room, int userId) {
 		ChatRoomVo vo = new ChatRoomVo();
 		vo.setRoomId(room.getRoomId());
+		vo.setProductId(room.getProductId());
 
 		// 判斷哪一個是對方ID
 		int targetUserId;
@@ -69,10 +72,22 @@ public class ChatRoomService {
 		vo.setTargetUserId(targetUserId);
 
 		// 取得對方姓名及頭貼
-		userDao.findById(targetUserId).ifPresent(user -> {
-			vo.setTargetUserName(user.getUserName());
-			vo.setTargetUserImg(user.getImgPath());
-		});
+		// 先判斷對方是不是管理員（ID = 0）
+		if (targetUserId == 0) {
+			vo.setTargetUserName("admin");
+			vo.setTargetUserImg(
+					"https://res.cloudinary.com/df8kviidh/image/upload/v1780243053/default_avatar_lvgh1a.png");
+		} else {
+			userDao.findById(targetUserId).ifPresentOrElse(user -> {
+				vo.setTargetUserName(user.getUserName());
+				vo.setTargetUserImg(user.getImgPath());
+			}, () -> {
+				// 找不到使用者時的防呆（帳號可能已刪除）
+				vo.setTargetUserName("已刪除的使用者");
+				vo.setTargetUserImg(
+						"https://res.cloudinary.com/df8kviidh/image/upload/v1780243053/default_avatar_lvgh1a.png");
+			});
+		}
 
 		// 取得最後一則訊息
 		chatMessageDao.lastMessage(room.getRoomId()).ifPresent(msg -> {
@@ -99,5 +114,19 @@ public class ChatRoomService {
 
 			chatMessageDao.readAllMessages(roomId, targetUserId);
 		});
+	}
+
+	// 更新帶入的商品ID
+	@Transactional
+	public ChatRoomRes updateProductId(Integer productId, int roomId) {
+		Optional<ChatRoom> roomOpt = chatRoomDao.findById(roomId);
+
+		if (roomOpt.isPresent()) {
+			chatRoomDao.updateProductId(productId, roomId);
+			return new ChatRoomRes(ReplyMessage.SUCCESS.getCode(), ReplyMessage.SUCCESS.getMessage());
+		} else {
+			return new ChatRoomRes(ReplyMessage.ROOM_IS_NOTFOUND.getCode(), //
+					ReplyMessage.ROOM_IS_NOTFOUND.getMessage());
+		}
 	}
 }

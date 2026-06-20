@@ -6,8 +6,10 @@ import com.example.HellTrain.vo.ChatRoomVo;
 
 public class ChatRoomRes extends BasicResponse {
 	private int roomId;
-	
-	private List <ChatRoomVo> chatRoomVo;
+
+	private int productId;
+
+	private List<ChatRoomVo> chatRoomVo;
 
 	public ChatRoomRes() {
 		super();
@@ -17,9 +19,10 @@ public class ChatRoomRes extends BasicResponse {
 		super(statusCode, message);
 	}
 
-	public ChatRoomRes(int roomId, List<ChatRoomVo> chatRoomVo) {
+	public ChatRoomRes(int roomId, int productId, List<ChatRoomVo> chatRoomVo) {
 		super();
 		this.roomId = roomId;
+		this.productId = productId;
 		this.chatRoomVo = chatRoomVo;
 	}
 
@@ -31,6 +34,14 @@ public class ChatRoomRes extends BasicResponse {
 		this.roomId = roomId;
 	}
 
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
 	public List<ChatRoomVo> getChatRoomVo() {
 		return chatRoomVo;
 	}
@@ -39,5 +50,4 @@ public class ChatRoomRes extends BasicResponse {
 		this.chatRoomVo = chatRoomVo;
 	}
 
-	
 }

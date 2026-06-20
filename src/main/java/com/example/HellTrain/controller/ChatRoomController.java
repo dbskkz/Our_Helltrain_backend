@@ -39,4 +39,10 @@ public class ChatRoomController {
 		chatRoomService.readAllRoomMessages(roomId, userId);
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping("/update-productId")
+	public ChatRoomRes updateProductId(@RequestParam("productId") Integer productId,
+			@RequestParam("roomId") int roomId) {
+		return chatRoomService.updateProductId(productId, roomId);
+	}
 }
