@@ -10,11 +10,13 @@ public class WishReq {
     private List<String> location;
     private int budgetMin;
     private int budgetMax;
-	public String getTitle() {
-		return title;
+    private String status;
+	public WishReq() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	public WishReq(String title, String description, List<String> type, List<String> location, int budgetMin,
-			int budgetMax) {
+			int budgetMax, String status) {
 		super();
 		this.title = title;
 		this.description = description;
@@ -22,12 +24,10 @@ public class WishReq {
 		this.location = location;
 		this.budgetMin = budgetMin;
 		this.budgetMax = budgetMax;
+		this.status = status;
 	}
-	public List<String> getLocation() {
-		return location;
-	}
-	public void setLocation(List<String> location) {
-		this.location = location;
+	public String getTitle() {
+		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
@@ -44,9 +44,11 @@ public class WishReq {
 	public void setType(List<String> type) {
 		this.type = type;
 	}
-	public WishReq() {
-		super();
-		// TODO Auto-generated constructor stub
+	public List<String> getLocation() {
+		return location;
+	}
+	public void setLocation(List<String> location) {
+		this.location = location;
 	}
 	public int getBudgetMin() {
 		return budgetMin;
@@ -60,6 +62,14 @@ public class WishReq {
 	public void setBudgetMax(int budgetMax) {
 		this.budgetMax = budgetMax;
 	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+    
     
     
 }

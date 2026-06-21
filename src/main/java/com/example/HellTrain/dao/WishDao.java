@@ -34,7 +34,7 @@ public interface WishDao extends JpaRepository<Wish, Integer>{
     // 依學校篩選（JOIN user table）
     @Query(value = "SELECT w.* FROM wish w "
                  + "JOIN user u ON w.user_id = u.user_id "
-                 + "WHERE w.status = 'active' AND u.school = ?1 "
+                 + "WHERE u.school = ?1 "
                  + "ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wish> findActiveBySchool(String school);
 
