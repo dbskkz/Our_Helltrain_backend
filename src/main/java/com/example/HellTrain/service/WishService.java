@@ -178,7 +178,7 @@ public class WishService {
                 locationJson,
                 req.getBudgetMin(),
                 req.getBudgetMax(),
-                "active",                      // 預設狀態
+                req.getStatus(),                      // 預設狀態
                 LocalDateTime.now(),           // 建立時間
                 LocalDateTime.now().plusDays(30) // 30 天後到期
             );

@@ -1,6 +1,7 @@
 package com.example.HellTrain.vo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserVo {
@@ -17,6 +18,8 @@ public class UserVo {
     private String msg;
     private String imgPath;
     private String note;
+    private LocalDateTime createDate;
+    
 	public int getUserId() {
 		return userId;
 	}
@@ -95,5 +98,12 @@ public class UserVo {
 	public void setNote(String note) {
 		this.note = note;
 	}
+	public LocalDateTime getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(LocalDateTime createDate) {
+		this.createDate = createDate;
+	}
+	
     
 }
