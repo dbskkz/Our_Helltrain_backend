@@ -67,8 +67,8 @@ public class ChatService {
 
                 // 去 user 表查出名字與大頭貼網址
                 User user = userDao.findById(senderId).orElse(null);
-                String senderName = (user != null) ? user.getUserName() : "未知用戶";
-                String senderImg = (user != null) ? user.getImgPath() : "default_avatar.png"; 
+                String senderName = (user != null) ? user.getUserName() : "admin";
+                String senderImg = (user != null) ? user.getImgPath() : "https://res.cloudinary.com/df8kviidh/image/upload/v1780243053/default_avatar_lvgh1a.png"; 
 
                 ChatMessageVo vo = new ChatMessageVo();
                 vo.setMessageId(savedEntity.getMessageId());      // 訊息流水號
@@ -98,17 +98,26 @@ public class ChatService {
                 e.printStackTrace();
             }
         });
+        
+        // 監聽使用者離開聊天室
+        server.addEventListener("leave_room", Map.class, (client, data, ackSender) -> {
+            if (data != null && data.containsKey("roomId")) {
+                String roomId = String.valueOf(data.get("roomId"));
+                String userName = String.valueOf(data.get("userName")); 
+                
+                client.leaveRoom(roomId);                
+                System.out.println("【退房通知】使用者 [" + userName + "] 已主動離開房間: " + roomId);
+            }
+        });
 
         // 監聽斷線事件
         server.addDisconnectListener(client -> {
             System.out.println("使用者已斷線: " + client.getSessionId());
         });
-
-
-        
+       
         server.start();
         System.out.println("==== Socket.io 伺服器已在 Port 9092 啟動 ====");
-    }
+    }    
 
     // 當 Spring Boot 關閉時，關閉 Socket 伺服器
     @PreDestroy

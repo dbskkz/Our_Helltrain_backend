@@ -4,6 +4,8 @@ public class ChatRoomVo {
 
 	private int roomId;
 
+	private int productId;
+
 	private int targetUserId;
 
 	private String targetUserName;
@@ -18,10 +20,11 @@ public class ChatRoomVo {
 		super();
 	}
 
-	public ChatRoomVo(int roomId, int targetUserId, String targetUserName, String targetUserImg, String lastMessage,
-			int unreadCount) {
+	public ChatRoomVo(int roomId, int productId, int targetUserId, String targetUserName, String targetUserImg,
+			String lastMessage, int unreadCount) {
 		super();
 		this.roomId = roomId;
+		this.productId = productId;
 		this.targetUserId = targetUserId;
 		this.targetUserName = targetUserName;
 		this.targetUserImg = targetUserImg;
@@ -35,6 +38,14 @@ public class ChatRoomVo {
 
 	public void setRoomId(int roomId) {
 		this.roomId = roomId;
+	}
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
 	}
 
 	public int getTargetUserId() {

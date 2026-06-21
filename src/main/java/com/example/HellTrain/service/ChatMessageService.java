@@ -13,10 +13,8 @@ import com.example.HellTrain.constant.ReplyMessage;
 import com.example.HellTrain.dao.ChatMessageDao;
 import com.example.HellTrain.dao.UserDao;
 import com.example.HellTrain.entity.ChatMessage;
-import com.example.HellTrain.response.BasicResponse;
 import com.example.HellTrain.response.ChatMessageRes;
 import com.example.HellTrain.vo.ChatMessageVo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Service
 public class ChatMessageService {
@@ -48,6 +46,7 @@ public class ChatMessageService {
 		vo.setRoomId(entity.getRoomId());
 		vo.setMessageContent(entity.getMessageContent());
 		vo.setSenderId(entity.getSenderId());
+		vo.setRead(entity.isRead());
 
 		if (entity.getCreatedAt() != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

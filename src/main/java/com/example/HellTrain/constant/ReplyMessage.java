@@ -64,6 +64,8 @@ public enum ReplyMessage {
 	DATE_ERROR(400, "Date error"),//日期為空
 	CONTENT_TEXT_OVER(400, "Counent text over"),//內文過長
 	PRODUCT_IS_COLLECT(400, "The product is alreay collect"),//商品以收藏
+	//聊天室用
+	ROOM_IS_NOTFOUND(400, "Room is not found !"),
 	;
 	
 	private int code;
