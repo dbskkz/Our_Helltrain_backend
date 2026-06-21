@@ -566,7 +566,7 @@ public class ProductService {
 
 	// ── 下架（改 status 回 NotSale）──
 	public void unpublishById(int id) {
-		productDao.updateStatus(id, ProductStatus.NotSale.getMassage());
+		productDao.updateStatus(id, ProductStatus.Removed.getMassage());
 	}
 
 	// ── 刪除草稿 ──
