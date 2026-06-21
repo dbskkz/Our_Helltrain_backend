@@ -130,7 +130,7 @@ public class UserService {
 	        		ReplyMessage.LOCATION_IS_NULL.getMessage());
 	    }
 	    // 檢查姓名格式
-	    if (req.getName().length()>=20) {
+	    if (req.getName().length()>20) {
 	        return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(),
 	                ReplyMessage.PARAM_NAME_ERROR.getMessage());
 	    }
@@ -376,7 +376,7 @@ public class UserService {
 					ReplyMessage.NO_DATA_FOUND.getMessage());
 		}
 		// 檢查姓名格式
-		if (vo.getName().length()>=20) {
+		if (vo.getName().length()>20) {
 			return new BasicResponse(ReplyMessage.PARAM_NAME_ERROR.getCode(), //
 					ReplyMessage.PARAM_NAME_ERROR.getMessage());
 		}
