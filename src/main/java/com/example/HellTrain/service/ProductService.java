@@ -322,8 +322,9 @@ public class ProductService {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 
-		// 只有草稿才能發布
-		if (!product.getStatus().equals(ProductStatus.NotSale.getMassage())) {
+		// 只有草稿或已下架才能發布
+		if (!product.getStatus().equals(ProductStatus.NotSale.getMassage())
+				&& !product.getStatus().equals(ProductStatus.Removed.getMassage())) {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 
