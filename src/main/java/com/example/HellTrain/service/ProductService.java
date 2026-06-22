@@ -379,8 +379,38 @@ public class ProductService {
 			return new BasicResponse(ReplyMessage.NO_PERMISSIONS.getCode(), ReplyMessage.NO_PERMISSIONS.getMessage());
 		}
 
+		List<String> imgUrls = new ArrayList<>();
+
+		if (req.getImgList() != null) {
+			for (String img : req.getImgList()) {
+				if (img == null || img.isBlank())
+					continue;
+
+				// 新圖片（base64），上傳 Cloudinary
+				try {
+					imgUrls.add(cloudinaryService.uploadBase64(img));
+				} catch (Exception e) {
+					return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+							ReplyMessage.PLEASE_TRY_LATE.getMessage());
+				}
+
+			}
+		}
+		// 先判斷 imgUrls 不為空
+		String imgPathJson;
+		if (!imgUrls.isEmpty()) {
+			try {
+				imgPathJson = mapper.writeValueAsString(imgUrls);
+			} catch (Exception e) {
+				return new BasicResponse(ReplyMessage.PLEASE_TRY_LATE.getCode(),
+						ReplyMessage.PLEASE_TRY_LATE.getMessage());
+			}
+		} else {
+			imgPathJson = "[]";
+		}
+
 		try {
-			String imgPathJson = mapper.writeValueAsString(req.getImgList() != null ? req.getImgList() : List.of());
+//			String imgPathJson = mapper.writeValueAsString(req.getImgList() != null ? req.getImgList() : List.of());
 			String typeJson = mapper.writeValueAsString(req.getType() != null ? req.getType() : List.of());
 			String locationJson = mapper.writeValueAsString(req.getLocation() != null ? req.getLocation() : List.of());
 			String gradeJson = mapper.writeValueAsString(req.getGrade() != null ? req.getGrade() : List.of());
