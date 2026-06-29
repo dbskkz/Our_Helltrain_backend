@@ -180,7 +180,7 @@ public class WishService {
                 req.getBudgetMax(),
                 req.getStatus(),                      // 預設狀態
                 LocalDateTime.now(),           // 建立時間
-                LocalDateTime.now().plusDays(30) // 30 天後到期
+                LocalDateTime.now().plusDays(14) // 14 天後到期
             );
 
         } catch (Exception e) {

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # MySQL 資料庫服務
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: our_helltrain       # 你的資料庫名稱
+      MYSQL_ROOT_PASSWORD: 1234 # 你的密碼
+    ports:
+      - "3306:3306"
+    volumes:
+      # 將你的 SQL 檔放到本機的 ./init 資料夾下，Docker 啟動時會自動執行它
+      - ./init:/docker-entrypoint-initdb.d
+
+  # Spring Boot 後端服務
+  backend:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      # 自動將 Spring Boot 的資料庫連線指向 Docker 內部的 db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/your_db_name?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=your_password
